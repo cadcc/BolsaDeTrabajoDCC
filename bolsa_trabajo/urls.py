@@ -16,9 +16,12 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from app import views as app_views
+
 admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^prueba/', include('prueba.urls'))
+    url(r'^app/', include('app.urls')),
+    url(r'^$', app_views.home, name='home')
 ]
