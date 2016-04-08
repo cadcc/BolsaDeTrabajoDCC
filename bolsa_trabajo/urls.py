@@ -22,6 +22,5 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^app/', include('app.urls')),
-    url(r'^$', app_views.home, name='home')
+    url(r'^', include('app.urls'))
 ]
