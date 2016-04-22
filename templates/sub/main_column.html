@@ -1,0 +1,20 @@
+{% extends "sub/main.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="col-md-3">
+        <div>
+            <img alt="Bootstrap Image Preview" src="{% static "resources/image/dcc.jpg" %}"/>
+        </div>
+        <hr>
+        <div>
+            {% block left_column_content %}
+            {% endblock %}
+        </div>
+    </div>
+    <div class="col-md-9">
+        {% block right_column_content %}
+        
+        {% endblock %}
+    </div>
+{% endblock %}

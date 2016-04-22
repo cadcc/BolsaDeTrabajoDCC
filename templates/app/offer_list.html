@@ -1,43 +1,16 @@
+{% extends "sub/main_column.html" %}
 {% load staticfiles %}
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block left_column_content %}
+    <h3 class="text-center">Publica con el perfil de tu empresa</h3>
+    <button type="button" class="btn btn-default">Ingresar</button>
+{% endblock %}
 
-    <title>Bootstrap 3, from LayoutIt!</title>
-
-    <meta name="description" content="Source code generated using layoutit.com">
-    <meta name="author" content="LayoutIt!">
-
-    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-    <link href="{% static "css/style.css" %}" rel="stylesheet">
-
-  </head>
-  <body>
-
-    <div class="container-fluid">
-	<div class="row">
-		<div class="col-md-3">
-			<div>
-				<img alt="Bootstrap Image Preview" src="{% static "resources/image/dcc.jpg" %}"/>
-			</div>
-			<hr>
-			<div>
-				<h3 class="text-center">Publica con el perfil de tu empresa</h3>
-				<button type="button" class="btn btn-default">Ingresar</button>
-			</div>
-			<hr>
-			<div>
-			</div>
-		</div>
-		<div class="col-md-9">
+{% block right_column_content %}
 			<div>
 				<form class="navbar-form" role="search">
 						<div class="form-group">
 							<input class="form-control" type="text">
-						</div> 
+						</div>
 						<button type="submit" class="btn btn-default">
 							Buscar
 						</button>
@@ -172,12 +145,5 @@
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-</div>
+{% endblock %}
 
-    <script src="{% static "js/jquery.min.js" %}"></script>
-    <script src="{% static "js/bootstrap.min.js" %}"></script>
-    <script src="{% static "js/scripts.js" %}"></script>
-  </body>
-</html>
