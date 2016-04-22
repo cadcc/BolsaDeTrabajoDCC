@@ -110,3 +110,17 @@ class Valoracion(models.Model):
 
     def __str__(self):
         return self.usuario + ' - ' + str(self.valor) + ' - ' + self.comentario
+
+class ValoracionEmpresa(models.Model):
+    usuario = models.ForeignKey(Usuario)
+    empresa = models.ForeignKey(Empresa)
+    valor = models.IntegerField()
+    comentario = models.TextField()
+    fecha = models.DateTimeField()
+
+    def __str__(self):
+        return self.usuario + ' - ' + str(self.valor) + ' - ' + self.comentario
+
+class Visitas(models.Model):
+    usuario = models.ForeignKey(Usuario)
+    oferta = models.ForeignKey(Oferta)
