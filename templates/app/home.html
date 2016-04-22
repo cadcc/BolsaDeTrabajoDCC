@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Bootstrap 3, from LayoutIt!</title>
+    <title>Bolsa de trabajo DCC</title>
 
     <meta name="description" content="Source code generated using layoutit.com">
     <meta name="author" content="LayoutIt!">
@@ -39,29 +39,29 @@
 						</div>
 					</div>
 					<div>
-							<form role="form">
-								<div class="form-group">
-									<label class="sr-only" for="exampleInputEmail1">
-										Usuario
-									</label>
-									<input class="form-control" id="exampleInputEmail1" type="email" placeholder="Usuario"/>
-								</div>
-								<div class="form-group">
-									 
-									<label class="sr-only" for="exampleInputPassword1">
-										Password
-									</label>
-									<input class="form-control" id="exampleInputPassword1" type="password" placeholder="Contraseña" />
-								</div>
-								<div class="checkbox">
-									<label>
-										<input type="checkbox" /> Recordarme
-									</label>
-								</div> 
-								<button type="submit" class="btn btn-default">
-									Ingresar
-								</button>
-							</form>
+                        <form role="form" action = {% url 'login_upasaporte' %}>
+                            <div class="form-group">
+                                <label class="sr-only" for="exampleInputEmail1">
+                                    Usuario
+                                </label>
+                                <input class="form-control" id="id_username" placeholder="Usuario"/>
+                            </div>
+                            <div class="form-group">
+
+                                <label class="sr-only" for="exampleInputPassword1">
+                                    Password
+                                </label>
+                                <input class="form-control" id="id_password" type="password" placeholder="Contraseña" />
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" /> Recordarme
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-default">
+                                Ingresar
+                            </button>
+                        </form>
 					</div>
 				</div>
 			</div>
