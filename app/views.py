@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from app.forms import OfferForm
 from django.conf import settings
+from django.http import HttpResponseNotAllowed
 
 @csrf_exempt
 def home(request):
@@ -15,7 +16,9 @@ def company_offer_form(request):
     context = {
         'main_url': settings.MAIN_URL
     }
-    return render(request, 'app/form.html', context)
+    if request.method == 'GET':
+        return render(request, 'app/form.html', context)
+    return HttpResponseNotAllowed('GET')
 
 @csrf_exempt
 def offer(request):

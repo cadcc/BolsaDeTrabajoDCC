@@ -20,7 +20,9 @@ Bolsa de Trabajo DCC
                         <div class="title text-center">Publicar ofertas</div>
                         <div class="row">
                             <div class="col-md-6 col-md-offset-3 col-xs-12">
-                                <div><button type="button" class="m-btn-full m-btn-darkcyan">Publicar</button></div>
+                                <form role="form" action="{% url 'formulario' %}" method="GET">
+                                    <div><button type="submit" class="m-btn-full m-btn-darkcyan">Publicar</button></div>
+                                </form>
                                 <div><button type="button" class="m-btn-full m-btn-cyan">Empresas Verificadas</button></div>
                             </div>
                         </div>
