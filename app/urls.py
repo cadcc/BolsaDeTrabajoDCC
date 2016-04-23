@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^login_upasaporte$', views.login_upasaporte, name='login_upasaporte'),
     url(r'^suscripciones', views.suscription, name='suscription'),
+    url(r'^enviar_oferta', views.enviar_oferta, name='enviar_oferta')
 ]
