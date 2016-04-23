@@ -20,3 +20,7 @@ def offer_list(request):
 @csrf_exempt
 def login_upasaporte(request):
     return render(request, 'app/offer_list.html')
+
+@csrf_exempt
+def suscription(request):
+    return render(request, 'app/suscription.html')

@@ -6,5 +6,6 @@ urlpatterns = [
     url(r'^oferta/$', views.offer, name='oferta'),
     url(r'^listado_ofertas/$', views.offer_list, name='listado_ofertas'),
     url(r'^$', views.home, name='home'),
-    url(r'^login_upasaporte$', views.login_upasaporte, name='login_upasaporte')
+    url(r'^login_upasaporte$', views.login_upasaporte, name='login_upasaporte'),
+    url(r'^suscripciones', views.suscription, name='suscription'),
 ]

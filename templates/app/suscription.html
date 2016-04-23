@@ -1,0 +1,47 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+
+{% block left_column_content %}
+    <h3 class="text-center">Publica con el perfil de tu empresa</h3>
+    <button type="button" class="btn btn-default">Ingresar</button>
+{% endblock %}
+
+{% block right_column_content %}
+    <h1>Suscripción de ofertas</h1>
+    <div>
+        <form>
+            <dl>
+                <dt>Notificar</dt>
+                <dd>
+                    <select>
+                        <option value="diario">Diariamente</option>
+                        <option value="semanal">Semanalmente</option>
+                        <option value="semanal2">Cada dos semanas</option>
+                        <option value="mensual">Mensualmente</option>
+                        <option value="deshabilitado">Deshabilitar notificaciones</option>
+                    </select>
+                </dd>
+                <dt>Notificar Solo</dt>
+                <dd>
+                    <label class="checkbox-inline"><input type="checkbox" name="practicas" value="">Prácticas</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="memorias" value="">Memorias</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="trabajos" value="">Trabajos</label>
+                </dd>
+                <dt>Notificar Únicamente</dt>
+                <dd>
+                    <input type="text" placeholder="Etiqueta" />
+                    <div class="tag-list">
+                        <span class="label label-default">Tag 1</span>
+                        <span class="label label-default">Tag 2</span>
+                        <span class="label label-default">Tag 3</span>
+                        <span class="label label-default">Tag 4</span>
+                    </div>
+                    <div class="hidden">
+                        <input type="hidden" name="tag[]" />
+                    </div>
+                </dd>
+            </dl>
+            <button type="submit" class="btn btn-default">Guardar</button>
+        </form>
+    </div>
+{% endblock %}
