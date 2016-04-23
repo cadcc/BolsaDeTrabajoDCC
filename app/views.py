@@ -1,32 +1,54 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from app.forms import OfferForm
+from django.conf import settings
 
 @csrf_exempt
 def home(request):
-    return render(request, 'app/home.html')
+    context = {
+        'main_url': settings.MAIN_URL
+    }
+    return render(request, 'app/home.html', context)
 
 @csrf_exempt
 def company_offer_form(request):
-    return render(request, 'app/form.html')
+    context = {
+        'main_url': settings.MAIN_URL
+    }
+    return render(request, 'app/form.html', context)
 
 @csrf_exempt
 def offer(request):
-    return render(request, 'app/offer.html')
+    context = {
+        'main_url': settings.MAIN_URL
+    }
+    return render(request, 'app/offer.html', context)
 
 @csrf_exempt
 def offer_list(request):
-    return render(request, 'app/offer_list.html')
+    context = {
+        'main_url': settings.MAIN_URL
+    }
+    return render(request, 'app/offer_list.html', context)
 
 @csrf_exempt
 def login_upasaporte(request):
-    return render(request, 'app/offer_list.html')
+    context = {
+        'main_url': settings.MAIN_URL
+    }
+    return render(request, 'app/offer_list.html', context)
 
 @csrf_exempt
 def suscription(request):
-    return render(request, 'app/suscription.html')
+    context = {
+        'main_url': settings.MAIN_URL
+    }
+    return render(request, 'app/suscription.html', context)
 
 def enviar_oferta(request):
+    context = {
+        'main_url': settings.MAIN_URL
+    }
     form = OfferForm(request.POST)
     if (form.is_valid()):
 
@@ -65,5 +87,5 @@ def enviar_oferta(request):
         print('comen_dur: ' + comen_dur)
         print('etiquetas: ' + etiquetas)
 
-        return render(request, 'app/offer.html')
-    return render(request, 'app/home.html')
+        return render(request, 'app/offer.html', context)
+    return render(request, 'app/home.html', context)

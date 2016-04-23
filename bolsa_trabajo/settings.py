@@ -129,3 +129,6 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 STATIC_URL = '/static/'
+
+# carga de url principal
+MAIN_URL = os.getenv('MAIN_URL', default='localhost:8000')
