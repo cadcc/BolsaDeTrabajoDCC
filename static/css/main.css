@@ -3,6 +3,23 @@ body{
     color: #FFFFFF;
 }
 
+.column-left{
+    min-height: 100vh;
+    color: #FFFFFF;
+    background-color: rgba(85,179,174,0.9);
+    border-right: 5px solid #1b6d85;
+}
+
+.column-right{
+    min-height: 100vh;
+    color: #267AAD;
+    background-color: rgba(255,255,255,0.9);
+}
+
+.container{
+    min-height: 100vh;
+}
+
 .logo{
     background-image: url("/static/resources/image/dcc.png");
     background-repeat: no-repeat;
@@ -18,7 +35,6 @@ body{
     left: 0;
     right: 0;
     width: 100%;
-    height: 100vh;
     background-color: #0B1A3B;
     opacity: 0.6;
 }
@@ -27,7 +43,6 @@ body{
     left: 0;
     right: 0;
     width: 100%;
-    height: 100vh;
     background-image: url("/static/resources/image/back.jpg");
     background-repeat: no-repeat;
     background-size: cover;
@@ -90,4 +105,20 @@ body{
 
 .opaque{
     opacity: 1;
+}
+
+.height100{
+    height: 100%;
+}
+
+.height33{
+    height: 33%;
+}
+
+.height50{
+    height: 50%;
+}
+
+dt{
+    width: 200px;
 }

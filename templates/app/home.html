@@ -6,23 +6,25 @@ Bolsa de Trabajo DCC
 {% endblock %}
 
 {% block content %}
-    <div class="background">
-            <div></div>
+    <div class="background height100">
+            <div class="height100"></div>
     </div>
-<div class="row">
-		<div class="col-md-12 col-xs-12">
-			<div class="row">
+    <div class="row">
 				<div class="col-md-12 col-xs-12 m-b-5">
                     <div class="logo"></div>
 				</div>
 			</div>
-			<div class="row">
+    <div class="row">
 				<div class="col-md-6 col-xs-12">
-					<div class="title text-center">Publicar ofertas</div>
-					<div class="col-md-6 col-md-offset-3 col-xs-12">
-						<div><button type="button" class="m-btn-full m-btn-darkcyan">Publicar</button></div>
-						<div><button type="button" class="m-btn-full m-btn-cyan">Empresas verificadas</button></div>
-					</div>
+                    <div class="frame">
+                        <div class="title text-center">Publicar ofertas</div>
+                        <div class="row">
+                            <div class="col-md-6 col-md-offset-3 col-xs-12">
+                                <div><button type="button" class="m-btn-full m-btn-darkcyan">Publicar</button></div>
+                                <div><button type="button" class="m-btn-full m-btn-cyan">Empresas Verificadas</button></div>
+                            </div>
+                        </div>
+                    </div>
 				</div>
 				<div class="col-md-6 col-xs-12">
                     <div class="frame">
@@ -33,7 +35,8 @@ Bolsa de Trabajo DCC
                         </div>
                         <div class="row">
                             <div class="col-md-10 col-md-offset-1 col-xs-12">
-                        <form role="form" action = {% url 'login_upasaporte' %}>
+                        <form role="form" action = "{% url 'login_upasaporte' %}" method="post">
+                            {% csrf_token %}
                             <div class="form-group">
                                 <label class="sr-only" for="exampleInputEmail1">
                                     Usuario
@@ -47,12 +50,13 @@ Bolsa de Trabajo DCC
                                 </label>
                                 <input class="form-control" id="id_password" type="password" placeholder="Contraseña" />
                             </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" /> Recordarme
-                                </label>
+                            <div>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" /> Recordarme
+                                    </label>
+                                <div class="pull-right"><a href="javascript:void(0)">No poseo U-Pasaporte</a></div>
                             </div>
-                            <button type="submit" class="m-btn m-btn-darkgreen">
+                            <button type="submit" class="m-btn m-btn-darkcyan">
                                 Ingresar
                             </button>
                         </form>
@@ -61,6 +65,4 @@ Bolsa de Trabajo DCC
                     </div>
 				</div>
 			</div>
-		</div>
-	</div>
 {% endblock %}
