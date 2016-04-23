@@ -33,7 +33,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-10 col-md-offset-1 col-xs-12">
-                        <form role="form" action = "{% url 'login_upasaporte' %}" method="post">
+                        <form role="form" action = "{% url 'login_upasaporte' %}" method="GET">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label class="sr-only" for="exampleInputEmail1">

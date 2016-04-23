@@ -39,7 +39,9 @@ def login_upasaporte(request):
     context = {
         'main_url': settings.MAIN_URL
     }
-    return render(request, 'app/offer_list.html', context)
+    if request.method == 'GET':
+        return render(request, 'app/offer_list.html', context)
+    return HttpResponseNotAllowed('GET')
 
 @csrf_exempt
 def suscription(request):
