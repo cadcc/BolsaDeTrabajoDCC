@@ -2,8 +2,10 @@
 {% load staticfiles %}
 {% block title %} Listado de ofertas {% endblock %}
 {% block left_column_content %}
-    <h3 class="text-center">Publica con el perfil de tu empresa</h3>
-    <button type="button" class="btn btn-default">Ingresar</button>
+    <div class="frame text-center">
+        <h3 class="text-center">Publica con el perfil de tu empresa</h3>
+        <button type="button" class="m-btn m-btn-darkcyan">Ingresar</button>
+    </div>
 {% endblock %}
 
 {% block right_column_content %}
@@ -31,118 +33,15 @@
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-804185">
-						<div class="row">
-							<div class="col-md-3">
-								<img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/">
-							</div>
-							<div class="col-md-9">
-								<div class="row">
-									<div class="col-md-8">
-										Práctica 1 - Empresa 1
-									</div>
-									<div class="col-md-2">
-										<span><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> Aprobado</span>
-									</div>
-									<div class="col-md-2">
-										estrellitas
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-8">
-										<span class="label label-info">Tag 1</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span>
-									</div>
-									<div class="col-md-4">
-										<span>$120.000</span>
-										<span>$330.000</span>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-3">
-								<img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/">
-							</div>
-							<div class="col-md-9">
-								<div class="row">
-									<div class="col-md-8">
-										Práctica 1 - Empresa 1
-									</div>
-									<div class="col-md-2">
-										<span><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> Aprobado</span>
-									</div>
-									<div class="col-md-2">
-										estrellitas
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-8">
-										<span class="label label-info">Tag 1</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span>
-									</div>
-									<div class="col-md-4">
-										<span>$120.000</span>
-										<span>$330.000</span>
-									</div>
-								</div>
-							</div>
-						</div>
+                        {% include "example/offer_list_item1.html" %}
+						{% include "example/offer_list_item2.html" %}
+                        {% include "example/offer_list_item3.html" %}
 					</div>
 					<div class="tab-pane" id="panel-289390">
-						<div class="row">
-							<div class="col-md-3">
-								<img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/">
-							</div>
-							<div class="col-md-9">
-								<div class="row">
-									<div class="col-md-8">
-										Memoria 1 - Empresa 2
-									</div>
-									<div class="col-md-2">
-										<span><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> Aprobado</span>
-									</div>
-									<div class="col-md-2">
-										estrellitas
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-8">
-										<span class="label label-info">Tag 5</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span>
-									</div>
-									<div class="col-md-4">
-										<span>$220.000</span>
-										<span>$530.000</span>
-									</div>
-								</div>
-							</div>
-						</div>
+						{% include "example/offer_list_item1.html" %}
 					</div>
 					<div class="tab-pane" id="panel-289391">
-						<div class="row">
-							<div class="col-md-3">
-								<img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/">
-							</div>
-							<div class="col-md-9">
-								<div class="row">
-									<div class="col-md-8">
-										Trabajo 1 - Empresa 3
-									</div>
-									<div class="col-md-2">
-										<span><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> Aprobado</span>
-									</div>
-									<div class="col-md-2">
-										estrellitas
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-8">
-										<span class="label label-info">Tag 4</span><span class="label label-info">Tag 7</span><span class="label label-info">Tag 3</span>
-									</div>
-									<div class="col-md-4">
-										<span>$1.200.000</span>
-										<span>$3.300.000</span>
-									</div>
-								</div>
-							</div>
-						</div>
+						{% include "example/offer_list_item2.html" %}
 					</div>
 				</div>
 			</div>

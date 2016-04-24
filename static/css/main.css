@@ -38,8 +38,8 @@ body{
 }
 
 .company-logo{
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
 }
 
 .background div{
@@ -163,4 +163,26 @@ body{
     vertical-align: middle;
     display: inline-block;
     float: none;
+}
+
+.nav-tabs > li > a {
+    font-size: 20px;
+}
+
+.tab-content{
+    background-color: #ffffff;
+    padding: 10px;
+}
+
+.tab-pane > .row{
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #EEEEEE;
+}
+
+.overflow-ellipsis{
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
 }
