@@ -2,10 +2,7 @@
 {% load staticfiles %}
 {% block title %} Oferta {% endblock %}
 {% block left_column_content %}
-    <div class="frame text-center">
-        <h3 class="text-center">Publica con el perfil de tu empresa</h3>
-        <button type="button" class="m-btn m-btn-darkcyan">Ingresar</button>
-    </div>
+    {% include "sub/left-panel-user-profile.html" %}
 {% endblock %}
 
 {% block right_column_content %}

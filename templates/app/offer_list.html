@@ -2,22 +2,21 @@
 {% load staticfiles %}
 {% block title %} Listado de ofertas {% endblock %}
 {% block left_column_content %}
-    <div class="frame text-center">
-        <h3 class="text-center">Publica con el perfil de tu empresa</h3>
-        <button type="button" class="m-btn m-btn-darkcyan">Ingresar</button>
-    </div>
+    {% include "sub/left-panel-user-profile.html" %}
 {% endblock %}
 
 {% block right_column_content %}
 			<div>
-				<form class="navbar-form" role="search">
-						<div class="form-group">
-							<input class="form-control" type="text">
-						</div>
-						<button type="submit" class="btn btn-default">
-							Buscar
-						</button>
-					</form>
+				<form role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar ofertas">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                        </span>
+                    </div>
+                </form>
 			</div>
 			<div class="tabbable" id="tabs-813395">
 				<ul class="nav nav-tabs">
