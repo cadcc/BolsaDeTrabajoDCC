@@ -14,7 +14,7 @@
             <div>Empresa</div>
             <div class="text-highlight text-big">Nombre empresa</div>
         </div>
-        <div class="col-md-4 col-xs-1">
+        <div class="col-md-4 col-xs-12">
             <div>Jornada</div>
             <div class="text-highlight text-big">part-time</div>
         </div>
@@ -27,7 +27,7 @@
     <div>
         <div>
             <div class="badge">
-                <div>Remuneración mensual</div>
+                <div>Sueldo mensual</div>
                 <div class="text-big">$330.000</div>
             </div>
             <div class="badge">
@@ -70,6 +70,8 @@
             <dd>Desde <b>04/Diciembre/2016</b> hasta <b>28/Julio/2017</b></dd>
             <dt>Comentarios remuneración</dt>
             <dd>--</dd>
+            <dt>Fecha de publicación</dt>
+            <dd>01/01/2016</dd>
             <dt>Etiquetas</dt>
             <dd>
                 <span class="label label-info">Tag 5</span>
@@ -93,4 +95,7 @@
             <div class="text-highlight text-big">Las Condes</div>
         </div>
     </div>
+    <hr>
+    <h3>Comentarios y valoraciones</h3>
+    {% include "sub/offer-comments.html" %}
 {% endblock %}

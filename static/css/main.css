@@ -110,7 +110,7 @@ body{
 
 .m-btn-cyan {
     color: #FFF;
-    background-color: #33B7B5;
+    background-color: #31BD7F;
     border-color: #28907F;
 }
 
@@ -136,6 +136,13 @@ body{
     background: rgba(0, 0, 0, 0.4);
     border-radius: 4px;
     padding: 10px;
+}
+
+.frame.frame-light{
+    background: rgba(0, 0, 0, 0.07);
+    border: 1px solid;
+    border-color: rgba(0, 0, 0, 0.1);
+    margin: 5px 0;
 }
 
 .opaque{
@@ -208,4 +215,8 @@ body{
     -ms-text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
+}
+
+.inline-block{
+    display: inline-block;
 }
