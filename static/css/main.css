@@ -57,6 +57,7 @@ body{
     width: 100%;
     background-color: #0B1A3B;
     opacity: 0.6;
+    z-index: -999;
 }
 .background{
     position: absolute;
@@ -67,6 +68,7 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    z-index: -999;
 }
 
 .title{
@@ -133,16 +135,29 @@ body{
 }
 
 .frame{
-    background: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.4);
     border-radius: 4px;
     padding: 10px;
 }
 
 .frame.frame-light{
-    background: rgba(0, 0, 0, 0.07);
+    background-color: rgba(0, 0, 0, 0.07);
     border: 1px solid;
     border-color: rgba(0, 0, 0, 0.1);
     margin: 5px 0;
+}
+
+.frame.frame-white{
+    border: 1px solid;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.75);
+    color: #267AAD;
+}
+
+.frame.frame-white hr{
+    border-color: #CECECE;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .opaque{

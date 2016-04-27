@@ -50,6 +50,20 @@ def suscription(request):
     }
     return render(request, 'app/suscription.html', context)
 
+@csrf_exempt
+def registro(request):
+    context = {
+        'main_url': settings.MAIN_URL
+    }
+    return render(request, 'app/registro.html', context)
+
+@csrf_exempt
+def empresa(request, nombre_empresa):
+    context = {
+        'main_url': settings.MAIN_URL
+    }
+    return render(request, 'app/registro.html', context)
+
 def enviar_oferta(request):
     context = {
         'main_url': settings.MAIN_URL
