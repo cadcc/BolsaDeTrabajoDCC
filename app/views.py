@@ -62,7 +62,7 @@ def empresa(request, nombre_empresa):
     context = {
         'main_url': settings.MAIN_URL
     }
-    return render(request, 'app/registro.html', context)
+    return render(request, 'app/company.html', context)
 
 def enviar_oferta(request):
     context = {

@@ -50,6 +50,11 @@ body{
     height: 80px;
 }
 
+.company-logo-small{
+    width: 50px;
+    height: 50px;
+}
+
 .background div{
     position: absolute;
     left: 0;
@@ -200,8 +205,20 @@ body{
     background-color: #761c19;
 }
 
+.badge.badge-lightred{
+    background-color: #BD5631;
+}
+
+.badge.badge-lightgreen{
+    background-color: #31BD34;
+}
+
 .badge.badge-orange{
     background-color: #985f0d;
+}
+
+.badge.badge-yellow{
+    background-color: #BCBD31;
 }
 
 .v-align{
