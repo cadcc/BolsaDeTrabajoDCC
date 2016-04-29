@@ -1,12 +1,23 @@
-Para realizar lo siguiente es necesario tener instalado postgres
-y para mayor conveniencia haber creado un usuario (aparte de postgrss)
-y una base de datos.
+***Instalar base de datos postgresql y usuario
+
+--instalar
+
+sudo apt-get install postgresql postgresql-contrib
+
+--crear rol de usuario, base de datos y contraseña
+
+sudo -i -u postgres
+createuser --interactive #aqui creamos un usuario, lo llamare usuario
+createdb nombre_bd usuario
+psql
+\password usuario #crear contraseña y confirmar
+\q #para salir
 
 ***Instalar dependencias para poder conectar a base de datos postgres
 
 sudo apt-get install python-psycopg2
 sudo apt-get install libpq-dev
-apt-get install python3-dev
+sudo apt-get install python3-dev
 
 ***Crear el ambiente de trabajo (Se explica desde 0)
 
@@ -25,7 +36,7 @@ export WORKON_HOME=~/.virtualenvs
 . /usr/local/bin/virtualenvwrapper.sh
 
 --ejecutar en la consola (actualiza)
-source ~/bashrc
+source ~/.bashrc
 
 --crear el ambiente de trabajo
 mkvirtualenv miAmbiente -p python3 #para usar python 3
@@ -42,13 +53,15 @@ workon miAmbiente
 
 ***Ultimos ajustes
 --dentro de la carpeta del proyecto ejecutar
-workon miAmbiente
+workon miAmbiente #si es que no se estuviera ya en el ambiente
 
 --instalar dependencias
 pip install -r requirements.txt
 
 --configurar un ambiente .env en la raiz del proyecto debe 
   ser identico a .env.example
+
+cp .env.example .env #luego editar .env a conveniencia
 
 --crear migracion de la aplicacion
 python3 manage.py makemigrations app
