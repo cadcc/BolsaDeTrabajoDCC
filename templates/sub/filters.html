@@ -1,0 +1,33 @@
+<div class="frame text-center">
+    <div class="text-center text-capitalize text-big">Filtro de Ofertas</div>
+    <form class="text-left">
+        <div class="form-group">
+            <label>Sueldo mínimo <span class="text-highlight" id="min-price-label">$0</span></label>
+            <div class="price-filter">
+                <div class="price-range-holder">
+                    <input type="text" class="price-slider" value="" >
+                    <input type="hidden" id="min-price" />
+                </div>
+            </div><!-- /.price-filter -->
+        </div>
+        <div class="form-group">
+            <label class="control-label">Jornada</label>
+            <div>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="inlineCheckbox1" value="option1"> Full-Time
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" id="inlineCheckbox2" value="option2"> Part-Time
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Etiquetas</label>
+            <div>
+                <input type="text" class="form-control" name="etiquetas" placeholder="Buscar etiqueta">
+                <div><span class="label label-info">Tag 1</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span></div>
+            </div>
+        </div>
+        <a href="#"><button type="button" class="m-btn-medium m-btn-darkcyan">Filtrar</button></a>
+    </form>
+</div>

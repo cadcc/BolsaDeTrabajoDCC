@@ -3,6 +3,64 @@
 {% block title %} Listado de ofertas {% endblock %}
 {% block left_column_content %}
     {% include "sub/left-panel-user-profile.html" %}
+    <hr>
+    {% include "sub/filters.html" %}
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-slider.min.css" %}">
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static "js/bootstrap-slider.min.js" %}"></script>
+<script>
+function CLPFormatter(price){
+    price = price + "";
+    var clp="";
+    var c = 1;
+    for(var i=price.length -1; i >= 0; i--){
+        clp = price[i]+clp;
+        if(c%3==0 && c!=(price.length)){
+            clp = '.'+clp;
+        }
+        c++;
+    }
+    return '$'+clp;
+}
+// Price Slider
+if ($('.price-slider').length > 0) {
+    $('.price-slider').slider({
+        min: 0,
+        max: 3000000,
+        step: 50000,
+        value: 0,
+        tooltip: "hide",
+        handle: "round",
+        labelledby: 'min-price',
+        //scale: 'logarithmic',
+        formatter: function (value) {
+            return 'Current value: ' + value;
+        },
+
+    }).on('slide', function (slideEvt) {
+        $('.price-filter #min-price').val(slideEvt.value);
+        $('.price-filter #min-price').change();
+    });
+
+    $('.price-filter #min-price').val(0);
+}
+</script>
+<script>
+    $('.price-slider').change(function(){
+        console.log($(this).val());
+    });
+    $('#min-price').change(function(){
+        $('#min-price-label').text(CLPFormatter($(this).val()));
+    });
+    $('#max-price').change(function(){
+        $('#max-price-label').text(CLPFormatter($(this).val()));
+    });
+</script>
 {% endblock %}
 
 {% block right_column_content %}

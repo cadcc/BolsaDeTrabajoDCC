@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^login_upasaporte$', views.login_upasaporte, name='login_upasaporte'),
     url(r'^suscripciones$', views.suscription, name='suscription'),
     url(r'^solicitar-acceso$', views.registro, name='registro'),
-    url(r'^ingreso-a-empresas$', views.registro, name='login_empresas'),
+    url(r'^ingreso-a-empresas$', views.registro_empresa, name='login_empresas'),
     url(r'^empresa/(?P<nombre_empresa>([a-zA-Z0-9]+\-)*[a-zA-Z0-9]+)$', views.empresa, name='registro'),
     #!Esta ruta deberia ser la misma que 'formulario' pero con método POST !
     url(r'^enviar_oferta', views.enviar_oferta, name='enviar_oferta'),
