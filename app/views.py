@@ -3,8 +3,19 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import HttpResponseNotAllowed
 
-from app.models import Usuario, Rol
+from app.models import Usuario, Rol, Oferta
 from app.forms import OfferForm, UserForm
+
+#------------------------------------------------------------
+
+from django.views.generic.edit import CreateView
+
+class OfertaCreate(CreateView):
+    model = Oferta
+    form_class = OfferForm
+    template_name = 'app/enviar_oferta.html'
+
+#------------------------------------------------------------
 
 
 @csrf_exempt
@@ -20,7 +31,8 @@ def company_offer_form(request):
         'main_url': settings.MAIN_URL
     }
     if request.method == 'GET':
-        return render(request, 'app/form.html', context)
+        f = OfferForm(request.POST)
+        #return render(request, 'app/form.html', context)
     return HttpResponseNotAllowed('GET')
 
 @csrf_exempt

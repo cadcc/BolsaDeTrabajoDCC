@@ -1,4 +1,7 @@
 from django import forms
+from django.forms import ModelForm
+from django.utils.translation import ugettext_lazy as _
+from app.models import Oferta
 
 from app.models import Usuario
 
@@ -6,35 +9,6 @@ from app.models import Usuario
 class Login_upasaporteForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
-
-class OfferForm(forms.Form):
-    jornadas = [('full-time', 'full-time'),
-                ('part-time', 'part-time')]
-    opciones_rem = [('mensual', 'mensual'),
-                    ('sin determinar', 'sin determinar'),
-                    ('Sin remuneracion', 'sin remuneracion'),
-                    ('otro', 'otro')]
-    choices_select_tipo = [('practica', 'practica'),
-                           ('memoria', 'memoria'),
-                           ('trabajo', 'trabajo')]
-    choices_select_dur = [('1', '1'), ('2', '2'), ('3', '3')]
-
-    titulo_oferta = forms.CharField()
-    nombre_empresa = forms.CharField()
-    jornada_trabajo = forms.ChoiceField(choices=jornadas)
-    select_tipo_oferta = forms.ChoiceField(choices=choices_select_tipo)
-    perfil_objetivo = forms.CharField()
-    desc_oferta = forms.CharField()
-    habilidades_deseadas = forms.CharField()
-    habilidades_requeridas = forms.CharField()
-    remuneracion = forms.ChoiceField(choices=opciones_rem)
-    sueldo_minimo = forms.CharField()
-    se_ofrece = forms.CharField()
-    fecha_inicio = forms.DateField()
-    fecha_fin = forms.DateField()
-    select_dur_min = forms.ChoiceField(choices=choices_select_dur)
-    comen_dur = forms.CharField()
-    etiquetas = forms.CharField()
 
 class UserForm(forms.Form):
     first_name = forms.CharField()
@@ -57,3 +31,38 @@ class UserForm(forms.Form):
         if password != repassword:
             raise forms.ValidationError('Las contraseñas no coinciden.')
         return repassword
+
+class OfferForm(ModelForm):
+    class Meta:
+        model = Oferta
+        fields = (
+            'titulo',
+            'empresa',
+            'tipo',
+            'descripcion',
+            'requiere_experiencia',
+            'habilidades_requeridas',
+            'habilidades_deseadas',
+            'jornada',
+            'comentario_jornada',
+            'hora_ingreso',
+            'hora_salida',
+            'remunerado',
+            'sueldo_minimo',
+            'comentario_sueldo',
+            'fecha_comienzo',
+            'fecha_termino',
+            'duracion_minima',
+            'comentario_duracion',
+            'comuna',
+            'nombre_encargado',
+            'email_encargado',
+            'telefono_encargado',
+            'etiquetas',
+        )
+        labels ={
+            'titulo': _('Título de la Oferta'),
+        }
+        help_texts = {
+            'titulo': _('Tooltip Titulo')
+        }

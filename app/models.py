@@ -56,49 +56,82 @@ class Etiqueta(models.Model):
 
 
 class Jornada(models.Model):
-    nombre = models.CharField(max_length=64)
+    OPCIONES_JORNADA = (
+        ('FullTime', 'FullTime'),
+        ('PartTime', 'PartTime'),
+    )
+    nombre = models.CharField(max_length=8,
+                              choices=OPCIONES_JORNADA,
+                              default=FULLTIME)
 
     def __str__(self):
         return self.nombre
 
 
 class Oferta(models.Model):
-    empresa = models.ForeignKey(Empresa)
-    jornada = models.ForeignKey(Jornada)
-    comuna = models.ForeignKey(Comuna)
+
+    OPCIONES_TIPO = (
+        ('Práctica', 'Práctica'),
+        ('Memoria', 'Memoria'),
+        ('Trabajo', 'Trabajo'),
+    )
+    OPCIONES_REMUNERACION = (
+        ('Mensual', 'Mensual'),
+        ('Por Determinar', 'Por Determinar'),
+        ('Sin Remuneración', 'Sin Remuneración'),
+        ('Otro', 'Otro'),
+    )
+
+    # Datos Oferta
     titulo = models.CharField(max_length=64)
-    nombre_encargado = models.CharField(max_length=64)
-    tipo = models.CharField(max_length=16)
+    empresa = models.ForeignKey(Empresa)
+    tipo = models.CharField(max_length=9,
+                            choices=OPCIONES_TIPO)
     habilidades_deseadas = models.TextField()
     habilidades_requeridas = models.TextField()
     descripcion = models.TextField()
-    email_encargado = models.EmailField()
-    telefono_encargado = models.CharField(max_length=16)
-    hora_ingreso = models.TimeField()
-    hora_salida = models.TimeField()
-    comentario_jornada = models.TextField()
     requiere_experiencia = models.TextField()
-    remunerado = models.IntegerField()
-    sueldo_minimo = models.IntegerField()
-    comentario_sueldo = models.TextField()
-    fecha_ingreso = models.DateTimeField(auto_now_add=True)
-    fecha_publicacion = models.DateTimeField()
+    se_ofrece = models.TextField()
     fecha_comienzo = models.DateTimeField()
     fecha_termino = models.DateTimeField()
     duracion_minima = models.IntegerField()
-    se_ofrece = models.TextField()
     comentario_duracion = models.TextField()
+    direccion = models.CharField(max_length=64)
+    comuna = models.ForeignKey(Comuna)
+
+    # Datos Encargado
+    nombre_encargado = models.CharField(max_length=64)
+    email_encargado = models.EmailField()
+    telefono_encargado = models.CharField(max_length=16)
+
+    # Jornada
+    jornada = models.ForeignKey(Jornada)
+    comentario_jornada = models.TextField()
+    hora_ingreso = models.TimeField()
+    hora_salida = models.TimeField()
+
+    # Remuneracion
+    remunerado = models.CharField(max_length=19,
+                                  choices=OPCIONES_REMUNERACION)
+    sueldo_minimo = models.IntegerField()
+    comentario_sueldo = models.TextField()
+
+    # Estado de la Oferta
+    fecha_ingreso = models.DateTimeField(auto_now_add=True)
     publicada = models.BooleanField(default=False)
+    fecha_publicacion = models.DateTimeField()
     puntuacion = models.IntegerField(default=0)
     visitas = models.IntegerField(default=0)
     notificar = models.BooleanField()
-    direccion = models.CharField(max_length=64)
     latitud = models.DecimalField(max_digits=10, decimal_places=7)
     longitud = models.DecimalField(max_digits=10, decimal_places=7)
     etiquetas = models.ManyToManyField(Etiqueta)
 
     def __str__(self):
         return self.titulo
+
+    def get_absolute_url(self):
+        return reverse('oferta-detail', kwargs={'pk': self.pk})
 
 
 class Usuario(AbstractUser):
