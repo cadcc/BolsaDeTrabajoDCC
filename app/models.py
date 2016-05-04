@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 
 class Rol(models.Model):
@@ -12,7 +13,7 @@ class Rol(models.Model):
 class Empresa(models.Model):
     nombre = models.CharField(max_length=64)
     sitio_web = models.CharField(max_length=64)
-    logo = models.CharField(max_length=64, default=settings.PATH_LOGOS + 'logo-company.png')
+    logo = models.FileField(upload_to='logos')
     direccion = models.CharField(max_length=64)
     descripcion = models.TextField()
     puntaje = models.IntegerField(default=0)
@@ -100,12 +101,8 @@ class Oferta(models.Model):
         return self.titulo
 
 
-class Usuario(models.Model):
-    nombre = models.CharField(max_length=64)
-    apellido = models.CharField(max_length=64)
-    email = models.EmailField()
-    fecha = models.DateField()
-    documento = models.CharField(max_length=64)
+class Usuario(AbstractUser):
+    documento = models.FileField(upload_to='user_document', null=True)
     roles = models.ManyToManyField(Rol)
     marcadores = models.ManyToManyField(Oferta)
 

@@ -1,5 +1,8 @@
 from django import forms
 
+from app.models import Usuario
+
+
 class Login_upasaporteForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
@@ -33,3 +36,24 @@ class OfferForm(forms.Form):
     comen_dur = forms.CharField()
     etiquetas = forms.CharField()
 
+class UserForm(forms.Form):
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    email = forms.EmailField()
+    document = forms.FileField()
+    password = forms.CharField()
+    repassword = forms.CharField()
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if Usuario.objects.filter(email=email):
+            raise forms.ValidationError('El correo electrónico ingresado ya se '
+                                        'encuentra registrado en el sistema.')
+        return email
+
+    def clean_repassword(self):
+        password = self.cleaned_data['password']
+        repassword = self.cleaned_data['repassword']
+        if password != repassword:
+            raise forms.ValidationError('Las contraseñas no coinciden.')
+        return repassword

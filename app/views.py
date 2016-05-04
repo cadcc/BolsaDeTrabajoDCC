@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from app.forms import OfferForm
 from django.conf import settings
 from django.http import HttpResponseNotAllowed
+
+from app.models import Usuario, Rol
+from app.forms import OfferForm, UserForm
+
 
 @csrf_exempt
 def home(request):
@@ -56,6 +59,51 @@ def registro(request):
         'main_url': settings.MAIN_URL
     }
     return render(request, 'app/registro.html', context)
+
+@csrf_exempt
+def registrar_usuario(request):
+    if (request.method == 'POST'):
+        context = {
+            'main_url': settings.MAIN_URL
+        }
+        form = UserForm(request.POST, request.FILES)
+        if form.is_valid():
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            document = form.cleaned_data['document']
+            #la comprobacion de existencia del correo se hace en el formulario
+            email = form.cleaned_data['email']
+            #la comprobacion de contrañas se hace en el formulario
+            password = form.cleaned_data['password']
+            repassword = form.cleaned_data['repassword']
+            datos_extra = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'documento': document
+            }
+
+            usuario = Usuario.objects.create_user(email, email, password, **datos_extra)
+            #agregar rol de pendiente
+            rol = Rol.objects.get(nombre='pendiente')
+            usuario.roles.add(rol)
+
+            return render(request, 'app/usuario_pendiente.html', context)
+        else:
+            context['form'] = form
+            print('algo fallo :c')
+            return render(request, 'app/registro.html', context)
+    else:
+        return HttpResponseNotAllowed('GET')
+
+@csrf_exempt
+def wait_for_check_user(request):
+    if (request.method == 'GET'):
+        context = {
+            'main_url': settings.MAIN_URL
+        }
+        return render(request, 'app/usuario_pendiente.html', context)
+    else:
+        return HttpResponseNotAllowed('GET')
 
 @csrf_exempt
 def registro_empresa(request):

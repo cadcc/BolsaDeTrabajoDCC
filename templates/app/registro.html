@@ -6,67 +6,115 @@
             <div class="height100"></div>
     </div>
     <div class="row">
-				<div class="col-md-12 col-xs-12 m-b-5">
-                    <a href="{{ main_url }}"><div class="logo"></div></a>
-				</div>
-			</div>
+        <div class="col-md-12 col-xs-12 m-b-5">
+            <a href="{{ main_url }}"><div class="logo"></div></a>
+        </div>
+    </div>
     <div class="row frame frame-white">
-				<div class="col-md-6 col-xs-12">
-                    <h2>¿No posees una cuenta U-Pasaporte?</h2>
-                    <hr>
-                    <p>
-                        [Texto explicando por qué no todos poseen u-pasaporte y los pasos a seguir para crearse una
-                        cuenta en el sitio.]
-                    </p>
-				</div>
-				<div class="col-md-6 col-xs-12">
-                    <div class="frame frame-light">
-                        <div class="row">
-                            <div class="col-md-12 col-xs-12">
-                                <div class="title text-center">Solicita tu cuenta de usuario</div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-10 col-md-offset-1 col-xs-12">
-                                <form role="form" action = "{% url 'login_upasaporte' %}" method="GET">
+        <div class="col-md-6 col-xs-12">
+            <h2>¿No posees una cuenta U-Pasaporte?</h2>
+            <hr>
+            <p>
+                [Texto explicando por qué no todos poseen u-pasaporte y los pasos a seguir para crearse una
+                cuenta en el sitio.]
+            </p>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <div class="frame frame-light">
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <div class="title text-center">Solicita tu cuenta de usuario</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-1 col-xs-12">
+                        <form role="form" action = "{% url 'registrar_usuario' %}" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label class="sr-only" for="nombre">
+                                <label class="sr-only" for="first_name">
                                     Nombre
                                 </label>
-                                <input class="form-control" id="nombre" placeholder="Nombre"/>
+                                {% if form.first_name.errors %}
+                                    <ul>
+                                    {% for error in form.first_name.errors %}
+                                      <label for="first_name" class="error">{{ error|escape }}</label>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <input class="form-control" id="first_name" name="first_name" placeholder="Nombre" value="{{ form.first_name.value|default_if_none:"" }}" required/>
                             </div>
                             <div class="form-group">
-                                <label class="sr-only" for="apellidos">
-                                    Apellidos
+                                <label class="sr-only" for="last_name">
+                                    Apellido
                                 </label>
-                                <input class="form-control" id="apellidos" placeholder="Apellidos"/>
+                                {% if form.last_name.errors %}
+                                    <ul>
+                                    {% for error in form.last_name.errors %}
+                                      <label for="last_name" class="error">{{ error|escape }}</label>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <input class="form-control" id="last_name" name="last_name" placeholder="Apellido" value="{{ form.last_name.value|default_if_none:"" }}" required/>
                             </div>
                             <div class="form-group">
                                 <label class="sr-only" for="email">
-                                    Apellidos
+                                    Correo electrónico
                                 </label>
-                                <input class="form-control" id="email" type="email" placeholder="Correo electrónico"/>
+                                {% if form.email.errors %}
+                                    <ul>
+                                    {% for error in form.email.errors %}
+                                      <label for="email" class="error">{{ error|escape }}</label>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <input class="form-control" id="email" name="email" type="email" placeholder="Correo electrónico" value="{{ form.email.value|default_if_none:"" }}" required/>
                             </div>
                             <div class="form-group">
                                 <label class="sr-only" for="password">
-                                    Apellidos
+                                    Contraseña
                                 </label>
-                                <input class="form-control" id="password" type="password" placeholder="Contraseña"/>
+                                {% if form.password.errors %}
+                                    <ul>
+                                    {% for error in form.password.errors %}
+                                      <label for="password" class="error">{{ error|escape }}</label>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <input class="form-control" id="password" name="password" type="password" placeholder="Contraseña" required/>
                             </div>
                             <div class="form-group">
                                 <label class="sr-only" for="repassword">
-                                    Apellidos
+                                    Repetir contraseña
                                 </label>
-                                <input class="form-control" id="repassword" type="password" placeholder="Repetir contraseña"/>
+                                {% if form.repassword.errors %}
+                                    <ul>
+                                    {% for error in form.repassword.errors %}
+                                      <label for="repassword" class="error">{{ error|escape }}</label>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <input class="form-control" id="repassword" name="repassword" type="password" placeholder="Repetir contraseña" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="document">
+                                    Documento para comprobar (PDF)
+                                </label>
+                                {% if form.document.errors %}
+                                    <ul>
+                                    {% for error in form.document.errors %}
+                                      <label for="document" class="error">{{ error|escape }}</label>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <input type="file" name="document" id="document" accept="application/pdf" required/>
                             </div>
                             <button type="submit" class="m-btn m-btn-cyan">
                                 Solicitar
                             </button>
                         </form>
-					        </div>
-                        </div>
                     </div>
-				</div>
-			</div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
