@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
@@ -76,6 +76,11 @@ def login_user(request):
             return render(request, 'app/home.html', context)
         return redirect(reverse(offer_list))
     return HttpResponseNotAllowed('GET')
+
+@csrf_exempt
+def logout_user(request):
+    logout(request)
+    return redirect(reverse(home))
 
 @csrf_exempt
 def suscription(request):

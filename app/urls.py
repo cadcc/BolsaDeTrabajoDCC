@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^lista-de-ofertas/$', views.offer_list, name='listado_ofertas'),
     url(r'^$', views.home, name='home'),
     url(r'^login_user$', views.login_user, name='login_user'),
+    url(r'^logout_user$', views.logout_user, name='logout_user'),
     url(r'^suscripciones$', views.suscription, name='suscription'),
     url(r'^solicitar-acceso$', views.registro, name='registro'),
     url(r'^ingreso-a-empresas$', views.registro_empresa, name='login_empresas'),
