@@ -132,3 +132,7 @@ STATIC_URL = '/static/'
 
 # carga de url principal
 MAIN_URL = os.getenv('MAIN_URL', default='localhost:8000')
+
+#carga de rutas por defecto
+PATH_LOGOS = os.getenv('PATH_LOGOS', default='static/resources/company/')
+PATH_DOCUMENTS = os.getenv('PATH_DOCUMENTS', default='static/document_user/')
