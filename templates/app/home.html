@@ -30,23 +30,26 @@
                             <div class="col-md-12 col-xs-12">
                                 <div class="title text-center">Ingresar con U-Pasaportes</div>
                             </div>
+                            {% if error_login %}
+                                 <label for="password" class="error">{{ error_login|escape }}</label>
+                            {% endif %}
                         </div>
                         <div class="row">
                             <div class="col-md-10 col-md-offset-1 col-xs-12">
-                        <form role="form" action = "{% url 'login_upasaporte' %}" method="GET">
+                        <form role="form" action = "{% url 'login_user' %}" method="POST">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label class="sr-only" for="username">
-                                    Usuario
+                                    Usuario/Correo
                                 </label>
-                                <input class="form-control" id="username" placeholder="Usuario"/>
+                                <input class="form-control" id="username" name="username" placeholder="Usuario"/>
                             </div>
                             <div class="form-group">
 
                                 <label class="sr-only" for="password">
                                     Password
                                 </label>
-                                <input class="form-control" id="password" type="password" placeholder="Contraseña" />
+                                <input class="form-control" id="password" name="password" type="password" placeholder="Contraseña" />
                             </div>
                             <div>
                                     <label class="checkbox-inline">

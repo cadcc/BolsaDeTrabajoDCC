@@ -1,4 +1,7 @@
-from django.shortcuts import render
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import HttpResponseNotAllowed
@@ -43,19 +46,35 @@ def offer(request):
     return render(request, 'app/offer.html', context)
 
 @csrf_exempt
+@login_required
 def offer_list(request):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
+    user = request.user
+    context = {}
+    context['main_url'] = settings.MAIN_URL
+    context['user'] = user
+    roles = map(lambda rol: str(rol), user.roles.all())
+    context['roles'] = roles
+    if 'pendiente' in roles:
+        return redirect(reverse(wait_for_check_user))
     return render(request, 'app/offer_list.html', context)
 
 @csrf_exempt
-def login_upasaporte(request):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
-    if request.method == 'GET':
-        return render(request, 'app/offer_list.html', context)
+def login_user(request):
+    if request.method == 'POST':
+        context = {
+            'main_url': settings.MAIN_URL
+        }
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:    #verificar en nuestra base de datos
+            login(request, user)
+        elif False: #por aca hay que ver el tema con u-pasaporte
+            print('Aún no tenemos U-Pasaporte')
+        else:   #No hay registros de existencia del usuario
+            context['error_login'] = 'Nombre de usuario o contraseña no válido!'
+            return render(request, 'app/home.html', context)
+        return redirect(reverse(offer_list))
     return HttpResponseNotAllowed('GET')
 
 @csrf_exempt
@@ -87,17 +106,17 @@ def registrar_usuario(request):
             email = form.cleaned_data['email']
             #la comprobacion de contrañas se hace en el formulario
             password = form.cleaned_data['password']
-            repassword = form.cleaned_data['repassword']
             datos_extra = {
                 'first_name': first_name,
                 'last_name': last_name,
                 'documento': document
             }
 
-            usuario = Usuario.objects.create_user(email, email, password, **datos_extra)
+            usuario = Usuario.objects.create_user(username=email, email=email, password=password, **datos_extra)
             #agregar rol de pendiente
             rol = Rol.objects.get(nombre='pendiente')
             usuario.roles.add(rol)
+            usuario.save()
 
             return render(request, 'app/usuario_pendiente.html', context)
         else:

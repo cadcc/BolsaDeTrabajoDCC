@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -62,7 +63,7 @@ class Jornada(models.Model):
     )
     nombre = models.CharField(max_length=8,
                               choices=OPCIONES_JORNADA,
-                              default=FULLTIME)
+                              default='FullTime')
 
     def __str__(self):
         return self.nombre
@@ -140,7 +141,7 @@ class Usuario(AbstractUser):
     marcadores = models.ManyToManyField(Oferta)
 
     def __str__(self):
-        return self.nombre + " " + self.apellido
+        return self.first_name + " " + self.last_name
 
 
 class Validacion(models.Model):
