@@ -1,0 +1,44 @@
+{% load staticfiles %}
+<div class="row">
+    <div class="col-md-3 text-center">
+        <div class="text-capitalize text-big row">{{ offer.empresa }}</div>
+        <img class="company-logo" src="{% static "resources/company/logo-company.png" %}">
+    </div>
+    <div class="col-md-9">
+        <div>
+            <a href="javascript:void(0)" class="text-highlight text-big text-capitalize">{{ offer.titulo }}</a>
+        </div>
+        <div>
+            <div class="badge">
+                <div>Sueldo</div>
+                <div class="text-big text-uppercase">${{ offer.sueldo_minimo }}</div>
+            </div>
+            <div class="badge">
+                <div>Jornada</div>
+                <div class="text-big text-uppercase">{{ offer.jornada }}</div>
+            </div>
+            <div class="badge badge-yellow" title="{{ offer.puntuacion }}">
+                <div>Valoración</div>
+                <div class="text-big star-val" data-score={{ offer.puntuacion }}></div>
+            </div>
+        </div>
+        <div>
+            <span>
+                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                {{ offer.email_encargado }}
+            </span>
+            <span>
+                <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span>
+                {{ offer.telefono_encargado }}
+            </span>
+        </div>
+        <div>
+            {% for etiqueta in offer.etiquetas.all %}
+                <span class="label label-info">{{ etiqueta }}</span>
+            {% empty %}
+                Esta oferta no posee etiquetas
+            {% endfor %}
+            <span class="text-uppercase text-highlight pull-right">{{ offer.info.fecha_publicacion }}</span>
+        </div>
+    </div>
+</div>

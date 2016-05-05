@@ -53,7 +53,7 @@ class Etiqueta(models.Model):
     tipo = models.ForeignKey(TipoEtiqueta)
 
     def __str__(self):
-        return str(self.tipo) + ' - ' + self.nombre
+        return self.nombre
 
 
 class Jornada(models.Model):
@@ -147,12 +147,12 @@ class Usuario(AbstractUser):
 class Validacion(models.Model):
     aceptado = models.BooleanField()
     comentario = models.TextField()
-    fecha = models.DateTimeField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(Usuario)
     oferta = models.ForeignKey(Oferta)
 
     def __str__(self):
-        return str(self.aceptado) + ' - ' + self.comentario
+        return 'Aprobada' if self.aceptado else 'No Aprobada'
 
 
 class Periodicidad(models.Model):

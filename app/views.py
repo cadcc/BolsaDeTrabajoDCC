@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import HttpResponseNotAllowed
 
-from app.models import Usuario, Rol, Oferta, Empresa
+from app.models import Usuario, Rol, Oferta, Empresa, Validacion
 from app.forms import OfferForm, UserForm, CompanyForm
 
 
@@ -64,7 +64,6 @@ def offer(request):
     }
     return render(request, 'app/offer.html', context)
 
-@csrf_exempt
 @login_required
 def offer_list(request):
     user = request.user
@@ -75,6 +74,17 @@ def offer_list(request):
     context['roles'] = roles
     if 'pendiente' in roles:
         return redirect(reverse(wait_for_check_user))
+    practices = []
+    pre_practices = Oferta.objects.filter(tipo='Práctica', publicada=True).order_by('-fecha_publicacion')
+    for i in range(len(pre_practices)):
+        practice = {'info': pre_practices[i]}
+        valid = Validacion.objects.filter(oferta=pre_practices[i]).last()
+        practice['valid'] = str(valid) if valid is not None else 'Sin Validar'
+        practices.append(practice)
+    context['practices'] = practices
+    context['jobs'] = Oferta.objects.filter(tipo='Trabajo', publicada=True).order_by('-fecha_publicacion')
+    context['reports'] = Oferta.objects.filter(tipo='Memoria', publicada=True).order_by('-fecha_publicacion')
+    context['offers_to_check'] = Oferta.objects.filter(publicada=False).order_by('fecha_ingreso')
     return render(request, 'app/offer_list.html', context)
 
 @csrf_exempt
@@ -187,8 +197,7 @@ def registrar_empresa(request):
             print('algo fallo :c')
             return render(request, 'app/registro_empresa.html', context)
     else:
-        return HttpResponseNotAllowed('GET')
-    return
+        return HttpResponseNotAllowed('POST')
 
 @csrf_exempt
 def empresa(request, nombre_empresa):
@@ -212,7 +221,7 @@ def login_empresa(request):
             context['error_login'] = 'Nombre de usuario o contraseña no válido!'
             return render(request, 'app/home.html', context)
         return redirect(reverse(home))
-    return HttpResponseNotAllowed('GET')
+    return HttpResponseNotAllowed('POST')
 
 @csrf_exempt
 def logout_empresa(request):

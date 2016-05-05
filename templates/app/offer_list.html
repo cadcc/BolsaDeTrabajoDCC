@@ -12,55 +12,95 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static "js/bootstrap-slider.min.js" %}"></script>
-<script>
-function CLPFormatter(price){
-    price = price + "";
-    var clp="";
-    var c = 1;
-    for(var i=price.length -1; i >= 0; i--){
-        clp = price[i]+clp;
-        if(c%3==0 && c!=(price.length)){
-            clp = '.'+clp;
+    <script src="{% static "js/bootstrap-slider.min.js" %}"></script>
+    <script>
+        function CLPFormatter(price){
+            price = price + "";
+            var clp="";
+            var c = 1;
+            for(var i=price.length -1; i >= 0; i--){
+                clp = price[i]+clp;
+                if(c%3==0 && c!=(price.length)){
+                    clp = '.'+clp;
+                }
+                c++;
+            }
+            return '$'+clp;
         }
-        c++;
-    }
-    return '$'+clp;
-}
-// Price Slider
-if ($('.price-slider').length > 0) {
-    $('.price-slider').slider({
-        min: 0,
-        max: 3000000,
-        step: 50000,
-        value: 0,
-        tooltip: "hide",
-        handle: "round",
-        labelledby: 'min-price',
-        //scale: 'logarithmic',
-        formatter: function (value) {
-            return 'Current value: ' + value;
-        },
+        // Price Slider
+        if ($('.price-slider').length > 0) {
+            $('.price-slider').slider({
+                min: 0,
+                max: 3000000,
+                step: 50000,
+                value: 0,
+                tooltip: "hide",
+                handle: "round",
+                labelledby: 'min-price',
+                //scale: 'logarithmic',
+                formatter: function (value) {
+                    return 'Current value: ' + value;
+                },
 
-    }).on('slide', function (slideEvt) {
-        $('.price-filter #min-price').val(slideEvt.value);
-        $('.price-filter #min-price').change();
-    });
+            }).on('slide', function (slideEvt) {
+                $('.price-filter #min-price').val(slideEvt.value);
+                $('.price-filter #min-price').change();
+            });
 
-    $('.price-filter #min-price').val(0);
-}
-</script>
-<script>
-    $('.price-slider').change(function(){
-        console.log($(this).val());
-    });
-    $('#min-price').change(function(){
-        $('#min-price-label').text(CLPFormatter($(this).val()));
-    });
-    $('#max-price').change(function(){
-        $('#max-price-label').text(CLPFormatter($(this).val()));
-    });
-</script>
+            $('.price-filter #min-price').val(0);
+        }
+    </script>
+    <script>
+        $('.price-slider').change(function(){
+            console.log($(this).val());
+        });
+        $('#min-price').change(function(){
+            $('#min-price-label').text(CLPFormatter($(this).val()));
+        });
+        $('#max-price').change(function(){
+            $('#max-price-label').text(CLPFormatter($(this).val()));
+        });
+    </script>
+
+    <script type="text/javascript">
+        //colores e iconos en la parte de validar para practica
+        var valid_icons = $('.valid-class');
+        for (var i = 0; i < valid_icons.length; i++) {
+            var valid_icon = $(valid_icons[i]);
+            var icon;
+            if (valid_icon.data('valid') === 'Aprobada') {
+                icon = "glyphicon glyphicon-ok-sign text-big valid-class";
+            } else if (valid_icon.data('valid') === 'No Aprobada') {
+                icon = "glyphicon glyphicon-remove-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-red')
+            } else {
+                icon = "glyphicon glyphicon-question-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-orange')
+            }
+            valid_icon.attr('class', icon);
+        }
+    </script>
+    <script type="text/javascript">
+        //para el llenado de las estrellas
+        var star_vals = $('.star-val');
+        for (var i = 0; i < star_vals.length; i++) {
+            var star_val = $(star_vals[i]);
+            var offer_score = star_val.data('score');
+            star_val.append($('<span/>', {text: offer_score/20}));
+            for (var score = 20; score <= 100; score+=20) {
+                if (offer_score >= score)
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star',
+                        'aria-hidden': 'true'
+                    }));
+                else
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star-empty',
+                        'aria-hidden': 'true'
+                    }));
+            }
+        }
+    </script>
 {% endblock %}
 
 {% block right_column_content %}
@@ -76,6 +116,7 @@ if ($('.price-slider').length > 0) {
                     </div>
                 </form>
 			</div>
+            {% csrf_token %}
 			<div class="tabbable" id="tabs-813395">
 				<ul class="nav nav-tabs">
 					<li class="active">
@@ -93,22 +134,33 @@ if ($('.price-slider').length > 0) {
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-804185">
-                        {% include "example/offer_list_item1.html" %}
-						{% include "example/offer_list_item2.html" %}
-                        {% include "example/offer_list_item3.html" %}
+                        {% for offer in practices %}
+                            {% include "app/offer_list_practice.html" %}
+                            {% empty %}
+                                Aún no hay ofertas de Práctica.
+                        {% endfor %}
 					</div>
 					<div class="tab-pane" id="panel-289390">
-						{% include "example/offer_list_item1.html" %}
+                        {% for offer in reports %}
+                            {% include "app/offer_list_report_and_job.html" %}
+                            {% empty %}
+                                Aún no hay ofertas de Memoria.
+                        {% endfor %}
 					</div>
 					<div class="tab-pane" id="panel-289391">
-						{% include "example/offer_list_item2.html" %}
+						{% for offer in jobs %}
+                            {% include "app/offer_list_report_and_job.html" %}
+                            {% empty %}
+                                Aún no hay ofertas de Trabajo.
+                        {% endfor %}
 					</div>
                     <div class="tab-pane" id="panel-289392">
-						{% include "example/offer_list_fullitem1.html" %}
-                        {% include "example/offer_list_fullitem1.html" %}
-                        {% include "example/offer_list_fullitem1.html" %}
+                        {% for offer in offers_to_check %}
+                            {% include "app/offer_list_acept_offer.html" %}
+                            {% empty %}
+                                Todas las ofertas han sido revisadas.
+                        {% endfor %}
 					</div>
 				</div>
 			</div>
 {% endblock %}
-
