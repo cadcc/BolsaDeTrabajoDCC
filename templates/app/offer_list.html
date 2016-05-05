@@ -100,6 +100,18 @@
                     }));
             }
         }
+        function evaluateOffer(offer_id, accept) {
+            //aqui hay que poner algo para que se vea como carga el sistema, su modal loco
+            $.post('/evaluar-oferta',{
+                    'offer_id': offer_id,
+                    'accept': accept
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                $('#oferta_' + offer_id).css('display', 'None');
+                console.log(msg);
+            })
+        }
     </script>
 {% endblock %}
 
@@ -118,6 +130,9 @@
 			</div>
             {% csrf_token %}
 			<div class="tabbable" id="tabs-813395">
+                {% if 'publicador' in roles %}
+                    <h3>Para ver las nuevas ofertas aceptadas en las otras pestañas debes actualizar la página</h3>
+                {% endif %}
 				<ul class="nav nav-tabs">
 					<li class="active">
 						<a href="#panel-804185" data-toggle="tab">Prácticas</a>
@@ -128,9 +143,11 @@
 					<li>
 						<a href="#panel-289391" data-toggle="tab">Trabajos</a>
 					</li>
+                    {% if 'publicador' in roles %}
                     <li>
-						<a href="#panel-289392" data-toggle="tab">Ofertas recibidas</a>
-					</li>
+                        <a href="#panel-289392" data-toggle="tab">Ofertas recibidas</a>
+                    </li>
+                    {% endif %}
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-804185">
@@ -154,6 +171,7 @@
                                 Aún no hay ofertas de Trabajo.
                         {% endfor %}
 					</div>
+                    {% if 'publicador' in roles %}
                     <div class="tab-pane" id="panel-289392">
                         {% for offer in offers_to_check %}
                             {% include "app/offer_list_acept_offer.html" %}
@@ -161,6 +179,7 @@
                                 Todas las ofertas han sido revisadas.
                         {% endfor %}
 					</div>
+                    {% endif %}
 				</div>
 			</div>
 {% endblock %}

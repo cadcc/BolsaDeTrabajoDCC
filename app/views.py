@@ -1,10 +1,13 @@
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
+from django.utils.datetime_safe import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseBadRequest
 
 from app.models import Usuario, Rol, Oferta, Empresa, Validacion
 from app.forms import OfferForm, UserForm, CompanyForm
@@ -57,6 +60,30 @@ def company_offer_form(request):
         #return render(request, 'app/form.html', context)
     return HttpResponseNotAllowed('GET')
 
+#@login_required
+@csrf_exempt
+def evaluate_offer(request):
+    if request.method == 'POST':
+        user = request.user
+        if 'publicador' not in map(lambda rol: str(rol), user.roles.all()):
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+        offer_id = request.POST.get('offer_id')
+        accept = request.POST.get('accept')
+        offer = Oferta.objects.get(pk=offer_id)
+
+        if accept == 'aceptada':  #la oferta fue aceptada
+            offer.publicada = True
+            offer.fecha_publicacion = datetime.now()
+            offer.save()
+            return HttpResponse(json.dumps({'msg': 'Oferta agregada del sistema'}), content_type='application/json')
+        else:
+            #hacer cosas de rechazo de oferta como mandar correo y cosas
+            #offer.delete() #dejar comentado para no borrar ofertas accidentalmente
+            return HttpResponse(json.dumps({'msg': 'Oferta eliminada del sistema'}), content_type='application/json')
+    else:
+        return HttpResponseNotAllowed('POST')
+
+@login_required
 def offer(request, offer_id):
     context = {
         'main_url': settings.MAIN_URL
@@ -75,7 +102,7 @@ def offer_list(request):
     context['main_url'] = settings.MAIN_URL
     context['user'] = user
     roles = map(lambda rol: str(rol), user.roles.all())
-    context['roles'] = roles
+    context['roles'] = list(roles)
     if 'pendiente' in roles:
         return redirect(reverse(wait_for_check_user))
     practices = []

@@ -18,8 +18,9 @@ urlpatterns = [
     url(r'^ingreso-a-empresas$', views.registro_empresa, name='login_empresas'),
     url(r'^empresa/(?P<nombre_empresa>([a-zA-Z0-9]+\-)*[a-zA-Z0-9]+)$', views.empresa, name='registro'),
     #!Esta ruta deberia ser la misma que 'formulario' pero con método POST !
-    url(r'^enviar_oferta', views.enviar_oferta, name='enviar_oferta'),
-    url(r'^registrar-usuario', view=views.registrar_usuario, name='registrar_usuario'),
-    url(r'^registrar-empresa', view=views.registrar_empresa, name='registrar_empresa'),
-    url(r'^usuario-pendiente', view=views.wait_for_check_user, name='usuario_pendiente')
+    url(r'^enviar_oferta$', views.enviar_oferta, name='enviar_oferta'),
+    url(r'^registrar-usuario$', view=views.registrar_usuario, name='registrar_usuario'),
+    url(r'^registrar-empresa$', view=views.registrar_empresa, name='registrar_empresa'),
+    url(r'^usuario-pendiente$', view=views.wait_for_check_user, name='usuario_pendiente'),
+    url(r'^evaluar-oferta$', view=views.evaluate_offer, name='evaluar_oferta')
 ]

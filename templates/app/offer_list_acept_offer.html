@@ -1,5 +1,5 @@
 {% load staticfiles %}
-<div class="row">
+<div id="oferta_{{ offer.id }}" class="row offer-to-eval">
     <div class="col-md-3 text-center">
         <img class="company-logo-small" src="{% static "resources/company/logo-company.png" %}">
     </div>
@@ -56,7 +56,7 @@
         </dl>
     </div>
     <div class="col-xs-12 col-xs-12 text-center">
-        <button type="button" class="m-btn m-btn-cyan" >Publicar</button>
-        <button type="button" class="m-btn m-btn-darkred">Rechazar</button>
+        <button type="button" onclick="evaluateOffer({{ offer.id }}, 'aceptada')" class="m-btn m-btn-cyan" >Publicar</button>
+        <button type="button" onclick="evaluateOffer({{ offer.id }}, 'rechazada')" class="m-btn m-btn-darkred">Rechazar</button>
     </div>
 </div>
