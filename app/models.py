@@ -13,10 +13,10 @@ class Rol(models.Model):
 
 class Empresa(models.Model):
     nombre = models.CharField(max_length=64)
-    sitio_web = models.CharField(max_length=64)
-    logo = models.FileField(upload_to='logos')
-    direccion = models.CharField(max_length=64)
-    descripcion = models.TextField()
+    sitio_web = models.CharField(max_length=64, null=True)
+    logo = models.FileField(upload_to='logos', null=True)
+    direccion = models.CharField(max_length=64, null=True)
+    descripcion = models.TextField(null=True)
     puntaje = models.IntegerField(default=0)
     verificada = models.BooleanField(default=False)
 
@@ -124,8 +124,8 @@ class Oferta(models.Model):
     puntuacion = models.IntegerField(default=0)
     visitas = models.IntegerField(default=0)
     notificar = models.BooleanField()
-    latitud = models.DecimalField(max_digits=10, decimal_places=7)
-    longitud = models.DecimalField(max_digits=10, decimal_places=7)
+    latitud = models.DecimalField(max_digits=10, decimal_places=7, null=True)
+    longitud = models.DecimalField(max_digits=10, decimal_places=7, null=True)
     etiquetas = models.ManyToManyField(Etiqueta)
 
     def __str__(self):
