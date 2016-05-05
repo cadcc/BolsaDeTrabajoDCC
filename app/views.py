@@ -57,11 +57,15 @@ def company_offer_form(request):
         #return render(request, 'app/form.html', context)
     return HttpResponseNotAllowed('GET')
 
-@csrf_exempt
-def offer(request):
+def offer(request, offer_id):
     context = {
         'main_url': settings.MAIN_URL
     }
+    offer = Oferta.objects.get(pk=offer_id)
+    context['oferta'] = offer
+
+    valid = Validacion.objects.filter(oferta=offer).last()
+    context['validez'] = str(valid) if valid is not None else 'Sin Validar'
     return render(request, 'app/offer.html', context)
 
 @login_required

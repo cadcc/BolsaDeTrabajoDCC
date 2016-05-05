@@ -6,7 +6,7 @@ urlpatterns = [
     url(r'rol/add/$', RolCreate.as_view()),
     url(r'oferta/add/$', OfertaCreate.as_view(), name='oferta-add'),
     url(r'^enviar-oferta$', views.company_offer_form, name='formulario'),
-    url(r'^oferta/$', views.offer, name='oferta'),
+    url(r'^oferta/(\d{1,})$', views.offer, name='oferta'),
     url(r'^lista-de-ofertas/$', views.offer_list, name='listado_ofertas'),
     url(r'^$', views.home, name='home'),
     url(r'^login_user$', views.login_user, name='login_user'),

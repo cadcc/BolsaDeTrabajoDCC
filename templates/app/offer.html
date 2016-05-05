@@ -6,85 +6,77 @@
 {% endblock %}
 
 {% block right_column_content %}
+    {% csrf_token %}
     <h2 class="text-center">Nombre de la oferta</h2>
     <hr>
     <div class="row text-center text-uppercase">
     {# <img class="company-logo" src="{% static "resources/company/logo-company.png" %}"> #}
         <div class="col-md-4 col-xs-12">
             <div>Empresa</div>
-            <div class="text-highlight text-big">Nombre empresa</div>
+            <div class="text-highlight text-big">{{ oferta.empresa }}</div>
         </div>
         <div class="col-md-4 col-xs-12">
             <div>Jornada</div>
-            <div class="text-highlight text-big">part-time</div>
+            <div class="text-highlight text-big">{{ oferta.jornada }}</div>
         </div>
         <div class="col-md-4 col-xs-12">
             <div>Oferta</div>
-            <div class="text-highlight text-big">Práctica</div>
+            <div class="text-highlight text-big">{{ oferta.tipo }}</div>
         </div>
     </div>
     <hr>
     <div>
         <div>
             <div class="badge">
-                <div>Sueldo mensual</div>
-                <div class="text-big">$330.000</div>
+                <div>Sueldo mínimo</div>
+                <div class="text-big">${{ oferta.sueldo_minimo }}</div>
             </div>
             <div class="badge">
                 <div>Ubicación</div>
-                <div class="text-big">Las Condes</div>
+                <div class="text-big">{{ oferta.comuna }}</div>
             </div>
-            <div class="badge">
-                <div>Aprobada</div>
-                <span class="glyphicon glyphicon-ok-sign text-big" aria-hidden="true"></span>
-            </div>
-            <div class="badge badge-red">
-                <div>No Aprobada</div>
-                <span class="glyphicon glyphicon-remove-sign text-big" aria-hidden="true"></span>
-            </div>
-            <div class="badge badge-orange">
-                <div>Sin aprobar</div>
-                <span class="glyphicon glyphicon-question-sign text-big" aria-hidden="true"></span>
-            </div>
-            <div class="pull-right">
+            {% ifequal 'Práctica' oferta.tipo %}
                 <div class="badge">
-                    <div>+24</div>
-                    <span class="glyphicon glyphicon-thumbs-up text-big" aria-hidden="true"></span>
+                    <div>{{ validez }}</div>
+                    <span data-valid="{{ validez }}" class="valid-class" aria-hidden="true"></span>
                 </div>
-                <div class="badge badge-red">
-                    <div>-6</div>
-                    <span class="glyphicon glyphicon-thumbs-down text-big" aria-hidden="true"></span>
+            {% endifequal %}
+            <div class="pull-right badge badge-yellow" title="{{ oferta.puntuacion }}">
+                <div>Valoración</div>
+                <div class="text-big star-val" data-score={{ oferta.puntuacion }}>
                 </div>
             </div>
         </div>
         {# Interesst profile #}
-        <p>Lorem ipsum dolor sit amet, porttitor metus scelerisque, nullam hymenaeos, justo in lobortis. Consectetur proin, placerat scelerisque. Pellentesque tincidunt convallis, quis ornare, at dolor. Aenean ultrices, blandit mattis, amet ut nec. Mattis aliquam. At in. Morbi ac orci, sit semper. Lacinia arcu.</p>
+        <p>{{ oferta.descripcion }}</p>
         <dl class="dl-horizontal">
             <dt>Experiencia previa</dt>
-            <dd>No requiere</dd>
+            <dd>{{ oferta.requiere_experiencia }}</dd>
             <dt>Habilidades deseadas</dt>
-            <dd>Conocimiento desarrollo Web, Framework MVC, Web Scraping</dd>
+            <dd>{{ oferta.habilidades_deseadas }}</dd>
             <dt>Habilidades requeridas</dt>
-            <dd>Python, Javascript</dd>
+            <dd>{{ oferta.habilidades_requeridas }}</dd>
             <dt>Se ofrece</dt>
-            <dd>--</dd>
+            <dd>{{ oferta.se_ofrece }}</dd>
             <dt>Duración mínima</dt>
-            <dd>2 meses</dd>
+            <dd>{{ oferta.duracion_minima }} meses</dd>
             <dt>Validez</dt>
-            <dd>Desde <b>04/Diciembre/2016</b> hasta <b>28/Julio/2017</b></dd>
+            <dd>Desde <b>{{ oferta.fecha_comienzo }}</b> hasta <b>{{ oferta.fecha_termino }}</b></dd>
             <dt>Comentario duración</dt>
-            <dd>Un mínimo de 2 meses y 5 como máximo</dd>
+            <dd>{{ oferta.comentario_duracion }}</dd>
             <dt>Comentario jornada</dt>
-            <dd>Viernes 8 horas con horario de entrada y salida flexible</dd>
+            <dd>{{ oferta.comentario_jornada }}</dd>
             <dt>Comentarios remuneración</dt>
-            <dd>Sueldo variable según experiencia demostrable</dd>
+            <dd>{{ oferta.comentario_sueldo }}</dd>
             <dt>Fecha de publicación</dt>
-            <dd>01/01/2016</dd>
+            <dd>{{ oferta.fecha_publicacion }}</dd>
             <dt>Etiquetas</dt>
             <dd>
-                <span class="label label-info">Tag 5</span>
-                <span class="label label-info">Tag 2</span>
-                <span class="label label-info">Tag 3</span>
+                {% for etiqueta in oferta.etiquetas.all %}
+                    <span class="label label-info">{{ etiqueta }}</span>
+                {% empty %}
+                    Esta oferta no posee etiquetas
+                {% endfor %}
             </dd>
         </dl>
     </div>
@@ -92,18 +84,60 @@
     <div class="row text-center text-uppercase">
         <div class="col-md-4 col-xs-12">
             <div>Encargado</div>
-            <div class="text-highlight text-big">Ricardo Ruiz</div>
+            <div class="text-highlight text-big">{{ oferta.nombre_encargado }}</div>
         </div>
         <div class="col-md-4 col-xs-12">
             <div>Correo electrónico</div>
-            <div class="text-highlight text-big">rruiz@company.cl</div>
+            <div class="text-highlight text-big">{{ oferta.email_encargado }}</div>
         </div>
         <div class="col-md-4 col-xs-12">
             <div>Teléfono</div>
-            <div class="text-highlight text-big">2 111 1111</div>
+            <div class="text-highlight text-big">{{ oferta.telefono_encargado }}</div>
         </div>
     </div>
     <hr>
     <h3>Comentarios y valoraciones</h3>
     {% include "sub/offer-comments.html" %}
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        //colores e iconos en la parte de validar para practica
+        var valid_icons = $('.valid-class');
+        for (var i = 0; i < valid_icons.length; i++) {
+            var valid_icon = $(valid_icons[i]);
+            var icon;
+            if (valid_icon.data('valid') === 'Aprobada') {
+                icon = "glyphicon glyphicon-ok-sign text-big valid-class";
+            } else if (valid_icon.data('valid') === 'No Aprobada') {
+                icon = "glyphicon glyphicon-remove-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-red')
+            } else {
+                icon = "glyphicon glyphicon-question-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-orange')
+            }
+            valid_icon.attr('class', icon);
+        }
+    </script>
+    <script type="text/javascript">
+        //para el llenado de las estrellas
+        var star_vals = $('.star-val');
+        for (var i = 0; i < star_vals.length; i++) {
+            var star_val = $(star_vals[i]);
+            var offer_score = star_val.data('score');
+            star_val.append($('<span/>', {text: offer_score/20}));
+            for (var score = 20; score <= 100; score+=20) {
+                if (offer_score >= score)
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star',
+                        'aria-hidden': 'true'
+                    }));
+                else
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star-empty',
+                        'aria-hidden': 'true'
+                    }));
+            }
+        }
+    </script>
 {% endblock %}
