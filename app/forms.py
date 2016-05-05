@@ -55,11 +55,14 @@ class UserForm(forms.Form):
         return repassword
 
 class OfferForm(ModelForm):
+    nombre_empresa = forms.CharField(max_length=64, required=False)
+
     class Meta:
         model = Oferta
         fields = (
             'titulo',
             'empresa',
+            'nombre_empresa',
             'tipo',
             'descripcion',
             'requiere_experiencia',
@@ -88,3 +91,10 @@ class OfferForm(ModelForm):
         help_texts = {
             'titulo': _('Tooltip Titulo')
         }
+
+    def clean(self):
+        super(OfferForm, self).clean()
+        empresa = self.cleaned_data['empresa']
+        nueva_empresa = self.cleaned_data['nombre_empresa']
+        if empresa == None and nueva_empresa == '':
+            raise forms.ValidationError('Debe elegir una Empresa del listado o agregar una Nueva Empresa')

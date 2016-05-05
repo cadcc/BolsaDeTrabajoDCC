@@ -1,8 +1,9 @@
 from django.conf.urls import url
 from app import views
-from app.views import OfertaCreate
+from app.views import OfertaCreate, RolCreate
 
 urlpatterns = [
+    url(r'rol/add/$', RolCreate.as_view()),
     url(r'oferta/add/$', OfertaCreate.as_view(), name='oferta-add'),
     url(r'^enviar-oferta$', views.company_offer_form, name='formulario'),
     url(r'^oferta/$', views.offer, name='oferta'),

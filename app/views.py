@@ -9,14 +9,33 @@ from django.http import HttpResponseNotAllowed
 from app.models import Usuario, Rol, Oferta, Empresa
 from app.forms import OfferForm, UserForm, CompanyForm
 
+
 #------------------------------------------------------------
 
 from django.views.generic.edit import CreateView
 
+#@csrf_exempt
 class OfertaCreate(CreateView):
     model = Oferta
     form_class = OfferForm
     template_name = 'app/enviar_oferta.html'
+    success_url = 'home'
+
+    #def form_valid(self, form):
+    #    if (form.instance.nombre_empresa != ''):
+    #        nueva_empresa = Empresa.create(form.instance.nombre_empresa)
+    #        nueva_empresa.save()
+    #        form.instance.empresa = nueva_empresa.pk
+
+
+#@csrf_exempt
+class RolCreate(CreateView):
+    model = Rol
+    fields = ('nombre',)
+    template_name = 'app/enviar_oferta.html'
+
+    def get_success_url(self):
+        return reverse('home')
 
 #------------------------------------------------------------
 
