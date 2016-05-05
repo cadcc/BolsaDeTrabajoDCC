@@ -6,8 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import HttpResponseNotAllowed
 
-from app.models import Usuario, Rol, Oferta
-from app.forms import OfferForm, UserForm
+from app.models import Usuario, Rol, Oferta, Empresa
+from app.forms import OfferForm, UserForm, CompanyForm
 
 #------------------------------------------------------------
 
@@ -149,11 +149,56 @@ def registro_empresa(request):
     return render(request, 'app/registro_empresa.html', context)
 
 @csrf_exempt
+def registrar_empresa(request):
+    if (request.method == 'POST'):
+        context = {
+            'main_url': settings.MAIN_URL
+        }
+        form = CompanyForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            document = form.cleaned_data['document']
+            password = form.cleaned_data['password']
+
+            empresa = Empresa.objects.create_user(name=name, email=email, password=password)
+            return render(request, 'app/registro_empresa.html', context)
+        else:
+            context['form'] = form
+            print('algo fallo :c')
+            return render(request, 'app/registro_empresa.html', context)
+    else:
+        return HttpResponseNotAllowed('GET')
+    return
+
+@csrf_exempt
 def empresa(request, nombre_empresa):
     context = {
         'main_url': settings.MAIN_URL
     }
     return render(request, 'app/company.html', context)
+
+@csrf_exempt
+def login_empresa(request):
+    if request.method == 'POST':
+        context = {
+            'main_url': settings.MAIN_URL
+        }
+        email = request.POST.get('login_email')
+        password = request.POST.get('login_password')
+        company = authenticate(email=email, password=password)
+        if company is not None:    #verificar en nuestra base de datos
+            login(request, company)
+        else:   #No hay registros de existencia de la empresa
+            context['error_login'] = 'Nombre de usuario o contraseña no válido!'
+            return render(request, 'app/home.html', context)
+        return redirect(reverse(home))
+    return HttpResponseNotAllowed('GET')
+
+@csrf_exempt
+def logout_empresa(request):
+    logout(request)
+    return redirect(reverse(home))
 
 def enviar_oferta(request):
     context = {
