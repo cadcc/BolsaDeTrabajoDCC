@@ -1,4 +1,6 @@
 import json
+from datetime import timedelta
+from django.utils import timezone
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -9,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseBadRequest
 
-from app.models import Usuario, Rol, Oferta, Empresa, Validacion
+from app.models import Usuario, Rol, Oferta, Empresa, Validacion, Etiqueta
 from app.forms import OfferForm, UserForm, CompanyForm
 
 
@@ -60,7 +62,43 @@ def company_offer_form(request):
         #return render(request, 'app/form.html', context)
     return HttpResponseNotAllowed('GET')
 
-#@login_required
+@login_required
+@csrf_exempt
+def evaluate_practice(request):
+    if request.method == 'POST':
+        user = request.user
+        if 'validador' not in map(lambda rol: str(rol), user.roles.all()):
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+        offer_id = request.POST.get('offer_id')
+        valid = request.POST.get('valid')
+        offer = Oferta.objects.get(pk=offer_id)
+
+        accept = True if valid != 'no valida' else False
+
+        tag_prac_1 = Etiqueta.objects.filter(nombre='práctica 1').last()
+        tag_prac_2 = Etiqueta.objects.filter(nombre='práctica 2').last()
+
+        validation = Validacion(aceptado=accept, oferta=offer, usuario=user)
+
+        if valid == 'practica 1':  #la oferta fue aceptada
+            offer.etiquetas.add(tag_prac_1)
+        elif valid == 'practica 2':
+            offer.etiquetas.add(tag_prac_2)
+        elif valid == 'practica 1 y 2':
+            offer.etiquetas.add(tag_prac_1, tag_prac_2)
+        else:
+            #hacer cosas de rechazo de oferta como mandar correo y cosas
+            #offer.delete() #dejar comentado para no borrar ofertas accidentalmente
+            #por el momento se guardara en el sistema como no aprobada
+            #return HttpResponse(json.dumps({'msg': 'Práctica eliminada del sistema'}), content_type='application/json')
+            pass
+        validation.save()
+        offer.save()
+        return HttpResponse(json.dumps({'msg': 'Validada como: ' + valid}), content_type='application/json')
+    else:
+        return HttpResponseNotAllowed('POST')
+
+@login_required
 @csrf_exempt
 def evaluate_offer(request):
     if request.method == 'POST':
@@ -98,6 +136,11 @@ def offer(request, offer_id):
 @login_required
 def offer_list(request):
     user = request.user
+
+    #obtener fecha para comparar
+    date_now = timezone.now()
+    date_seven_days = date_now - timedelta(days=7)
+
     context = {}
     context['main_url'] = settings.MAIN_URL
     context['user'] = user
@@ -105,17 +148,22 @@ def offer_list(request):
     context['roles'] = list(roles)
     if 'pendiente' in roles:
         return redirect(reverse(wait_for_check_user))
-    practices = []
+    valid_practices = []
+    wait_practices = []
     pre_practices = Oferta.objects.filter(tipo='Práctica', publicada=True).order_by('-fecha_publicacion')
     for i in range(len(pre_practices)):
         practice = {'info': pre_practices[i]}
         valid = Validacion.objects.filter(oferta=pre_practices[i]).last()
         practice['valid'] = str(valid) if valid is not None else 'Sin Validar'
-        practices.append(practice)
-    context['practices'] = practices
+        if valid is not None or pre_practices[i].fecha_ingreso < date_seven_days:
+            valid_practices.append(practice)
+        if valid is None:
+            wait_practices.append(pre_practices[i])
+    context['practices'] = valid_practices
     context['jobs'] = Oferta.objects.filter(tipo='Trabajo', publicada=True).order_by('-fecha_publicacion')
     context['reports'] = Oferta.objects.filter(tipo='Memoria', publicada=True).order_by('-fecha_publicacion')
     context['offers_to_check'] = Oferta.objects.filter(publicada=False).order_by('fecha_ingreso')
+    context['practices_to_check'] = reversed(wait_practices)
     return render(request, 'app/offer_list.html', context)
 
 @csrf_exempt

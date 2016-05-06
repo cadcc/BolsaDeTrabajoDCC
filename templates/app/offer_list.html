@@ -40,7 +40,7 @@
                 //scale: 'logarithmic',
                 formatter: function (value) {
                     return 'Current value: ' + value;
-                },
+                }
 
             }).on('slide', function (slideEvt) {
                 $('.price-filter #min-price').val(slideEvt.value);
@@ -112,6 +112,18 @@
                 console.log(msg);
             })
         }
+        function evaluatePractice(offer_id, valid) {
+            //aqui hay que poner algo para que se vea como carga el sistema, su modal loco
+            $.post('/evaluar-practica',{
+                    'offer_id': offer_id,
+                    'valid': valid
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                $('#oferta_' + offer_id).css('display', 'None');
+                console.log(msg);
+            })
+        }
     </script>
 {% endblock %}
 
@@ -148,6 +160,11 @@
                         <a href="#panel-289392" data-toggle="tab">Ofertas recibidas</a>
                     </li>
                     {% endif %}
+                    {% if 'validador' in roles %}
+                    <li>
+                        <a href="#panel-289393" data-toggle="tab">Prácticas por revisar</a>
+                    </li>
+                    {% endif %}
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-804185">
@@ -177,6 +194,15 @@
                             {% include "app/offer_list_acept_offer.html" %}
                             {% empty %}
                                 Todas las ofertas han sido revisadas.
+                        {% endfor %}
+					</div>
+                    {% endif %}
+                    {% if 'validador' in roles %}
+                    <div class="tab-pane" id="panel-289393">
+                        {% for offer in practices_to_check %}
+                            {% include "app/offer_list_valid_prac.html" %}
+                            {% empty %}
+                                Todas las prácticas han sido revisadas.
                         {% endfor %}
 					</div>
                     {% endif %}

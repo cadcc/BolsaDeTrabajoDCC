@@ -146,7 +146,6 @@ class Usuario(AbstractUser):
 
 class Validacion(models.Model):
     aceptado = models.BooleanField()
-    comentario = models.TextField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(Usuario)
     oferta = models.ForeignKey(Oferta)

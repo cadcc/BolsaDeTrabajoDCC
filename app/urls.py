@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^registrar-usuario$', view=views.registrar_usuario, name='registrar_usuario'),
     url(r'^registrar-empresa$', view=views.registrar_empresa, name='registrar_empresa'),
     url(r'^usuario-pendiente$', view=views.wait_for_check_user, name='usuario_pendiente'),
-    url(r'^evaluar-oferta$', view=views.evaluate_offer, name='evaluar_oferta')
+    url(r'^evaluar-oferta$', view=views.evaluate_offer, name='evaluar_oferta'),
+    url(r'^evaluar-practica$', view=views.evaluate_practice, name='evaluar_practica')
 ]

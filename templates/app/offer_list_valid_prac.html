@@ -1,0 +1,64 @@
+{% load staticfiles %}
+<div id="oferta_{{ offer.id }}" class="row offer-to-eval">
+    <div class="col-md-3 text-center">
+        <img class="company-logo-small" src="{% static "resources/company/logo-company.png" %}">
+    </div>
+    <div class="col-md-9">
+        <div>
+            <a href="javascript:void(0)" class="text-highlight text-big text-capitalize">{{ offer.titulo }}</a>
+        </div>
+        <div class="text-capitalize text-big">{{ offer.empresa }}</div>
+    </div>
+    <div class="col-md-12 col-xs-12">
+        {# Interesst profile #}
+        <p>{{ offer.descripcion }}</p>
+        <dl class="dl-horizontal">
+            <dt>Oferta</dt>
+            <dd>{{ offer.tipo }}</dd>
+            <dt>Jornada</dt>
+            <dd>{{ offer.jornada }}</dd>
+            <dt>Experiencia previa</dt>
+            <dd>{{ offer.requiere_experiencia }}</dd>
+            <dt>Habilidades deseadas</dt>
+            <dd>{{ offer.habilidades_deseadas }}</dd>
+            <dt>Habilidades requeridas</dt>
+            <dd>{{ offer.habilidades_requeridas }}</dd>
+            <dt>Se ofrece</dt>
+            <dd>{{ offer.se_ofrece }}</dd>
+            <dt>Duración mínima</dt>
+            <dd>{{ offer.duracion_minima }} meses</dd>
+            <dt>Validez</dt>
+            <dd>Desde <b>{{ offer.fecha_comienzo }}</b> hasta <b>{{ offer.fecha_termino }}</b></dd>
+            <dt>Comentario duración</dt>
+            <dd>{{ offer.comentario_duracion }}</dd>
+            <dt>Comentario jornada</dt>
+            <dd>{{ offer.comentario_jornada }}</dd>
+            <dt>Tipo de remuneración</dt>
+            <dd>{{ offer.remunerado }}</dd>
+            <dt>Sueldo mínimo</dt>
+            <dd>${{ offer.sueldo_minimo }}</dd>
+            <dt>Comentarios remuneración</dt>
+            <dd>{{ offer.comentario_sueldo }}</dd>
+            <dt>Encargado</dt>
+            <dd>{{ offer.nombre_encargado }}</dd>
+            <dt>Correo electrónico</dt>
+            <dd>{{ offer.email_encargado }}</dd>
+            <dt>Teléfono</dt>
+            <dd>{{ offer.telefono_encargado }}</dd>
+            <dt>Región</dt>
+            <dd>{{ offer.comuna.region }}</dd>
+            <dt>Comuna</dt>
+            <dd>{{ offer.comuna }}</dd>
+            <dt>Dirección</dt>
+            <dd>{{ offer.direccion }}</dd>
+            <dt>Fecha de recepción</dt>
+            <dd>{{ offer.fecha_ingreso }}</dd>
+        </dl>
+    </div>
+    <div class="col-xs-12 col-xs-12 text-center">
+        <button type="button" onclick="evaluatePractice({{ offer.id }}, 'practica 1')" class="m-btn m-btn-cyan" >Práctica 1</button>
+        <button type="button" onclick="evaluatePractice({{ offer.id }}, 'practica 2')" class="m-btn m-btn-cyan" >Práctica 2</button>
+        <button type="button" onclick="evaluatePractice({{ offer.id }}, 'practica 1 y 2')" class="m-btn m-btn-cyan" >Práctica 1 y 2</button>
+        <button type="button" onclick="evaluatePractice({{ offer.id }}, 'no valida')" class="m-btn m-btn-darkred">No Válida</button>
+    </div>
+</div>
