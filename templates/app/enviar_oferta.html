@@ -1,0 +1,41 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+{% load filtros %}
+
+{% block title %} Formulario Empresa {% endblock %}
+
+{% block left_column_content %}
+    {% include "sub/left-panel-company-menu.html" %}
+    <hr>
+    {% include "sub/left-panel-company-login.html" %}
+{% endblock %}
+
+{% block right_column_content %}
+    <h3 class="text-center">
+        Publica una oferta
+    </h3>
+    <form action="" method ="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {% if field.errors %}
+                    <ul>
+                        {% for error in field.errors %}
+                          <li class="error">{{ error|escape }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% if field.help_text %}
+                    <img src="tooltip.png" alt="{{ field.help_text|safe }}"/>
+                {% endif %}
+                {% if field == form.notificar %}
+                    {{ field }}
+                {% else %}
+                    <br>{{ field|addClass:'form-control' }}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <input type="submit" value="Save"/>
+    </form>
+{% endblock %}

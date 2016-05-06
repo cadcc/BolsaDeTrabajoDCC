@@ -120,13 +120,13 @@ class Oferta(models.Model):
     # Estado de la Oferta
     fecha_ingreso = models.DateTimeField(auto_now_add=True)
     publicada = models.BooleanField(default=False)
-    fecha_publicacion = models.DateTimeField(null=True)
+    fecha_publicacion = models.DateTimeField(auto_now_add=True, blank=True)
     puntuacion = models.IntegerField(default=0)
     visitas = models.IntegerField(default=0)
     notificar = models.BooleanField()
     latitud = models.DecimalField(max_digits=10, decimal_places=7, null=True)
     longitud = models.DecimalField(max_digits=10, decimal_places=7, null=True)
-    etiquetas = models.ManyToManyField(Etiqueta)
+    etiquetas = models.ManyToManyField(Etiqueta, blank=True)
 
     def __str__(self):
         return self.titulo

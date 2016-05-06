@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
-from app.models import Oferta
+from app.models import Oferta, Rol
 
 from app.models import Usuario
 from app.models import Empresa
@@ -54,6 +54,12 @@ class UserForm(forms.Form):
             raise forms.ValidationError('Las contraseñas no coinciden.')
         return repassword
 
+class MyDateInput(forms.DateInput):
+    input_type = 'date'
+
+class MyTimeInput(forms.TimeInput):
+    input_type = 'time'
+
 class OfferForm(ModelForm):
     nombre_empresa = forms.CharField(max_length=64, required=False)
 
@@ -80,21 +86,33 @@ class OfferForm(ModelForm):
             'duracion_minima',
             'comentario_duracion',
             'comuna',
+            #'etiquetas',
             'nombre_encargado',
             'email_encargado',
             'telefono_encargado',
-            'etiquetas',
+            'notificar',
         )
-        labels ={
-            'titulo': _('Título de la Oferta'),
+        labels = {
+            'titulo': 'Título de la Oferta',
         }
         help_texts = {
-            'titulo': _('Tooltip Titulo')
+            'titulo': 'Tooltip Titulo'
+        }
+        widgets = {
+            'hora_ingreso': forms.TimeInput(format='%H:%M'),
+            'hora_salida': MyTimeInput(),
+            'fecha_comienzo': forms.SelectDateWidget,
+            'fecha_termino': MyDateInput(),
+            'etiquetas': forms.CheckboxSelectMultiple,
         }
 
+    def __init__(self, *args, **kwargs):
+        super(OfferForm, self).__init__(*args, **kwargs)
+        self.fields['empresa'].required = False
+
     def clean(self):
-        super(OfferForm, self).clean()
-        empresa = self.cleaned_data['empresa']
-        nueva_empresa = self.cleaned_data['nombre_empresa']
+        data = super(OfferForm, self).clean()
+        empresa = data.get("empresa")
+        nueva_empresa = data.get("nombre_empresa")
         if empresa == None and nueva_empresa == '':
             raise forms.ValidationError('Debe elegir una Empresa del listado o agregar una Nueva Empresa')
