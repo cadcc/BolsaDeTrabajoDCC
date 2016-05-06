@@ -48,7 +48,8 @@ class RolCreate(CreateView):
 @csrf_exempt
 def home(request):
     context = {
-        'main_url': settings.MAIN_URL
+        'main_url': settings.MAIN_URL,
+        'user': request.user
     }
     return render(request, 'app/home.html', context)
 
@@ -146,8 +147,6 @@ def offer_list(request):
     context['user'] = user
     roles = map(lambda rol: str(rol), user.roles.all())
     context['roles'] = list(roles)
-    if 'pendiente' in roles:
-        return redirect(reverse(wait_for_check_user))
     valid_practices = []
     wait_practices = []
     pre_practices = Oferta.objects.filter(tipo='Práctica', publicada=True).order_by('-fecha_publicacion')
@@ -176,6 +175,9 @@ def login_user(request):
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
         if user is not None:    #verificar en nuestra base de datos
+            #verificar si el usuario esta pendiente
+            if 'pendiente' in map(lambda rol: str(rol), user.roles.all()):
+                return redirect(reverse(wait_for_check_user))
             login(request, user)
         elif False: #por aca hay que ver el tema con u-pasaporte
             print('Aún no tenemos U-Pasaporte')
@@ -231,7 +233,7 @@ def registrar_usuario(request):
             usuario.roles.add(rol)
             usuario.save()
 
-            return render(request, 'app/usuario_pendiente.html', context)
+            return redirect(reverse(wait_for_check_user))
         else:
             context['form'] = form
             print('algo fallo :c')
@@ -241,7 +243,7 @@ def registrar_usuario(request):
 
 @csrf_exempt
 def wait_for_check_user(request):
-    if (request.method == 'GET'):
+    if request.method == 'GET':
         context = {
             'main_url': settings.MAIN_URL
         }
