@@ -70,7 +70,7 @@ class Jornada(models.Model):
         ('FullTime', 'FullTime'),
         ('PartTime', 'PartTime'),
     )
-    nombre = models.CharField(max_length=8,
+    nombre = models.CharField(max_length=16,
                               choices=OPCIONES_JORNADA,
                               default='FullTime')
 
