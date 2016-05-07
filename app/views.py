@@ -104,6 +104,9 @@ def evaluate_offer(request):
         if accept == 'aceptada':  #la oferta fue aceptada
             offer.publicada = True
             offer.fecha_publicacion = datetime.now()
+            tipo = offer.tipo.lower()
+            if tipo != 'práctica':
+                offer.etiquetas.add(Etiqueta.objects.filter(nombre=tipo).last())
             offer.save()
             return HttpResponse(json.dumps({'msg': 'Oferta agregada del sistema'}), content_type='application/json')
         else:
