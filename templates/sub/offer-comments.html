@@ -61,52 +61,33 @@
     </div>
     {% endif %}
     {# previous valorations #}
+    {% for comment in comments %}
     <div class="frame frame-light">
         <div>
             <div>
                 <div class="inline-block">
                     <div class="badge">
-                        Valoración por <span class="text-capitalize">Jorge José Pérez Gonzales</span>
+                        Valoración por <span class="text-capitalize">{{ comment.usuario }}</span>
                     </div>
                     <div class="badge badge-orange">
-                        03 de Abril del 2016
+                        {{ comment.fecha_creacion }}
                     </div>
                 </div>
                 <div class="text-big pull-right">
-                    <div class="badge">
-                        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                    <div class="badge badge-yellow">
+                        <div class="text-big star-val" data-score={{ comment.valor }}>
                     </div>
                 </div>
             </div>
 
         </div>
         <div>
-            Lorem ipsum dolor sit amet, porttitor metus scelerisque, nullam hymenaeos, justo in lobortis. Consectetur proin, placerat scelerisque. Pellentesque tincidunt convallis, quis ornare, at dolor. Aenean ultrices, blandit mattis, amet ut nec. Mattis aliquam. At in. Morbi ac orci, sit semper. Lacinia arcu.
+            {{ comment.comentario }}
         </div>
         <div class="text-danger text-uppercase text-right"><b>reportar</b></div>
     </div>
-    <div class="frame frame-light">
-        <div>
-            <div>
-                <div class="inline-block">
-                    <div class="badge">
-                        Valoración por <span class="text-capitalize">Javier Juan Peralta Godoy</span>
-                    </div>
-                    <div class="badge badge-orange">
-                        01 de Abril del 2016
-                    </div>
-                </div>
-                <div class="text-big pull-right">
-                    <div class="badge badge-red">
-                        <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div>
-            Lorem ipsum dolor sit amet, porttitor metus scelerisque, nullam hymenaeos, justo in lobortis. Consectetur proin, placerat scelerisque. Pellentesque tincidunt convallis, quis ornare, at dolor. Aenean ultrices, blandit mattis, amet ut nec. Mattis aliquam. At in. Morbi ac orci, sit semper. Lacinia arcu.
-        </div>
-        <div class="text-danger text-uppercase text-right"><b>reportar</b></div>
     </div>
+    {% empty %}
+        Aún no hay comentarios en esta oferta.
+    {% endfor %}
 </div>
