@@ -2,6 +2,24 @@
 {% load staticfiles %}
 {% load filtros %}
 
+{% block javascript %}
+    <script type="text/javascript">
+        function toggle_visibility(id) {
+           var empresa = document.getElementById("div_empresa");
+           var nueva_empresa = document.getElementById("div_nueva_empresa");
+
+           if (id == "new"){
+               empresa.style.display = "none";
+               nueva_empresa.style.display = "block";
+           }
+           else if (id == "old") {
+               empresa.style.display = "block";
+               nueva_empresa.style.display = "none";
+           }
+        }
+    </script>
+{% endblock %}
+
 {% block title %} Formulario Empresa {% endblock %}
 
 {% block left_column_content %}
@@ -11,31 +29,80 @@
 {% endblock %}
 
 {% block right_column_content %}
-    <h3 class="text-center">
-        Publica una oferta
-    </h3>
+    <h2 class="text-center">
+        Publicar una oferta
+    </h2><br>
     <form action="" method ="post">
         {% csrf_token %}
         {% for field in form %}
-            <div class="form-group">
-                {% if field.errors %}
-                    <ul>
-                        {% for error in field.errors %}
-                          <li class="error">{{ error|escape }}</li>
+            {% if field == form.empresa %}
+                <div id="div_empresa">
+                    {% if field.errors %}
+                        <ul>
+                            {% for error in field.errors %}
+                              <li class="error">{{ error|escape }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.help_text %}
+                        <img src="tooltip.png" alt="{{ field.help_text|safe }}"/>
+                    {% endif %}
+                    <a href="#" onclick="toggle_visibility('new');">¿La empresa no aparece en el listado?</a>
+                    <br>{{ field|addClass:'form-control' }}<br>
+                </div>
+            {% elif field == form.nombre_empresa %}
+                <div id="div_nueva_empresa" style="display: none">
+                    {% if field.errors %}
+                        <ul>
+                            {% for error in field.errors %}
+                              <li class="error">{{ error|escape }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.help_text %}
+                        <img src="tooltip.png" alt="{{ field.help_text|safe }}"/>
+                    {% endif %}
+                    <a href="#" onclick="toggle_visibility('old');">Seleccionar una empresa existente</a>
+                    <br>{{ field|addClass:'form-control' }}<br>
+                </div>
+            {% else %}
+                {% if field == form.tipo %}
+                    <br><h3>Datos de la Oferta</h3><hr>
+                {% elif field == form.jornada %}
+                    <br><h3>Jornada Laboral</h3><hr>
+                {% elif field == form.remunerado %}
+                    <br><h3>Remuneración</h3><hr>
+                {% elif field == form.direccion %}
+                    <br><h3>Ubicación</h3><hr>
+                {% elif field == form.nombre_encargado %}
+                    <br><h3>Contacto</h3><hr>
+                {% endif %}
+                <div class="form-group">
+                    {% if field.errors %}
+                        <ul>
+                            {% for error in field.errors %}
+                              <li class="error">{{ error|escape }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.help_text %}
+                        <img src="tooltip.png" alt="{{ field.help_text|safe }}"/>
+                    {% endif %}
+                    {% if field == form.notificar or field == form.fecha_comienzo or field == form.fecha_termino %}
+                        {{ field }}
+                    {% elif field == form.jornada or field == form.tipo %}
+                        {% for option in field %}
+                            {{ option }}
                         {% endfor %}
-                    </ul>
-                {% endif %}
-                <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {% if field.help_text %}
-                    <img src="tooltip.png" alt="{{ field.help_text|safe }}"/>
-                {% endif %}
-                {% if field == form.notificar %}
-                    {{ field }}
-                {% else %}
-                    <br>{{ field|addClass:'form-control' }}
-                {% endif %}
-            </div>
+                    {% else %}
+                        <br>{{ field|addClass:'form-control' }}
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endfor %}
-        <input type="submit" value="Save"/>
+        <input type="submit" value="Enviar"/>
     </form>
 {% endblock %}
