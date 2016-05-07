@@ -1,5 +1,6 @@
 <div>
     {# new valoration #}
+    {% if not user_already_comment %}
     <div class="frame frame-light">
         <form role="form" action="{% url "comentar_oferta" %}" method="POST">
             {% csrf_token %}
@@ -58,6 +59,7 @@
             </div>
         </form>
     </div>
+    {% endif %}
     {# previous valorations #}
     <div class="frame frame-light">
         <div>

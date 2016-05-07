@@ -126,6 +126,8 @@ def load_info_offer(offer_id):
 @login_required
 def offer(request, offer_id):
     context = load_info_offer(offer_id)
+    context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
+    context['user_already_comment'] = len(ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
     context['main_url'] = settings.MAIN_URL
     return render(request, 'app/offer.html', context)
 
