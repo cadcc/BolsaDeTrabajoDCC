@@ -38,23 +38,10 @@ class OfertaCreate(CreateView):
 @csrf_exempt
 def home(request):
     user = request.user
-    context = {
-        'main_url': settings.MAIN_URL,
-        'user': user
-    }
+    context = {'user': user}
     if user.is_authenticated():
         return redirect(reverse(offer_list))
     return render(request, 'app/home.html', context)
-
-@csrf_exempt
-def company_offer_form(request):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
-    if request.method == 'GET':
-        f = OfferForm(request.POST)
-        #return render(request, 'app/form.html', context)
-    return HttpResponseNotAllowed('GET')
 
 @login_required
 def evaluate_practice(request):
@@ -129,7 +116,6 @@ def offer(request, offer_id):
     context = load_info_offer(offer_id)
     context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
     context['user_already_comment'] = len(ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
-    context['main_url'] = settings.MAIN_URL
     return render(request, 'app/offer.html', context)
 
 @login_required
@@ -141,7 +127,6 @@ def offer_list(request):
     date_seven_days = date_now - timedelta(days=7)
 
     context = {}
-    context['main_url'] = settings.MAIN_URL
     context['user'] = user
     roles = map(lambda rol: str(rol), user.roles.all())
     context['roles'] = list(roles)
@@ -199,7 +184,6 @@ def comment_offer(request):
             actual_offer.save()
             return redirect(reverse(offer, args=[offer_id]))
         context = load_info_offer(offer_id)
-        context['main_url'] = settings.MAIN_URL
         context['form'] = form
         return render(request, 'app/offer.html', context)
     else:
@@ -244,9 +228,7 @@ def edit_comment_offer(request):
 
 def login_user(request):
     if request.method == 'POST':
-        context = {
-            'main_url': settings.MAIN_URL
-        }
+        context = {}
         username = request.POST.get('username')
         password = request.POST.get('password')
         baseUser = authenticate(username=username, password=password)
@@ -272,24 +254,18 @@ def logout_user(request):
 
 @csrf_exempt
 def suscription(request):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
+    context = {}
     return render(request, 'app/suscription.html', context)
 
 @csrf_exempt
 def registro(request):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
+    context = {}
     return render(request, 'app/registro.html', context)
 
 @csrf_exempt
 def registrar_usuario(request):
     if (request.method == 'POST'):
-        context = {
-            'main_url': settings.MAIN_URL
-        }
+        context = {}
         form = UserForm(request.POST, request.FILES)
         if form.is_valid():
             first_name = form.cleaned_data['first_name']
@@ -322,26 +298,20 @@ def registrar_usuario(request):
 @csrf_exempt
 def wait_for_check_user(request):
     if request.method == 'GET':
-        context = {
-            'main_url': settings.MAIN_URL
-        }
+        context = {}
         return render(request, 'app/usuario_pendiente.html', context)
     else:
         return HttpResponseNotAllowed('GET')
 
 @csrf_exempt
 def registro_empresa(request):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
+    context = {}
     return render(request, 'app/registro_empresa.html', context)
 
 @csrf_exempt
 def registrar_empresa(request):
     if (request.method == 'POST'):
-        context = {
-            'main_url': settings.MAIN_URL
-        }
+        context = {}
         form = CompanyForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data['name']
@@ -360,24 +330,19 @@ def registrar_empresa(request):
 
 @csrf_exempt
 def empresa(request, nombre_empresa):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
+    context = {}
     return render(request, 'app/company.html', context)
 
 @csrf_exempt
 def login_empresa(request):
     if request.method == 'POST':
-        context = {
-            'main_url': settings.MAIN_URL
-        }
         email = request.POST.get('login_email')
         password = request.POST.get('login_password')
         company = authenticate(email=email, password=password)
         if company is not None:    #verificar en nuestra base de datos
             login(request, company)
         else:   #No hay registros de existencia de la empresa
-            context['error_login'] = 'Nombre de usuario o contraseña no válido!'
+            context= {'error_login': 'Nombre de usuario o contraseña no válido!'}
             return render(request, 'app/home.html', context)
         return redirect(reverse(home))
     return HttpResponseNotAllowed('POST')
@@ -386,48 +351,3 @@ def login_empresa(request):
 def logout_empresa(request):
     logout(request)
     return redirect(reverse(home))
-
-def enviar_oferta(request):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
-    form = OfferForm(request.POST)
-    if (form.is_valid()):
-
-        titulo_oferta = form.cleaned_data['titulo_oferta']
-        nombre_empresa = form.cleaned_data['nombre_empresa']
-        jornada_trabajo = form.cleaned_data['jornada_trabajo']
-        select_tipo_oferta = form.cleaned_data['select_tipo_oferta']
-        perfil_objetivo = form.cleaned_data['perfil_objetivo']
-        desc_oferta = form.cleaned_data['desc_oferta']
-        habilidades_deseadas = form.cleaned_data['habilidades_deseadas']
-        habilidades_requeridas = form.cleaned_data['habilidades_requeridas']
-        remuneracion = form.cleaned_data['remuneracion']
-        sueldo_minimo = form.cleaned_data['sueldo_minimo']
-        se_ofrece = form.cleaned_data['se_ofrece']
-        fecha_inicio = form.cleaned_data['fecha_inicio']
-        fecha_fin = form.cleaned_data['fecha_fin']
-        select_dur_min = form.cleaned_data['select_dur_min']
-        comen_dur = form.cleaned_data['comen_dur']
-        etiquetas = form.cleaned_data['etiquetas']
-
-
-        print('titulo_oferta: ' + titulo_oferta)
-        print('nombre_empresa: ' + nombre_empresa)
-        print('jornada_trabajo: ' + jornada_trabajo)
-        print('select_tipo_oferta: ' + select_tipo_oferta)
-        print('perfil_objetivo: ' + perfil_objetivo)
-        print('desc_oferta: ' + desc_oferta)
-        print('habilidades_deseadas: ' + habilidades_deseadas)
-        print('habilidades_requeridas: ' + habilidades_requeridas)
-        print('remuneracion: ' + remuneracion)
-        print('sueldo_minimo: ' + sueldo_minimo)
-        print('se_ofrece: ' + se_ofrece)
-        print('fecha_inicio: ' + str(fecha_inicio))
-        print('fecha_fin: ' + str(fecha_fin))
-        print('select_dur_min: ' + select_dur_min)
-        print('comen_dur: ' + comen_dur)
-        print('etiquetas: ' + etiquetas)
-
-        return render(request, 'app/offer.html', context)
-    return render(request, 'app/home.html', context)
