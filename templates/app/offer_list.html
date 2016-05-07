@@ -102,8 +102,9 @@
         function evaluateOffer(offer_id, accept) {
             //aqui hay que poner algo para que se vea como carga el sistema, su modal loco
             $.post('/evaluar-oferta',{
-                    'offer_id': offer_id,
-                    'accept': accept
+                'offer_id': offer_id,
+                'accept': accept,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
             }).fail(function(err) {
                 console.log(err)
             }).done(function(msg) {
@@ -114,8 +115,9 @@
         function evaluatePractice(offer_id, valid) {
             //aqui hay que poner algo para que se vea como carga el sistema, su modal loco
             $.post('/evaluar-practica',{
-                    'offer_id': offer_id,
-                    'valid': valid
+                'offer_id': offer_id,
+                'valid': valid,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
             }).fail(function(err) {
                 console.log(err)
             }).done(function(msg) {

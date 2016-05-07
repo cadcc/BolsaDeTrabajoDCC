@@ -57,7 +57,6 @@ def company_offer_form(request):
     return HttpResponseNotAllowed('GET')
 
 @login_required
-@csrf_exempt
 def evaluate_practice(request):
     if request.method == 'POST':
         user = request.user.usuario
@@ -93,7 +92,6 @@ def evaluate_practice(request):
         return HttpResponseNotAllowed('POST')
 
 @login_required
-@csrf_exempt
 def evaluate_offer(request):
     if request.method == 'POST':
         user = request.user.usuario
