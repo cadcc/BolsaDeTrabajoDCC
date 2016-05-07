@@ -16,10 +16,9 @@
                 <div class="title text-center">Publicar ofertas</div>
                 <div class="row">
                     <div class="col-md-6 col-md-offset-3 col-xs-12">
-                        <form role="form" action="{% url 'formulario' %}" method="GET">
-                            <div><button type="submit" class="m-btn-full m-btn-darkcyan">Publicar</button></div>
-                        </form>
-                        <div><button type="button" class="m-btn-full m-btn-cyan">Empresas Verificadas</button></div>
+
+                        <div><a href="{% url 'formulario' %}"><button type="submit" class="m-btn-full m-btn-darkcyan">Publicar</button></a></div>
+                        <div><a href="{% url 'registro_empresas' %}"><button type="button" class="m-btn-full m-btn-cyan">Empresas Verificadas</button></a></div>
                     </div>
                 </div>
             </div>
@@ -31,7 +30,7 @@
                         <div class="title text-center">Ingresar con U-Pasaportes</div>
                     </div>
                     {% if error_login %}
-                         <label for="password" class="error">{{ error_login|escape }}</label>
+                         <label class="error">{{ error_login|escape }}</label>
                     {% endif %}
                 </div>
                 <div class="row">

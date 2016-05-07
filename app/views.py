@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseBadRequest
 
-from app.models import Usuario, Rol, Oferta, Empresa, Validacion, Etiqueta, ValoracionOferta
+from app.models import Usuario, Rol, Oferta, Empresa, Validacion, Etiqueta, ValoracionOferta, Encargado
 from app.forms import OfferForm, UserForm, CompanyForm, CommentOfferForm
 
 #------------------------------------------------------------
@@ -302,16 +302,17 @@ def registrar_empresa(request):
         }
         form = CompanyForm(request.POST)
         if form.is_valid():
-            name = form.cleaned_data['name']
-            email = form.cleaned_data['email']
-            document = form.cleaned_data['document']
-            password = form.cleaned_data['password']
+            company_name = form.cleaned_data['company_name']
+            attendant_name = form.cleaned_data['attendant_name']
+            email = form.cleaned_data['attendant_email']
+            password = form.cleaned_data['attendant_password']
 
-            empresa = Empresa.objects.create_user(name=name, email=email, password=password)
-            return render(request, 'app/registro_empresa.html', context)
+            empresa = Empresa.objects.create(nombre=company_name)
+            encargado = Encargado.objects.create_user(first_name=attendant_name, email=email, password=password,
+                                                 empresa=empresa, username=email)
+            return redirect('/empresa/' + empresa.url_encoded_name())
         else:
             context['form'] = form
-            print('algo fallo :c')
             return render(request, 'app/registro_empresa.html', context)
     else:
         return HttpResponseNotAllowed('POST')
@@ -321,6 +322,11 @@ def empresa(request, nombre_empresa):
     context = {
         'main_url': settings.MAIN_URL
     }
+    nombre_empresa = nombre_empresa.replace('-', ' ')
+    empresa = Empresa.objects.filter(nombre=nombre_empresa).first()
+    if empresa is None:
+        return redirect(reverse(home))
+    context['empresa'] = empresa
     return render(request, 'app/company.html', context)
 
 @csrf_exempt
@@ -329,21 +335,32 @@ def login_empresa(request):
         context = {
             'main_url': settings.MAIN_URL
         }
-        email = request.POST.get('login_email')
-        password = request.POST.get('login_password')
-        company = authenticate(email=email, password=password)
-        if company is not None:    #verificar en nuestra base de datos
-            login(request, company)
-        else:   #No hay registros de existencia de la empresa
-            context['error_login'] = 'Nombre de usuario o contraseña no válido!'
-            return render(request, 'app/home.html', context)
-        return redirect(reverse(home))
-    return HttpResponseNotAllowed('POST')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        baseUser = authenticate(username=email, password=password)
+        print(baseUser)
+        print(baseUser.encargado)
+        if baseUser is not None and baseUser.encargado is not None:    #verificar en nuestra base de datos
+            #verificar si el usuario esta pendiente
+            if baseUser.encargado.empresa.validada == False:
+                return redirect(reverse(wait_for_check_company))
+            baseUser.usuario.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, baseUser)
+        else:   #No hay registros de existencia del usuario
+            context['error_login'] = 'Combinación de usuario y contraseña inválida'
+            return render(request, 'app/registro_empresa.html', context)
+        return redirect(reverse(offer_list))
+    return HttpResponseNotAllowed('GET')
 
 @csrf_exempt
-def logout_empresa(request):
-    logout(request)
-    return redirect(reverse(home))
+def wait_for_check_company(request):
+    if request.method == 'GET':
+        context = {
+            'main_url': settings.MAIN_URL
+        }
+        return render(request, 'app/empresa_pendiente.html', context)
+    else:
+        return HttpResponseNotAllowed('GET')
 
 def enviar_oferta(request):
     context = {

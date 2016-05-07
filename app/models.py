@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.core.validators import RegexValidator
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -17,7 +18,7 @@ class Rol(models.Model):
 
 
 class Empresa(models.Model):
-    nombre = models.CharField(max_length=64)
+    nombre = models.CharField(max_length=64, unique=True)
     sitio_web = models.CharField(max_length=64, null=True)
     logo = models.FileField(upload_to='logos', null=True)
     direccion = models.CharField(max_length=64, null=True)
@@ -27,6 +28,9 @@ class Empresa(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def url_encoded_name(self):
+        return self.nombre.replace(' ', '-')
 
 class Encargado(UsuarioBase):
     administrador = models.BooleanField(default=False)

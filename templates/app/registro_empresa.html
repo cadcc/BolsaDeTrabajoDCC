@@ -29,22 +29,25 @@
             <div class="col-md-12 col-xs-12">
                 <div class="title text-center">Ingresa con tu empresa</div>
             </div>
+            {% if error_login %}
+                 <label class="error">{{ error_login|escape }}</label>
+            {% endif %}
         </div>
         <div class="row">
             <div class="col-md-10 col-md-offset-1 col-xs-12">
-                <form role="form" action = "" method="GET">
+                <form role="form" action="{% url 'login_empresa' %}" method="POST">
         {% csrf_token %}
         <div class="form-group">
             <label class="sr-only" for="login-email">
-                Usuario
+                Correo electrónico
             </label>
-            <input class="form-control" id="login-email" placeholder="Correo electrónico"/>
+            <input class="form-control" id="login-email" name="email" placeholder="Correo electrónico"/>
         </div>
         <div class="form-group">
             <label class="sr-only" for="login-password">
                 Password
             </label>
-            <input class="form-control" id="login-password" type="password" placeholder="Contraseña" />
+            <input class="form-control" id="login-password" name="password" type="password" placeholder="Contraseña" />
         </div>
         <div>
             <label class="checkbox-inline">
@@ -71,28 +74,72 @@
                 <form role="form" action = "{% url 'registrar_empresa' %}" method="POST">
                     {% csrf_token %}
                     <div class="form-group">
-                        <label class="sr-only" for="id_name">
-                            Nombre
+                        <label class="sr-only" for="id_company_name">
+                            Nombre empresa
                         </label>
-                        <input class="form-control" id="id_name" name="name" placeholder="Nombre de empresa"/>
+                        {% if form.company_name.errors %}
+                            <ul>
+                            {% for error in form.company_name.errors %}
+                              <label for="id_company_name" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_company_name" name="company_name" placeholder="Nombre de empresa"
+                         value="{{ form.company_name.value|default_if_none:"" }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="id_attendant_name">
+                            Nombre encargado
+                        </label>
+                        {% if form.attendant_name.errors %}
+                            <ul>
+                            {% for error in form.attendant_name.errors %}
+                              <label for="id_attendant_name" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_attendant_name" name="attendant_name" placeholder="Nombre de encargado"
+                         value="{{ form.attendant_name.value|default_if_none:"" }}"/>
                     </div>
                     <div class="form-group">
                         <label class="sr-only" for="id_email">
-                            Apellidos
+                            Correo electrónico
                         </label>
-                        <input class="form-control" id="id_email" name="email" type="email" placeholder="Correo electrónico"/>
+                        {% if form.attendant_email.errors %}
+                            <ul>
+                            {% for error in form.attendant_email.errors %}
+                              <label for="id_email" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_email" name="attendant_email" type="email" placeholder="Correo electrónico"
+                         value="{{ form.attendant_email.value|default_if_none:"" }}"/>
                     </div>
                     <div class="form-group">
                         <label class="sr-only" for="id_password">
-                            Apellidos
+                            Contraseña
                         </label>
-                        <input class="form-control" id="id_password" name="password" type="password" placeholder="Contraseña"/>
+                        {% if form.attendant_password.errors %}
+                            <ul>
+                            {% for error in form.attendant_password.errors %}
+                              <label for="id_password" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_password" name="attendant_password" type="password" placeholder="Contraseña"/>
                     </div>
                     <div class="form-group">
                         <label class="sr-only" for="id_repassword">
-                            Apellidos
+                            Repetir contraseña
                         </label>
-                        <input class="form-control" id="id_repassword" name="repassword" type="password" placeholder="Repetir contraseña"/>
+                        {% if form.attendant_repassword.errors %}
+                            <ul>
+                            {% for error in form.attendant_repassword.errors %}
+                              <label for="id_repassword" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_repassword" name="attendant_repassword" type="password" placeholder="Repetir contraseña"/>
                     </div>
                     <button type="submit" class="m-btn m-btn-darkcyan">
                         Registrar
