@@ -120,7 +120,7 @@ class Oferta(models.Model):
     # Estado de la Oferta
     fecha_ingreso = models.DateTimeField(auto_now_add=True)
     publicada = models.BooleanField(default=False)
-    fecha_publicacion = models.DateTimeField(auto_now_add=True, blank=True)
+    fecha_publicacion = models.DateTimeField(null=True)
     puntuacion = models.IntegerField(default=0)
     visitas = models.IntegerField(default=0)
     notificar = models.BooleanField()
