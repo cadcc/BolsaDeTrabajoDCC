@@ -62,32 +62,40 @@
     {% endif %}
     {# previous valorations #}
     {% for comment in comments %}
-    <div class="frame frame-light">
-        <div>
+        <div class="frame frame-light">
             <div>
-                <div class="inline-block">
-                    <div class="badge">
-                        Valoración por <span class="text-capitalize">{{ comment.usuario }}</span>
+                <div>
+                    <div class="inline-block">
+                        <div class="badge">
+                            Valoración por <span class="text-capitalize">{{ comment.usuario }}</span>
+                        </div>
+                        <div class="badge badge-orange">
+                            {{ comment.fecha_creacion }}
+                        </div>
                     </div>
-                    <div class="badge badge-orange">
-                        {{ comment.fecha_creacion }}
+                    <div class="text-big pull-right">
+                        <div class="badge badge-yellow">
+                            <div class="text-big star-val" data-score={{ comment.valor }}>
+                        </div>
                     </div>
                 </div>
-                <div class="text-big pull-right">
-                    <div class="badge badge-yellow">
-                        <div class="text-big star-val" data-score={{ comment.valor }}>
-                    </div>
-                </div>
-            </div>
 
+                </div>
+                <div>
+                    {{ comment.comentario }}
+                </div>
+                {% ifequal comment.usuario user.usuario %}
+                    <div class="text-primary text-uppercase text-right">
+                        <button type="button"><b>Editar</b></button>
+                    </div>
+                {% else %}
+                    <div class="text-danger text-uppercase text-right">
+                        <button type="button"><b>Reportar</b></button>
+                    </div>
+                {% endifequal %}
+            </div>
         </div>
-        <div>
-            {{ comment.comentario }}
-        </div>
-        <div class="text-danger text-uppercase text-right"><b>reportar</b></div>
-    </div>
-    </div>
     {% empty %}
-        Aún no hay comentarios en esta oferta.
+            Aún no hay comentarios en esta oferta.
     {% endfor %}
 </div>
