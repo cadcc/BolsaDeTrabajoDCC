@@ -11,8 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseBadRequest
 
-from app.models import Usuario, Rol, Oferta, Empresa, Validacion, Etiqueta
-from app.forms import OfferForm, UserForm, CompanyForm
+from app.models import Usuario, Rol, Oferta, Empresa, Validacion, Etiqueta, ValoracionOferta
+from app.forms import OfferForm, UserForm, CompanyForm, CommentOfferForm
 
 #------------------------------------------------------------
 
@@ -37,11 +37,11 @@ class OfertaCreate(CreateView):
 
 @csrf_exempt
 def home(request):
+    user = request.user
     context = {
         'main_url': settings.MAIN_URL,
-        'user': request.user
+        'user': user
     }
-    user = request.user
     if user.is_authenticated():
         return redirect(reverse(offer_list))
     return render(request, 'app/home.html', context)
@@ -115,16 +115,18 @@ def evaluate_offer(request):
     else:
         return HttpResponseNotAllowed('POST')
 
+def load_info_offer(offer_id):
+    offer = Oferta.objects.get(pk=offer_id)
+    valid = Validacion.objects.filter(oferta=offer).last()
+    return {
+        'oferta': offer,
+        'validez': str(valid) if valid is not None else 'Sin Validar'
+    }
+
 @login_required
 def offer(request, offer_id):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
-    offer = Oferta.objects.get(pk=offer_id)
-    context['oferta'] = offer
-
-    valid = Validacion.objects.filter(oferta=offer).last()
-    context['validez'] = str(valid) if valid is not None else 'Sin Validar'
+    context = load_info_offer(offer_id)
+    context['main_url'] = settings.MAIN_URL
     return render(request, 'app/offer.html', context)
 
 @login_required
@@ -157,6 +159,43 @@ def offer_list(request):
     context['offers_to_check'] = Oferta.objects.filter(publicada=False).order_by('fecha_ingreso')
     context['practices_to_check'] = reversed(wait_practices)
     return render(request, 'app/offer_list.html', context)
+
+def new_score_offer(offer):
+    valorations = list(map(lambda o: o.valor, ValoracionOferta.objects.filter(oferta=offer)))
+    sum = 0
+    for val in valorations:
+        sum += val
+    return sum/len(valorations)
+
+@login_required
+def comment_offer(request):
+    if request.method == 'POST':
+        user = request.user.usuario
+        offer_id = request.POST.get('offer_id')
+        form = CommentOfferForm(request.POST)
+        if form.is_valid():
+            comment = form.cleaned_data['comment']
+            is_important = form.cleaned_data['is_important']
+            valoration = form.cleaned_data['valoration']
+            actual_offer = Oferta.objects.get(pk=offer_id)
+            valoration_offer = ValoracionOferta(
+                usuario=user,
+                oferta=actual_offer,
+                valor=valoration,
+                comentario=comment,
+                prioritario=is_important
+            )
+            valoration_offer.save()
+            score = new_score_offer(actual_offer)
+            actual_offer.puntuacion = score
+            actual_offer.save()
+            return redirect(reverse(offer, args=[offer_id]))
+        context = load_info_offer(offer_id)
+        context['main_url'] = settings.MAIN_URL
+        context['form'] = form
+        return render(request, 'app/offer.html', context)
+    else:
+        return HttpResponseNotAllowed('POST')
 
 @csrf_exempt
 def login_user(request):

@@ -1,36 +1,62 @@
 <div>
     {# new valoration #}
     <div class="frame frame-light">
-        <div>
+        <form role="form" action="{% url "comentar_oferta" %}" method="POST">
+            {% csrf_token %}
             <div>
-                <div class="visible-md-inline-block visible-lg-inline-block visible-xs-inline-block visible-sm-inline-block">
-                    Valorando como <span class="text-highlight text-capitalize">Juan José Pérez Gonzales</span><br>
-                    <div class="checkbox">
-                          <label>
-                                <input type="checkbox" value="">
-                                He trabajado aquí
-                          </label>
+                <div>
+                    <div class="visible-md-inline-block visible-lg-inline-block visible-xs-inline-block visible-sm-inline-block">
+                        Valorando como <span class="text-highlight text-capitalize">{{ user }}</span><br>
+                        <div class="checkbox">
+                              <label>
+                                  {% if form.is_important.errors %}
+                                  <ul>
+                                      {% for error in form.is_important.errors %}
+                                          <label for="is_important" class="error">{{ error|escape }}</label>
+                                      {% endfor %}
+                                  </ul>
+                                  {% endif %}
+                                  <label class="sr-only" for="is_important">
+                                      Importancia
+                                  </label>
+                                  <input name="is_important" id="is_important" type="checkbox" value=on>
+                                  He trabajado aquí
+                              </label>
+                        </div>
                     </div>
-                </div>
-                <div class="pull-right">
-                    <div class="badge">
-                        <div>+1</div>
-                        <span class="glyphicon glyphicon-thumbs-up text-big" aria-hidden="true"></span>
-                    </div>
-                    <div class="badge badge-red">
-                        <div>-1</div>
-                        <span class="glyphicon glyphicon-thumbs-down text-big" aria-hidden="true"></span>
+                    <div class="pull-right">
+                        {% if form.valoration.errors %}
+                            <ul>
+                            {% for error in form.valoration.errors %}
+                              <label for="valoration" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <label class="sr-only" for="valoration">
+                            Valoración
+                        </label>
+                        <input required id="valoration" type="number" class="rating" name="valoration" min="0" max="5" data-show-clear="false" data-show-caption="false" data-step="1" data-size="xs" >
+                        <input name="offer_id" type="hidden" value="{{ oferta.id }}">
                     </div>
                 </div>
             </div>
-
-        </div>
-        <textarea class="form-control" rows="3"></textarea>
-        <div class="row">
-            <div class="col-xs-12 col-md-12 text-right">
-                <button class="m-btn-medium m-btn-darkcyan" type="submit">Enviar</button>
+            {% if form.comment.errors %}
+                <ul>
+                {% for error in form.comment.errors %}
+                  <label for="comment" class="error">{{ error|escape }}</label>
+                {% endfor %}
+                </ul>
+                <label class="sr-only" for="comment">
+                    Comentario
+                </label>
+            {% endif %}
+            <textarea name="comment" class="form-control" rows="3"></textarea>
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right">
+                    <button id="comment_button" class="m-btn-medium m-btn-darkcyan" type="submit">Valora primero!!!</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
     {# previous valorations #}
     <div class="frame frame-light">

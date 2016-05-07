@@ -125,7 +125,7 @@
         for (var i = 0; i < star_vals.length; i++) {
             var star_val = $(star_vals[i]);
             var offer_score = star_val.data('score');
-            star_val.append($('<span/>', {text: offer_score/20}));
+            //star_val.append($('<span/>', {text: offer_score/20}));
             for (var score = 20; score <= 100; score+=20) {
                 if (offer_score >= score)
                     star_val.append($('<span/>', {
@@ -139,5 +139,13 @@
                     }));
             }
         }
+    </script>
+    <script type="text/javascript">
+        var commentButton = $('#comment_button');
+        commentButton.prop('disabled', true);
+        $('#valoration').on('rating.change', function() {
+            commentButton.text('Comentar');
+            commentButton.prop('disabled', false)
+        });
     </script>
 {% endblock %}

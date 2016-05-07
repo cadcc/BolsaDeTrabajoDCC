@@ -185,13 +185,13 @@ class ValoracionOferta(models.Model):
     oferta = models.ForeignKey(Oferta)
     valor = models.IntegerField()
     comentario = models.TextField()
-    prioritario = models.BooleanField(default=False)
+    prioritario = models.BooleanField()
     reportes = models.IntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_modificacion = models.DateTimeField()
+    fecha_modificacion = models.DateTimeField(null=True)
 
     def __str__(self):
-        return self.usuario + ' - ' + str(self.valor) + ' - ' + self.comentario
+        return self.usuario + ' - ' + str(self.valor) + ' - ' +self.comentario
 
 
 class AdvertenciaValoracionOferta(models.Model):
@@ -209,10 +209,10 @@ class ValoracionEmpresa(models.Model):
     empresa = models.ForeignKey(Empresa)
     valor = models.IntegerField()
     comentario = models.TextField()
-    prioritario = models.BooleanField(default=False)
+    prioritario = models.BooleanField()
     reportes = models.IntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_modificacion = models.DateTimeField()
+    fecha_modificacion = models.DateTimeField(null=True)
 
     def __str__(self):
         return self.usuario + ' - ' + str(self.valor) + ' - ' + self.comentario

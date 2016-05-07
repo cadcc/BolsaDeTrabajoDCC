@@ -5,7 +5,7 @@ from app.views import OfertaCreate
 urlpatterns = [
     url(r'oferta/add/$', OfertaCreate.as_view(), name='oferta-add'),
     url(r'^enviar-oferta$', views.company_offer_form, name='formulario'),
-    url(r'^oferta/(\d{1,})$', views.offer, name='oferta'),
+    url(r'^oferta/(?P<offer_id>(\d{1,}))$', views.offer, name='oferta'),
     url(r'^lista-de-ofertas/$', views.offer_list, name='listado_ofertas'),
     url(r'^$', views.home, name='home'),
     url(r'^login_user$', views.login_user, name='login_user'),
@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^registrar-empresa$', view=views.registrar_empresa, name='registrar_empresa'),
     url(r'^usuario-pendiente$', view=views.wait_for_check_user, name='usuario_pendiente'),
     url(r'^evaluar-oferta$', view=views.evaluate_offer, name='evaluar_oferta'),
-    url(r'^evaluar-practica$', view=views.evaluate_practice, name='evaluar_practica')
+    url(r'^evaluar-practica$', view=views.evaluate_practice, name='evaluar_practica'),
+    url(r'^comentar-oferta$', view=views.comment_offer, name="comentar_oferta")
 ]

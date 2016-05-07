@@ -54,6 +54,17 @@ class UserForm(forms.Form):
             raise forms.ValidationError('Las contraseñas no coinciden.')
         return repassword
 
+class CommentOfferForm(forms.Form):
+    valoration = forms.IntegerField()
+    is_important = forms.BooleanField(required=False)
+    comment = forms.CharField(required=False)
+
+    def clean_valoration(self):
+        valoration = self.cleaned_data['valoration']
+        if  not 0 < valoration <= 5:
+            raise forms.ValidationError('Las puntuaciones van entre 1 y 5 estrellas.')
+        return valoration * 20
+
 class MyDateInput(forms.DateInput):
     input_type = 'date'
 
