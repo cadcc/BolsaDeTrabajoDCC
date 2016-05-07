@@ -64,12 +64,20 @@
             <dd>Desde <b>{{ oferta.fecha_comienzo }}</b> hasta <b>{{ oferta.fecha_termino }}</b></dd>
             <dt>Comentario duración</dt>
             <dd>{{ oferta.comentario_duracion }}</dd>
+            <dt>Hora ingreso</dt>
+            <dd>{{ oferta.hora_ingreso }}</dd>
+            <dt>Hora salida</dt>
+            <dd>{{ oferta.hora_salida}}</dd>
             <dt>Comentario jornada</dt>
             <dd>{{ oferta.comentario_jornada }}</dd>
             <dt>Comentarios remuneración</dt>
             <dd>{{ oferta.comentario_sueldo }}</dd>
             <dt>Fecha de publicación</dt>
             <dd>{{ oferta.fecha_publicacion }}</dd>
+            <dt>Región</dt>
+            <dd>{{ oferta.comuna.region }}</dd>
+            <dt>Dirección</dt>
+            <dd>{{ oferta.direccion }}</dd>
             <dt>Etiquetas</dt>
             <dd>
                 {% for etiqueta in oferta.etiquetas.all %}
