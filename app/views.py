@@ -60,7 +60,7 @@ def company_offer_form(request):
 @csrf_exempt
 def evaluate_practice(request):
     if request.method == 'POST':
-        user = request.user
+        user = request.user.usuario
         if 'validador' not in map(lambda rol: str(rol), user.roles.all()):
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         offer_id = request.POST.get('offer_id')
@@ -96,7 +96,7 @@ def evaluate_practice(request):
 @csrf_exempt
 def evaluate_offer(request):
     if request.method == 'POST':
-        user = request.user
+        user = request.user.usuario
         if 'publicador' not in map(lambda rol: str(rol), user.roles.all()):
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         offer_id = request.POST.get('offer_id')
@@ -129,7 +129,7 @@ def offer(request, offer_id):
 
 @login_required
 def offer_list(request):
-    user = request.user
+    user = request.user.usuario
 
     #obtener fecha para comparar
     date_now = timezone.now()
@@ -166,12 +166,13 @@ def login_user(request):
         }
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
-        if user is not None:    #verificar en nuestra base de datos
+        baseUser = authenticate(username=username, password=password)
+        if baseUser is not None and baseUser.usuario is not None:    #verificar en nuestra base de datos
             #verificar si el usuario esta pendiente
-            if 'pendiente' in map(lambda rol: str(rol), user.roles.all()):
+            if 'pendiente' in map(lambda rol: str(rol), baseUser.usuario.roles.all()):
                 return redirect(reverse(wait_for_check_user))
-            login(request, user)
+            baseUser.usuario.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, baseUser)
         elif False: #por aca hay que ver el tema con u-pasaporte
             print('Aún no tenemos U-Pasaporte')
         else:   #No hay registros de existencia del usuario

@@ -3,6 +3,11 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
+class UsuarioBase(AbstractUser):
+    pass
+
+    def __str__(self):
+        return self.first_name + " " + self.last_name
 
 class Rol(models.Model):
     nombre = models.CharField(max_length=64)
@@ -18,11 +23,15 @@ class Empresa(models.Model):
     direccion = models.CharField(max_length=64, null=True)
     descripcion = models.TextField(null=True)
     puntaje = models.IntegerField(default=0)
-    verificada = models.BooleanField(default=False)
+    validada = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nombre
 
+class Encargado(UsuarioBase):
+    administrador = models.BooleanField(default=False)
+    telefono = models.CharField(max_length=15)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
 
 class Region(models.Model):
     nombre = models.CharField(max_length=64)
@@ -135,7 +144,7 @@ class Oferta(models.Model):
         return reverse('oferta-detail', kwargs={'pk': self.pk})
 
 
-class Usuario(AbstractUser):
+class Usuario(UsuarioBase):
     documento = models.FileField(upload_to='user_document', null=True)
     roles = models.ManyToManyField(Rol)
     marcadores = models.ManyToManyField(Oferta)

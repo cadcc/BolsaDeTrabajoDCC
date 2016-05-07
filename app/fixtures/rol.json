@@ -1,0 +1,30 @@
+[
+  {
+    "model": "app.rol",
+    "pk": 1,
+    "fields": {
+      "nombre": "validador"
+    }
+  },
+  {
+    "model": "app.rol",
+    "pk": 2,
+    "fields": {
+      "nombre": "publicador"
+    }
+  },
+  {
+    "model": "app.rol",
+    "pk": 3,
+    "fields": {
+      "nombre": "pendiente"
+    }
+  },
+  {
+    "model": "app.rol",
+    "pk": 4,
+    "fields": {
+      "nombre": "normal"
+    }
+  }
+]

@@ -138,7 +138,7 @@ PATH_LOGOS = os.getenv('PATH_LOGOS', default='static/resources/company/')
 PATH_DOCUMENTS = os.getenv('PATH_DOCUMENTS', default='static/document_user/')
 
 #para creacion de usaurios
-AUTH_USER_MODEL = 'app.Usuario'
+AUTH_USER_MODEL = 'app.UsuarioBase'
 
 #para los archivos a subir
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
