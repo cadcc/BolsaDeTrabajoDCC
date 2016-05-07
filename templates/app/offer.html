@@ -104,8 +104,11 @@
         </div>
     </div>
     <hr>
-    <h3>Comentarios y valoraciones</h3>
-    {% include "sub/offer-comments.html" %}
+
+    {% if "normal" in user.roles.all %}
+        <h3>Comentarios y valoraciones</h3>
+        {% include "sub/offer-comments.html" %}
+    {% endif %}
 {% endblock %}
 
 {% block javascript %}
