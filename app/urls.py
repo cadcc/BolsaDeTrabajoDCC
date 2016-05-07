@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^usuario-pendiente$', view=views.wait_for_check_user, name='usuario_pendiente'),
     url(r'^evaluar-oferta$', view=views.evaluate_offer, name='evaluar_oferta'),
     url(r'^evaluar-practica$', view=views.evaluate_practice, name='evaluar_practica'),
-    url(r'^comentar-oferta$', view=views.comment_offer, name="comentar_oferta")
+    url(r'^comentar-oferta$', view=views.comment_offer, name="comentar_oferta"),
+    url(r'^editar-comentario-oferta', view=views.edit_comment_offer, name="editar_comentario_oferta")
 ]
