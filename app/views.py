@@ -41,6 +41,9 @@ def home(request):
         'main_url': settings.MAIN_URL,
         'user': request.user
     }
+    user = request.user
+    if user.is_authenticated():
+        return redirect(reverse(offer_list))
     return render(request, 'app/home.html', context)
 
 @csrf_exempt
