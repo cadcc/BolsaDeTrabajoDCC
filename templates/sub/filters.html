@@ -10,24 +10,17 @@
                 </div>
             </div><!-- /.price-filter -->
         </div>
-        <div class="form-group">
-            <label class="control-label">Jornada</label>
-            <div>
-                <label class="checkbox-inline">
-                    <input type="checkbox" id="inlineCheckbox1" value="option1"> Full-Time
-                </label>
-                <label class="checkbox-inline">
-                    <input type="checkbox" id="inlineCheckbox2" value="option2"> Part-Time
-                </label>
+        {% for tipo_etiqueta in tipos_etiquetas %}
+            <div class="form-group">
+                <label class="control-label">{{ tipo_etiqueta.tipo }}</label>
+                <div>
+                    {% for etiqueta in tipo_etiqueta.etiquetas %}
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="inlineCheckbox1" value="option1">{{ etiqueta }}                            </label>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label">Etiquetas</label>
-            <div>
-                <input type="text" class="form-control" name="etiquetas" placeholder="Buscar etiqueta">
-                <div><span class="label label-info">Tag 1</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span></div>
-            </div>
-        </div>
+        {% endfor %}
         <a href="#"><button type="button" class="m-btn-medium m-btn-darkcyan">Filtrar</button></a>
     </form>
 </div>

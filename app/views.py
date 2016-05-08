@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseBadRequest
 
-from app.models import Usuario, Rol, Oferta, Empresa, Validacion, Etiqueta, ValoracionOferta, Encargado
+from app.models import Usuario, Rol, Oferta, Empresa, Validacion, Etiqueta, ValoracionOferta, Encargado, TipoEtiqueta
 from app.forms import OfferForm, UserForm, CompanyForm, CommentOfferForm
 
 #------------------------------------------------------------
@@ -137,8 +137,8 @@ def offer_list(request):
     date_now = timezone.now()
     date_seven_days = date_now - timedelta(days=7)
 
-    context = {}
-    context['user'] = user
+    #obtener ofertas
+    context = {'user': user}
     roles = map(lambda rol: str(rol), user.roles.all())
     context['roles'] = list(roles)
     valid_practices = []
@@ -157,6 +157,19 @@ def offer_list(request):
     context['reports'] = Oferta.objects.filter(tipo='Memoria', publicada=True).order_by('-fecha_publicacion')
     context['offers_to_check'] = Oferta.objects.filter(publicada=False).order_by('fecha_ingreso')
     context['practices_to_check'] = reversed(wait_practices)
+
+    #cargar etiquetas para filtrar
+    tipos_etiqueta_query = TipoEtiqueta.objects.all().order_by('nombre')
+    tipos_etiqueta = []
+
+    for tipo_etiqueta_query in tipos_etiqueta_query:
+        tipos_etiqueta.append({
+            'tipo': tipo_etiqueta_query,
+            'etiquetas': Etiqueta.objects.filter(tipo=tipo_etiqueta_query).order_by('nombre')
+        })
+
+    context['tipos_etiquetas'] = tipos_etiqueta
+
     return render(request, 'app/offer_list.html', context)
 
 def new_score_offer(offer):
