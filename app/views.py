@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseBadRequest
 
-from app.models import Usuario, Rol, Oferta, Empresa, Validacion, Etiqueta, ValoracionOferta
+from app.models import Usuario, Rol, Oferta, Empresa, Validacion, Etiqueta, ValoracionOferta, Encargado
 from app.forms import OfferForm, UserForm, CompanyForm, CommentOfferForm
 
 #------------------------------------------------------------
@@ -32,6 +32,16 @@ class OfertaCreate(CreateView):
             nueva_empresa, creada = Empresa.objects.get_or_create(nombre=form.cleaned_data['nombre_empresa'])
             form.instance.empresa = nueva_empresa
         return super(OfertaCreate, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(OfertaCreate, self).get_context_data(**kwargs)
+        user_request = self.request.user
+        user = Usuario.objects.get(pk=user_request) if user_request.is_authenticated() else None
+        #QUE PASA SI UN ENCARGADO CALZA CON ESTO?????, espero que el and
+        #adicional cubra eso
+        if user is not None and user.roles is not None:
+            context['roles'] = list(map(lambda r: str(r), user.roles.all()))
+        return context
 
 #------------------------------------------------------------
 
