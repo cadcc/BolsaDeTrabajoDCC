@@ -6,6 +6,6 @@
         <a href="{% url 'suscription' %}"><button type="button" class="m-btn-medium m-btn-darkred">Marcadores</button></a>
     </div>
     <div class="text-right">
-        <span><a href="{{ main_url }}logout_user" id="logout">Cerrar Sessión</a></span>
+        <span><a href="{% url "logout_user" %}" id="logout">Cerrar Sessión</a></span>
     </div>
 </div>
