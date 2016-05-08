@@ -16,8 +16,6 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from app import views as app_views
-
 admin.autodiscover()
 
 urlpatterns = [

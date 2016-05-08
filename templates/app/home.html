@@ -1,13 +1,12 @@
 {% extends "sub/main.html" %}
 {% load staticfiles %}
-
 {% block content %}
     <div class="background height100">
             <div class="height100"></div>
     </div>
     <div class="row">
         <div class="col-md-12 col-xs-12 m-b-5">
-            <a href="{{ main_url }}"><div class="logo"></div></a>
+            <a href="{{ MAIN_URL }}"><div class="logo"></div></a>
         </div>
     </div>
     <div class="row">
@@ -27,7 +26,7 @@
             <div class="frame">
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
-                        <div class="title text-center">Ingresar con U-Pasaportes</div>
+                        <div class="title text-center">Ingreso normal o por U-Pasaportes</div>
                     </div>
                     {% if error_login %}
                          <label class="error">{{ error_login|escape }}</label>
@@ -51,10 +50,10 @@
                         <input class="form-control" id="password" name="password" type="password" placeholder="Contraseña" />
                     </div>
                     <div>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" /> Recordarme
-                            </label>
-                        <div class="pull-right"><a href="{% url 'registro' %}">No poseo U-Pasaporte</a></div>
+                        <label class="checkbox-inline">
+                            <input name="remember_me" type="checkbox" value="on"/> Recuerdame por un mes
+                        </label>
+                        <div class="pull-right"><a href="{% url "registro" %}">No tengo U-Pasaporte ni cuenta</a></div>
                     </div>
                     <button type="submit" class="m-btn m-btn-darkcyan">
                         Ingresar

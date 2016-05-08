@@ -109,6 +109,12 @@ body{
     border-radius: 3px;
 }
 
+.m-btn-medium.disabled, .m-btn.disabled{
+    color: #FFF;
+    background-color: hsl(179, 16%, 58%);
+    border-color: hsl(170, 33%, 43%);
+}
+
 .m-btn-full{
     padding: 6px 0px;
     margin: 2px;

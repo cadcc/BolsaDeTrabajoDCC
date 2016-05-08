@@ -1,0 +1,52 @@
+------- Formulario
+
+------- Oferta
+	Título de oferta
+	Nombre de empresa
+	Jornada de trabajo
+	Tipo de ofertas
+	Perfil objetivo de ese tipo de oferta
+		- Habilidades deseadas para cada oferta
+		- Habilidades requeridas para cada oferta
+	Experiencia previa en años requerida (solo para Trabajo)
+	Remuneración de ese tipo de oferta
+		- Al menos XXX
+		- Sin remuneración
+		- Comentario renunmeración
+	Beneficios y características de ese tipo de oferta
+	Etiquetas
+------- Listado de ofertas
+
+------- Home
+	U-pasaporte:
+		- User y password
+	Registrarse
+	Publicar oferta
+
+------- Registrarse
+	Nombre
+	Apellido
+	Cotraseña
+	email
+	
+------- Formulario
+	Título de oferta
+	Nombre de empresa
+	Jornada de trabajo disponibles
+	Tipo de ofertas disponibles
+	Perfil objetivo
+		- Habilidades deseadas para cada oferta
+		- Habilidades requeridas para cada oferta
+	Experiencia previa en años requerida (solo para Trabajo)
+	Remuneración para cada oferta
+		- Al menos XXX
+		- Sin remuneración
+		- Comentario renunmeración
+	Beneficios y características
+	Etiquetas
+
+------ Infor sobre prácticas, memorias y trabajos
+	- Texto plano
+
+------ Header
+	Empresas destacadas

@@ -29,7 +29,7 @@
         <div>
             <div class="badge">
                 <div>Sueldo mínimo</div>
-                <div class="text-big">${{ oferta.sueldo_minimo }}</div>
+                <div class="text-big">{{ oferta.formatted_salary }}</div>
             </div>
             <div class="badge">
                 <div>Ubicación</div>
@@ -41,7 +41,7 @@
                     <span data-valid="{{ validez }}" class="valid-class" aria-hidden="true"></span>
                 </div>
             {% endifequal %}
-            <div class="pull-right badge badge-yellow" title="{{ oferta.puntuacion }}">
+            <div class="pull-right badge" title="{{ oferta.puntuacion }}">
                 <div>Valoración</div>
                 <div class="text-big star-val" data-score={{ oferta.puntuacion }}>
                 </div>
@@ -104,8 +104,11 @@
         </div>
     </div>
     <hr>
-    <h3>Comentarios y valoraciones</h3>
-    {% include "sub/offer-comments.html" %}
+
+    {% if "normal" in user.roles.all %}
+        <h3>Comentarios y valoraciones</h3>
+        {% include "sub/offer-comments.html" %}
+    {% endif %}
 {% endblock %}
 
 {% block javascript %}
@@ -152,8 +155,27 @@
         var commentButton = $('#comment_button');
         commentButton.prop('disabled', true);
         $('#valoration').on('rating.change', function() {
-            commentButton.text('Comentar');
-            commentButton.prop('disabled', false)
+            commentButton.removeClass('disabled')
+            commentButton.removeAttr('disabled');
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#edit-comment-btn').click(function () {
+                $('#user-textarea').removeClass('hidden');
+                $('#user-comment').addClass('hidden');
+                $('#update-comment-btn').removeClass('hidden');
+                $('#cancel-edit-btn').removeClass('hidden');
+                $(this).addClass('hidden');
+            });
+
+            $('#cancel-edit-btn').click(function () {
+                $('#user-textarea').addClass('hidden');
+                $('#user-comment').removeClass('hidden');
+                $('#update-comment-btn').addClass('hidden');
+                $('#edit-comment-btn').removeClass('hidden');
+                $(this).addClass('hidden');
+            });
         });
     </script>
 {% endblock %}

@@ -6,7 +6,7 @@
     </div>
     <div class="col-md-9">
         <div>
-            <a href="{{ main_url }}oferta/{{ offer.info.id }}" class="text-highlight text-big text-capitalize">{{ offer.info.titulo }}</a>
+            <a href="{% url "oferta" offer_id=offer.info.id %}" class="text-highlight text-big text-capitalize">{{ offer.info.titulo }}</a>
         </div>
         <div>
             <div class="badge">

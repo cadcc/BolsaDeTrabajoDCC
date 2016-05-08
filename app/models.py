@@ -147,6 +147,19 @@ class Oferta(models.Model):
     def get_absolute_url(self):
         return reverse('oferta-detail', kwargs={'pk': self.pk})
 
+    def formatted_salary(self):
+        price = str(self.sueldo_minimo)
+        clp = ""
+        x = "xxx"
+        c = 1
+        for i in range(len(price)-1, -1, -1):
+            clp = price[i]+clp;
+            if c % 3 == 0 and c != len(price):
+                x = clp
+                clp = '.'+clp
+            c = c+1
+        return '$' + clp;
+
 
 class Usuario(UsuarioBase):
     documento = models.FileField(upload_to='user_document', null=True)

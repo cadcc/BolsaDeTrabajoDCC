@@ -54,7 +54,7 @@
             <textarea name="comment" class="form-control" rows="3"></textarea>
             <div class="row">
                 <div class="col-xs-12 col-md-12 text-right">
-                    <button id="comment_button" class="m-btn-medium m-btn-darkcyan" type="submit">Valora primero!!!</button>
+                    <button id="comment_button" class="m-btn-medium m-btn-darkcyan disabled" type="submit" disabled>Valorar</button>
                 </div>
             </div>
         </form>
@@ -81,13 +81,20 @@
                 </div>
 
                 </div>
-                <div>
+                <div id="user-comment">
                     {{ comment.comentario }}
                 </div>
                 {% ifequal comment.usuario user.usuario %}
+                    <form action="{% url 'editar_comentario' %}" method="POST">
+                    {% csrf_token %}
+                    <input name="offer_id" type="hidden" value="{{ oferta.id }}">
+                    <textarea id="user-textarea" name="comment" class="form-control hidden">{{ comment.comentario }}</textarea>
                     <div class="text-primary text-uppercase text-right">
-                        <button type="button"><b>Editar</b></button>
+                        <button id="cancel-edit-btn" class="hidden" type="button"><b>Cancelar</b></button>
+                        <button id="update-comment-btn" class="hidden" type="submit"><b>Aceptar</b></button>
+                        <button id="edit-comment-btn" type="button"><b>Editar</b></button>
                     </div>
+                    </form>
                 {% else %}
                     <div class="text-danger text-uppercase text-right">
                         <button type="button"><b>Reportar</b></button>
@@ -96,6 +103,8 @@
             </div>
         </div>
     {% empty %}
-            Aún no hay comentarios en esta oferta.
+        <p>
+        Aún no hay comentarios en esta oferta.
+        </p>
     {% endfor %}
 </div>

@@ -2,8 +2,7 @@ import re
 from django import forms
 from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
-from app.models import Oferta, Rol, Encargado
-
+from app.models import Oferta, Rol, Jornada, Encargado
 from app.models import Usuario
 from app.models import Empresa
 
@@ -83,6 +82,8 @@ class MyTimeInput(forms.TimeInput):
 
 class OfferForm(ModelForm):
     nombre_empresa = forms.CharField(max_length=64, required=False)
+    tipo = forms.ChoiceField(choices=Oferta.OPCIONES_TIPO, widget=forms.RadioSelect())
+    jornada = forms.ModelChoiceField(queryset=Jornada.objects.all(), widget=forms.RadioSelect(), empty_label=None)
 
     class Meta:
         model = Oferta
@@ -95,6 +96,7 @@ class OfferForm(ModelForm):
             'requiere_experiencia',
             'habilidades_requeridas',
             'habilidades_deseadas',
+            'se_ofrece',
             'jornada',
             'comentario_jornada',
             'hora_ingreso',
@@ -106,6 +108,7 @@ class OfferForm(ModelForm):
             'fecha_termino',
             'duracion_minima',
             'comentario_duracion',
+            'direccion',
             'comuna',
             #'etiquetas',
             'nombre_encargado',
@@ -120,11 +123,10 @@ class OfferForm(ModelForm):
             'titulo': 'Tooltip Titulo'
         }
         widgets = {
-            'hora_ingreso': forms.TimeInput(format='%H:%M'),
+            'hora_ingreso': MyTimeInput(),
             'hora_salida': MyTimeInput(),
             'fecha_comienzo': forms.SelectDateWidget,
-            'fecha_termino': MyDateInput(),
-            'etiquetas': forms.CheckboxSelectMultiple,
+            'fecha_termino': forms.SelectDateWidget,
         }
 
     def __init__(self, *args, **kwargs):
