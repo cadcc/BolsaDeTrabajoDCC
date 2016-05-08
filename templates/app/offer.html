@@ -104,8 +104,7 @@
         </div>
     </div>
     <hr>
-
-    {% if "normal" in user.roles.all %}
+    {% if "normal" in roles %}
         <h3>Comentarios y valoraciones</h3>
         {% include "sub/offer-comments.html" %}
     {% endif %}

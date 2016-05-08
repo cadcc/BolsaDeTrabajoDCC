@@ -208,7 +208,7 @@ class ValoracionOferta(models.Model):
     fecha_modificacion = models.DateTimeField(null=True)
 
     def __str__(self):
-        return self.usuario + ' - ' + str(self.valor) + ' - ' +self.comentario
+        return str(self.usuario) + ' - ' + str(self.valor) + ' - ' +self.comentario
 
 
 class AdvertenciaValoracionOferta(models.Model):
@@ -232,7 +232,7 @@ class ValoracionEmpresa(models.Model):
     fecha_modificacion = models.DateTimeField(null=True)
 
     def __str__(self):
-        return self.usuario + ' - ' + str(self.valor) + ' - ' + self.comentario
+        return str(self.usuario) + ' - ' + str(self.valor) + ' - ' + self.comentario
 
 
 class AdvertenciaValoracionEmpresa(models.Model):

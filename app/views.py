@@ -126,6 +126,7 @@ def offer(request, offer_id):
     context = load_info_offer(offer_id)
     context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
     context['user_already_comment'] = len(ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
+    context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=request.user.id).roles.all()))
     return render(request, 'app/offer.html', context)
 
 @login_required
