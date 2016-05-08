@@ -4,6 +4,11 @@
 
 {% block javascript %}
     <script type="text/javascript">
+
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
         function toggle_visibility(id) {
            var empresa = document.getElementById("div_empresa");
            var nueva_empresa = document.getElementById("div_nueva_empresa");
@@ -44,10 +49,12 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
-                    <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {% if field.help_text %}
-                        <img src="tooltip.png" alt="{{ field.help_text|safe }}"/>
-                    {% endif %}
+                    <label class="" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.help_text %}
+                            <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
+                        {% endif %}
+                    </label>
                     <a href="#" onclick="toggle_visibility('new');">¿La empresa no aparece en el listado?</a>
                     <br>{{ field|addClass:'form-control' }}<br>
                 </div>
@@ -60,10 +67,12 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
-                    <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {% if field.help_text %}
-                        <img src="tooltip.png" alt="{{ field.help_text|safe }}"/>
-                    {% endif %}
+                    <label class="" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.help_text %}
+                            <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
+                        {% endif %}
+                    </label>
                     <a href="#" onclick="toggle_visibility('old');">Seleccionar una empresa existente</a>
                     <br>{{ field|addClass:'form-control' }}<br>
                 </div>
@@ -74,6 +83,8 @@
                     <br><h3>Jornada Laboral</h3><hr>
                 {% elif field == form.remunerado %}
                     <br><h3>Remuneración</h3><hr>
+                {% elif field == form.fecha_comienzo %}
+                    <br><h3>Duración y Plazos de Postulación</h3><hr>
                 {% elif field == form.direccion %}
                     <br><h3>Ubicación</h3><hr>
                 {% elif field == form.nombre_encargado %}
@@ -87,10 +98,13 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
-                    <label class="" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {% if field.help_text %}
-                        <img src="tooltip.png" alt="{{ field.help_text|safe }}"/>
-                    {% endif %}
+                    <label class="" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.help_text %}
+                            <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
+                        {% endif %}
+                    </label>
+
                     {% if field == form.notificar or field == form.fecha_comienzo or field == form.fecha_termino %}
                         {{ field }}
                     {% elif field == form.jornada or field == form.tipo %}
