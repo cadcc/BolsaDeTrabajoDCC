@@ -36,14 +36,22 @@ class OfertaCreate(CreateView):
     def get_context_data(self, **kwargs):
         context = super(OfertaCreate, self).get_context_data(**kwargs)
         user_request = self.request.user
-        user = Usuario.objects.get(pk=user_request) if user_request.is_authenticated() else None
-        #QUE PASA SI UN ENCARGADO CALZA CON ESTO?????, espero que el and
-        #adicional cubra eso
-        if user is not None and user.roles is not None:
-            context['roles'] = list(map(lambda r: str(r), user.roles.all()))
+        usuario = Usuario.objects.filter(pk=user_request).first() if user_request.is_authenticated() else None
+        encargado = Encargado.objects.filter(pk=user_request).first()
+        if usuario is not None and usuario.roles is not None:
+            context['roles'] = list(map(lambda r: str(r), usuario.roles.all()))
+            context['user'] = usuario
+        elif encargado is not None:
+            context['user'] = encargado
         return context
 
 #------------------------------------------------------------
+def getUser(user):
+    try:
+        usuario = user.usuario
+        return usuario
+    except Usuario.DoesNotExist:
+        return user.encargado
 
 @csrf_exempt
 def home(request):
@@ -357,7 +365,7 @@ def registrar_empresa(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@csrf_exempt
+@login_required
 def empresa(request, nombre_empresa):
     context = {
         'main_url': settings.MAIN_URL
@@ -367,6 +375,7 @@ def empresa(request, nombre_empresa):
     if empresa is None:
         return redirect(reverse(home))
     context['empresa'] = empresa
+    context['user'] = getUser(request.user);
     return render(request, 'app/company.html', context)
 
 @csrf_exempt
@@ -382,12 +391,12 @@ def login_empresa(request):
             #verificar si el usuario esta pendiente
             if baseUser.encargado.empresa.validada == False:
                 return redirect(reverse(wait_for_check_company))
-            baseUser.usuario.backend = 'django.contrib.auth.backends.ModelBackend'
+            #baseUser.usuario.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, baseUser)
         else:   #No hay registros de existencia del usuario
             context['error_login'] = 'Combinación de usuario y contraseña inválida'
             return render(request, 'app/registro_empresa.html', context)
-        return redirect(reverse(offer_list))
+        return redirect('/empresa/' + baseUser.encargado.empresa.url_encoded_name())
     return HttpResponseNotAllowed('POST')
 
 @csrf_exempt

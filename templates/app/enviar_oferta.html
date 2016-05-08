@@ -29,7 +29,7 @@
 
 {% block left_column_content %}
     {% if user.is_authenticated %}
-        {% if "normal" in roles %}
+        {% if not user.empresa %}
             {% include "sub/left-panel-user-profile.html" %}
         {% else %}
             {% include "sub/left-panel-company-menu.html" %}

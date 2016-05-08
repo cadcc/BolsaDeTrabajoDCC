@@ -1,8 +1,12 @@
 {% extends "sub/main_column.html" %}
 {% load staticfiles %}
-{% block title %} Empresa {% endblock %}
+{% block title %} Perfil de {{ empresa.nombre }} {% endblock %}
 {% block left_column_content %}
-    {% include "sub/left-panel-user-profile.html" %}
+    {% if not user.empresa %}
+            {% include "sub/left-panel-user-profile.html" %}
+        {% else %}
+            {% include "sub/left-panel-company-menu.html" %}
+    {% endif %}
 {% endblock %}
 
 {% block right_column_content %}
@@ -10,13 +14,13 @@
         <div class="col-xs-12 col-md-12 text-center">
             <h2>Perfil de Empresa</h2>
             <div class="col-md-4 col-xs-12 text-center">
-                <div class="text-big text-highlight">BehaviourCL</div>
+                <div class="text-big text-highlight">{{ empresa.nombre }}</div>
                 <div><img class="company-logo" src="{% static 'resources/company/logo-company.png' %}"></div>
             </div>
             <div class="col-md-8 col-xs-12">
                 <div class="badge badge-lightred">
                     <div>Publicaciones</div>
-                    <div class="text-big">3</div>
+                    <div class="text-big">{{ empresa.oferta_set.count }}</div>
                 </div>
                 <div class="badge badge-yellow" title="4.2">
                     <div>Valoración</div>
