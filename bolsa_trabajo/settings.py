@@ -145,5 +145,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 #tiempos de sesion en minutos
-SESSION_TIME_NORMAL = int(os.getenv('SESSION_TIME_NORMAL', default=15))*60
+SESSION_TIME_NORMAL = int(os.getenv('SESSION_TIME_NORMAL', default=60))*60
 SESSION_TIME_REMEMBER_ME = int(os.getenv('SESSION_TIME_REMEMBER_ME', default=720))*60
