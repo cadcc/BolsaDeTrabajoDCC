@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^suscripciones$', views.suscription, name='suscription'),
     url(r'^solicitar-acceso$', views.registro, name='registro'),
     url(r'^ingreso-a-empresas$', views.registro_empresa, name='login_empresas'),
-    url(r'^empresa/(?P<nombre_empresa>([a-zA-Z0-9]+\-)*[a-zA-Z0-9]+)$', views.empresa, name='registro'),
+    url(r'^empresa/(?P<nombre_empresa>([a-zA-Z0-9]+\-)*[a-zA-Z0-9]+)$', views.empresa, name='empresa'),
     #!Esta ruta deberia ser la misma que 'formulario' pero con método POST !
     url(r'^enviar_oferta$', OfertaCreate.as_view(), name='enviar_oferta'),
     url(r'^registrar-usuario$', view=views.registrar_usuario, name='registrar_usuario'),

@@ -228,7 +228,6 @@ def edit_comment_offer(request):
                 actual_offer.save()
                 return redirect(reverse(offer, args=[actual_offer.id]))
             context = load_info_offer(actual_offer.id)
-            context['main_url'] = settings.MAIN_URL
             context['form'] = form
             return render(request, 'app/offer.html', context)
         else:
@@ -241,12 +240,17 @@ def login_user(request):
         context = {}
         username = request.POST.get('username')
         password = request.POST.get('password')
+        remember_me = request.POST.get('remember_me', False)
         baseUser = authenticate(username=username, password=password)
         if baseUser is not None and baseUser.usuario is not None:    #verificar en nuestra base de datos
             #verificar si el usuario esta pendiente
             if 'pendiente' in map(lambda rol: str(rol), baseUser.usuario.roles.all()):
                 return redirect(reverse(wait_for_check_user))
             baseUser.usuario.backend = 'django.contrib.auth.backends.ModelBackend'
+            #setear tiempo de sesion
+            time_session = settings.SESSION_TIME_REMEMBER_ME if remember_me else settings.SESSION_TIME_NORMAL
+            request.session.set_expiry(time_session)
+            #loguear
             login(request, baseUser)
         elif False: #por aca hay que ver el tema con u-pasaporte
             print('Aún no tenemos U-Pasaporte')
