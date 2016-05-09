@@ -26,7 +26,7 @@
             <div class="frame">
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
-                        <div class="title text-center">Ingreso normal o por U-Pasaportes</div>
+                        <div class="title text-center">Ingreso al sistema</div>
                     </div>
                     {% if error_login %}
                          <label class="error">{{ error_login|escape }}</label>
@@ -51,7 +51,7 @@
                     </div>
                     <div>
                         <label class="checkbox-inline">
-                            <input name="remember_me" type="checkbox" value="on"/> Recuerdame por un mes
+                            <input name="remember_me" type="checkbox" value="on"/> Recuérdame
                         </label>
                         <div class="pull-right"><a href="{% url "registro" %}">No tengo U-Pasaporte ni cuenta</a></div>
                     </div>

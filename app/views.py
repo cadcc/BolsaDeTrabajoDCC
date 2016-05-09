@@ -36,13 +36,14 @@ class OfertaCreate(CreateView):
     def get_context_data(self, **kwargs):
         context = super(OfertaCreate, self).get_context_data(**kwargs)
         user_request = self.request.user
-        usuario = Usuario.objects.filter(pk=user_request).first() if user_request.is_authenticated() else None
-        encargado = Encargado.objects.filter(pk=user_request).first()
-        if usuario is not None and usuario.roles is not None:
-            context['roles'] = list(map(lambda r: str(r), usuario.roles.all()))
-            context['user'] = usuario
-        elif encargado is not None:
-            context['user'] = encargado
+        if user_request.is_authenticated():
+            usuario = Usuario.objects.filter(pk=user_request).first()
+            encargado = Encargado.objects.filter(pk=user_request).first()
+            if usuario is not None and usuario.roles is not None:
+                context['roles'] = list(map(lambda r: str(r), usuario.roles.all()))
+                context['user'] = usuario
+            elif encargado is not None:
+                context['user'] = encargado
         return context
 
 #------------------------------------------------------------
