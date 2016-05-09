@@ -12,7 +12,7 @@
         </div>
         {% for tipo_etiqueta in tipos_etiquetas %}
             <div class="form-group">
-                <label class="control-label">{{ tipo_etiqueta.tipo }}</label>
+                <label class="control-label text-capitalize">{{ tipo_etiqueta.tipo }}</label>
                 <div>
                     {% for etiqueta in tipo_etiqueta.etiquetas %}
                         <label class="checkbox-inline">
