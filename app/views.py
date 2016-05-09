@@ -56,16 +56,22 @@ def getUser(user):
 
 @csrf_exempt
 def home(request):
-    user = request.user
-    context = {'user': user}
-    if user.is_authenticated():
-        return redirect(reverse(offer_list))
+    user_request = request.user
+    context = {'user': user_request}
+    if user_request.is_authenticated():
+        user = getUser(user_request)
+        if isinstance(user, Usuario):
+            return redirect(reverse(offer_list))
+        elif isinstance(user, Encargado):
+            return redirect(reverse(empresa, args=[user.empresa.url_encoded_name()]))
     return render(request, 'app/home.html', context)
 
 @login_required
 def evaluate_practice(request):
     if request.method == 'POST':
-        user = request.user.usuario
+        user = getUser(request.user)
+        if not isinstance(user, Usuario):
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         if 'validador' not in map(lambda rol: str(rol), user.roles.all()):
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         offer_id = request.POST.get('offer_id')
@@ -100,7 +106,9 @@ def evaluate_practice(request):
 @login_required
 def evaluate_offer(request):
     if request.method == 'POST':
-        user = request.user.usuario
+        user = getUser(request.user)
+        if not isinstance(user, Usuario):
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         if 'publicador' not in map(lambda rol: str(rol), user.roles.all()):
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         offer_id = request.POST.get('offer_id')
@@ -132,15 +140,20 @@ def load_info_offer(offer_id):
 
 @login_required
 def offer(request, offer_id):
+    user = getUser(request.user)
     context = load_info_offer(offer_id)
-    context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
-    context['user_already_comment'] = len(ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
-    context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=request.user.id).roles.all()))
+    if isinstance(user, Usuario):
+        context['user_already_comment'] = len(
+            ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
+        context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
+        context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=request.user.id).roles.all()))
     return render(request, 'app/offer.html', context)
 
 @login_required
 def offer_list(request):
-    user = request.user.usuario
+    user = getUser(request.user)
+    if not isinstance(user, Usuario):
+        return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
     #obtener fecha para comparar
     date_now = timezone.now()
@@ -191,7 +204,10 @@ def new_score_offer(offer):
 @login_required
 def comment_offer(request):
     if request.method == 'POST':
-        user = request.user.usuario
+        user = getUser(request.user)
+        if not isinstance(user, Usuario):
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+
         offer_id = request.POST.get('offer_id')
         form = CommentOfferForm(request.POST)
         if form.is_valid():
@@ -225,7 +241,9 @@ def comment_offer(request):
 @login_required
 def edit_comment_offer(request):
     if request.method == 'POST':
-        user = request.user.usuario
+        user = getUser(request.user)
+        if not isinstance(user, Usuario):
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         comment_id = request.POST.get('comment_id')
         actual_valoration = ValoracionOferta.objects.get(pk=comment_id)
 
@@ -265,7 +283,7 @@ def login_user(request):
         password = request.POST.get('password')
         remember_me = request.POST.get('remember_me', False)
         baseUser = authenticate(username=username, password=password)
-        if baseUser is not None and baseUser.usuario is not None:    #verificar en nuestra base de datos
+        if baseUser is not None and isinstance(getUser(baseUser), Usuario):    #verificar en nuestra base de datos
             #verificar si el usuario esta pendiente
             if 'pendiente' in map(lambda rol: str(rol), baseUser.usuario.roles.all()):
                 return redirect(reverse(wait_for_check_user))
@@ -280,7 +298,7 @@ def login_user(request):
         else:   #No hay registros de existencia del usuario
             context['error_login'] = 'Nombre de usuario o contraseña no válido!'
             return render(request, 'app/home.html', context)
-        return redirect(reverse(offer_list))
+        return redirect(reverse(home))
     return HttpResponseNotAllowed('POST')
 
 @login_required
@@ -368,27 +386,23 @@ def registrar_empresa(request):
 
 @login_required
 def empresa(request, nombre_empresa):
-    context = {
-        'main_url': settings.MAIN_URL
-    }
+    context = {}
     nombre_empresa = nombre_empresa.replace('-', ' ')
     empresa = Empresa.objects.filter(nombre=nombre_empresa).first()
     if empresa is None:
         return redirect(reverse(home))
     context['empresa'] = empresa
-    context['user'] = getUser(request.user);
+    context['user'] = getUser(request.user)
     return render(request, 'app/company.html', context)
 
 @csrf_exempt
 def login_empresa(request):
     if request.method == 'POST':
-        context = {
-            'main_url': settings.MAIN_URL
-        }
+        context = {}
         email = request.POST.get('email')
         password = request.POST.get('password')
         baseUser = authenticate(username=email, password=password)
-        if baseUser is not None and baseUser.encargado is not None:    #verificar en nuestra base de datos
+        if baseUser is not None and isinstance(getUser(baseUser), Encargado):    #verificar en nuestra base de datos
             #verificar si el usuario esta pendiente
             if baseUser.encargado.empresa.validada == False:
                 return redirect(reverse(wait_for_check_company))
@@ -403,9 +417,7 @@ def login_empresa(request):
 @csrf_exempt
 def wait_for_check_company(request):
     if request.method == 'GET':
-        context = {
-            'main_url': settings.MAIN_URL
-        }
+        context = {}
         return render(request, 'app/empresa_pendiente.html', context)
     else:
         return HttpResponseNotAllowed('GET')
@@ -413,9 +425,7 @@ def wait_for_check_company(request):
 @csrf_exempt
 def edit_comment(request):
     if request.method == 'POST':
-        context = {
-            'main_url': settings.MAIN_URL
-        }
+        context = {}
         comment = request.POST.get('comment')
         offer_id = request.POST.get('offer_id')
         oferta = Oferta.objects.filter(pk=offer_id).first()
