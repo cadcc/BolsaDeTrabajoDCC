@@ -21,7 +21,7 @@ class CompanyForm(forms.Form):
 
     def clean_attendant_email(self):
         attendant_email = self.cleaned_data['attendant_email']
-        if Encargado.objects.filter(email=attendant_email):
+        if Usuario.objects.filter(email=attendant_email) or Encargado.objects.filter(email=attendant_email):
             raise forms.ValidationError('El correo electrónico ingresado ya se '
                                         'encuentra registrado en el sistema.')
         return attendant_email
@@ -51,7 +51,7 @@ class UserForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if Usuario.objects.filter(email=email):
+        if Usuario.objects.filter(email=email) or Encargado.objects.filter(email=email):
             raise forms.ValidationError('El correo electrónico ingresado ya se '
                                         'encuentra registrado en el sistema.')
         return email
