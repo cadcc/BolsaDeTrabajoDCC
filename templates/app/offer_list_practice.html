@@ -2,7 +2,12 @@
 <div class="row">
     <div class="col-md-3 text-center">
         <div class="text-capitalize text-big row">{{ offer.info.empresa }}</div>
-        <img class="company-logo" src="{% static "resources/company/logo-company.png" %}">
+        <img class="company-logo"
+             src="{% if empresa.logo %}
+                {{ empresa.logo }}
+             {% else %}
+                {% static "resources/company/default-logo-company.png" %}
+             {% endif %}">
     </div>
     <div class="col-md-9">
         <div>

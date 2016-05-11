@@ -15,7 +15,14 @@
             <h2>Perfil de Empresa</h2>
             <div class="col-md-4 col-xs-12 text-center">
                 <div class="text-big text-highlight">{{ empresa.nombre }}</div>
-                <div><img class="company-logo" src="{% static 'resources/company/logo-company.png' %}"></div>
+                <div>
+                    <img class="company-logo"
+                         src="{% if empresa.logo %}
+                            {{ empresa.logo }}
+                         {% else %}
+                            {% static "resources/company/default-logo-company.png" %}
+                         {% endif %}">
+                </div>
             </div>
             <div class="col-md-8 col-xs-12">
                 <div class="badge badge-lightred">
