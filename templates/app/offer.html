@@ -20,7 +20,7 @@
             <div class="text-highlight text-big">{{ oferta.jornada }}</div>
         </div>
         <div class="col-md-4 col-xs-12">
-            <div>Oferta</div>
+            <div>Tipo de oferta</div>
             <div class="text-highlight text-big">{{ oferta.tipo }}</div>
         </div>
     </div>
@@ -28,11 +28,11 @@
     <div>
         <div>
             <div class="badge">
-                <div>Sueldo mínimo</div>
+                <div>Sueldo base</div>
                 <div class="text-big">{{ oferta.formatted_salary }}</div>
             </div>
             <div class="badge">
-                <div>Ubicación</div>
+                <div>Comuna</div>
                 <div class="text-big">{{ oferta.comuna }}</div>
             </div>
             {% ifequal 'Práctica' oferta.tipo %}
