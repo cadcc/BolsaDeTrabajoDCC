@@ -345,7 +345,6 @@ def registrar_usuario(request):
             return redirect(reverse(wait_for_check_user))
         else:
             context['form'] = form
-            print('algo fallo :c')
             return render(request, 'app/registro.html', context)
     else:
         return HttpResponseNotAllowed('GET')
@@ -377,7 +376,7 @@ def registrar_empresa(request):
             empresa = Empresa.objects.create(nombre=company_name)
             encargado = Encargado.objects.create_user(first_name=attendant_name, email=email, password=password,
                                                  empresa=empresa, username=email, administrador=True)
-            return redirect(reverse(home))
+            return redirect(reverse(wait_for_check_company))
         else:
             context['form'] = form
             return render(request, 'app/registro_empresa.html', context)
