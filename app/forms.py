@@ -63,6 +63,16 @@ class UserForm(forms.Form):
             raise forms.ValidationError('Las contraseñas no coinciden.')
         return repassword
 
+    def clean_document(self):
+        document = self.cleaned_data['document']
+        types = document.content_type.split('/')
+        max_size = 2**20 * 5 #tamaño maximo de 5 MB
+        if 'pdf' not in types:
+            raise forms.ValidationError('Solo se permiten documentos PDF')
+        if document.size > max_size:
+            raise forms.ValidationError('El archivo subido supera los 5MB')
+        return document
+
 class CommentOfferForm(forms.Form):
     valoration = forms.IntegerField()
     is_important = forms.BooleanField(required=False)
