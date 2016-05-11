@@ -377,7 +377,7 @@ def registrar_empresa(request):
             empresa = Empresa.objects.create(nombre=company_name)
             encargado = Encargado.objects.create_user(first_name=attendant_name, email=email, password=password,
                                                  empresa=empresa, username=email, administrador=True)
-            return redirect('/empresa/' + empresa.url_encoded_name())
+            return redirect(reverse(home))
         else:
             context['form'] = form
             return render(request, 'app/registro_empresa.html', context)
