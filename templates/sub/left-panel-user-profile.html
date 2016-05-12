@@ -1,11 +1,11 @@
 <div class="frame text-center">
-    <div class="text-center text-capitalize text-big">Bienvenido <span class="text-highlight text-capitalize">{{ user }}</span></div>
+    <div class="text-center text-capitalize text-big"><span class="text-highlight text-capitalize">{{ user }}</span></div>
     <div>
         <a href="{% url 'formulario' %}"><button type="button" class="m-btn-medium m-btn-darkcyan">Publicar</button></a>
         <a href="{% url 'suscription' %}"><button type="button" class="m-btn-medium m-btn-darkgreen">Suscripciones</button></a>
         <a href="{% url 'suscription' %}"><button type="button" class="m-btn-medium m-btn-darkred">Marcadores</button></a>
     </div>
     <div class="text-right">
-        <span><a href="{% url "logout" %}" id="logout">Cerrar Sessión</a></span>
+        <span><a href="{% url "logout" %}" id="logout">Cerrar Sesión</a></span>
     </div>
 </div>
