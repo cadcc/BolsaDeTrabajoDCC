@@ -31,6 +31,8 @@ class OfertaCreate(CreateView):
         if (form.cleaned_data['nombre_empresa'] != ''):
             nueva_empresa, creada = Empresa.objects.get_or_create(nombre=form.cleaned_data['nombre_empresa'])
             form.instance.empresa = nueva_empresa
+        if (form.cleaned_data['remunerado'] == 'Por Determinar' or form.cleaned_data['remunerado'] == 'Sin Remunaración'):
+            form.instance.sueldo_minimo = 0
         return super(OfertaCreate, self).form_valid(form)
 
     def get_context_data(self, **kwargs):

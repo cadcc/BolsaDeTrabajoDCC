@@ -9,15 +9,33 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
 
+        $('.link-empresa').on('click', function(event){
+            event.preventDefault();
+        })
+
+        $('.select-rem').on('change', function(event){
+            event.preventDefault();
+            var value = $(this).val();
+            var elem = document.getElementById("div_sueldo");
+            if (value === 'Por Determinar' || value === 'Sin Remuneración'){
+                elem.style.display = "none";
+            }
+            else {
+                elem.style.display = "block";
+            }
+        })
+
+
+
         function toggle_visibility(id) {
            var empresa = document.getElementById("div_empresa");
            var nueva_empresa = document.getElementById("div_nueva_empresa");
 
-           if (id == "new"){
+           if (id === "new"){
                empresa.style.display = "none";
                nueva_empresa.style.display = "block";
            }
-           else if (id == "old") {
+           else if (id === "old") {
                empresa.style.display = "block";
                nueva_empresa.style.display = "none";
            }
@@ -62,7 +80,7 @@
                             <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
                         {% endif %}
                     </label>
-                    <a href="#" onclick="toggle_visibility('new');">¿La empresa no aparece en el listado?</a>
+                    <a href="#" class="link-empresa" onclick="toggle_visibility('new');">¿La empresa no aparece en el listado?</a>
                     <br>{{ field|addClass:'form-control' }}<br>
                 </div>
             {% elif field == form.nombre_empresa %}
@@ -80,7 +98,7 @@
                             <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
                         {% endif %}
                     </label>
-                    <a href="#" onclick="toggle_visibility('old');">Seleccionar una empresa existente</a>
+                    <a href="#" class="link-empresa" onclick="toggle_visibility('old');">Seleccionar una empresa existente</a>
                     <br>{{ field|addClass:'form-control' }}<br>
                 </div>
             {% else %}
@@ -97,7 +115,11 @@
                 {% elif field == form.nombre_encargado %}
                     <br><h3>Contacto</h3><hr>
                 {% endif %}
-                <div class="form-group">
+                {% if field == form.sueldo_minimo %}
+                    <div id="div_sueldo" class="form-group">
+                {% else %}
+                    <div class="form-group">
+                {% endif %}
                     {% if field.errors %}
                         <ul>
                             {% for error in field.errors %}
@@ -105,21 +127,33 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
-                    <label class="" for="{{ field.id_for_label }}">
-                        {{ field.label }}
-                        {% if field.help_text %}
-                            <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
-                        {% endif %}
-                    </label>
+                    {% if field != form.notificar %}
+                        <label class="" for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                            {% if field.help_text %}
+                                <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
+                            {% endif %}
+                        </label>
 
-                    {% if field == form.notificar or field == form.fecha_comienzo or field == form.fecha_termino %}
-                        {{ field }}
-                    {% elif field == form.jornada or field == form.tipo %}
-                        {% for option in field %}
-                            {{ option }}
-                        {% endfor %}
+                        {% if field == form.fecha_comienzo or field == form.fecha_termino %}
+                            {{ field }}
+                        {% elif field == form.jornada or field == form.tipo %}
+                            {% for option in field %}
+                                {{ option }}
+                            {% endfor %}
+                        {% elif field == form.remunerado %}
+                            <br>{{ field|addClass:'form-control select-rem' }}
+                        {% else %}
+                            <br>{{ field|addClass:'form-control' }}
+                        {% endif %}
                     {% else %}
-                        <br>{{ field|addClass:'form-control' }}
+                        {{ field }}
+                        <label class="" for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                            {% if field.help_text %}
+                                <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
+                            {% endif %}
+                        </label>
                     {% endif %}
                 </div>
             {% endif %}

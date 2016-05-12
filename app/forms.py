@@ -2,7 +2,7 @@ import re
 from django import forms
 from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
-from app.models import Oferta, Rol, Jornada, Encargado
+from app.models import Oferta, Rol, Jornada, Encargado, Comuna
 from app.models import Usuario
 from app.models import Empresa
 
@@ -93,7 +93,10 @@ class MyTimeInput(forms.TimeInput):
 class OfferForm(ModelForm):
     nombre_empresa = forms.CharField(max_length=64, required=False)
     tipo = forms.ChoiceField(choices=Oferta.OPCIONES_TIPO, widget=forms.RadioSelect())
+    sueldo_minimo = forms.IntegerField(min_value=0, required=False, label="Sueldo Base")
+    duracion_minima = forms.IntegerField(min_value=0)
     jornada = forms.ModelChoiceField(queryset=Jornada.objects.all(), widget=forms.RadioSelect(), empty_label=None)
+    comuna = forms.ModelChoiceField(queryset=Comuna.objects.all().order_by('nombre'))
 
     class Meta:
         model = Oferta
@@ -128,15 +131,44 @@ class OfferForm(ModelForm):
         )
         labels = {
             'titulo': 'Título de la Oferta',
+            'tipo': 'Tipo de Oferta',
+            'jornada': 'Tipo de Jornada',
+            'descripción': 'Descripción',
+            'requiere_experiencia': 'Experiencia Requerida',
+            'comentario_jornada': 'Comentarios sobre la Jornada',
+            'hora_ingreso': 'Horario Ingreso',
+            'hora_salida': 'Horario Salida',
+            'remunerado': 'Remuneración',
+            'sueldo_minimo': 'Sueldo Base',
+            'comentario_sueldo': 'Comentarios sobre la Remuneración',
+            'fecha_comienzo': 'Inicio Postulaciones',
+            'fecha_termino': 'Fin Postulaciones',
+            'duracion_minima': 'Duración mínima (meses)',
+            'comentario_duracion': 'Comentarios sobre la Duración',
+            'direccion': 'Dirección',
+            'comuna': 'Comuna',
+            'nombre_encargado': 'Nombre del Contacto',
+            'email_encargado': 'Email de Contacto',
+            'telefono_encargado': 'Teléfono de Contacto',
+            'notificar': 'Deseo recibir feedback de la oferta',
         }
         help_texts = {
             'titulo': 'Tooltip Titulo'
         }
         widgets = {
+            #forms.Textarea(attrs={'rows':4, 'cols':15}),
             'hora_ingreso': MyTimeInput(),
             'hora_salida': MyTimeInput(),
             'fecha_comienzo': forms.SelectDateWidget,
             'fecha_termino': forms.SelectDateWidget,
+            'descripcion': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
+            'requiere_experiencia': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
+            'habilidades_deseadas': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
+            'habilidades_requeridas': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
+            'se_ofrece': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
+            'comentario_jornada': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
+            'comentario_sueldo': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
+            'comentario_duracion': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -147,5 +179,31 @@ class OfferForm(ModelForm):
         data = super(OfferForm, self).clean()
         empresa = data.get("empresa")
         nueva_empresa = data.get("nombre_empresa")
-        if empresa == None and nueva_empresa == '':
+        if (empresa == None and nueva_empresa == ''):
             raise forms.ValidationError('Debe elegir una Empresa del listado o agregar una Nueva Empresa')
+
+    def clean_fecha_termino(self):
+        ini = self.cleaned_data['fecha_comienzo']
+        fin = self.cleaned_data['fecha_termino']
+        if (fin < ini):
+            raise forms.ValidationError('La fecha de término es menor a la fecha de inicio')
+
+    def clean_duracion_minima(self):
+        duracion = self.cleaned_data['duracion_minima']
+        if duracion < 0:
+            raise forms.ValidationError('La duración no puede ser menor que 0')
+        return duracion
+
+    def clean_sueldo_minimo(self):
+        sueldo = self.cleaned_data['sueldo_minimo']
+        remuneracion = self.cleaned_data['remunerado']
+
+        if (remuneracion == 'Mensual'):
+            if sueldo:
+                if sueldo < 0:
+                    raise forms.ValidationError('El sueldo base mínimo es 0')
+                return sueldo
+            else:
+                raise forms.ValidationError('Este campo es obligatorio')
+        else:
+            return 0

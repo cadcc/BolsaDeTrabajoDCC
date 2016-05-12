@@ -93,7 +93,6 @@ class Oferta(models.Model):
         ('Mensual', 'Mensual'),
         ('Por Determinar', 'Por Determinar'),
         ('Sin Remuneración', 'Sin Remuneración'),
-        ('Otro', 'Otro'),
     )
 
     # Datos Oferta
