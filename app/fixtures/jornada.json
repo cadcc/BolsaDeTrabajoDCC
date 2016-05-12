@@ -1,0 +1,14 @@
+[
+  {
+    "model": "app.jornada",
+    "fields": {
+      "nombre": "parttime"
+    }
+  },
+  {
+    "model": "app.jornada",
+    "fields": {
+      "nombre": "fulltime"
+    }
+  }
+]

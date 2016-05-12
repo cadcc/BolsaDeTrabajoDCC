@@ -69,6 +69,10 @@ python3 manage.py makemigrations app
 --migrar a la base de datos
 python3 manage.py migrate
 
+--Solo si no tienes datos en la base de datos ejecuta el siguiente comando para llenar los
+  datos base para hacer andar el sistema (no ejecutar mas de una vez o habra duplicacion!!!)
+./load_data.sh
+
 --correr servidor
 python3 manage.py runserver puerto
 

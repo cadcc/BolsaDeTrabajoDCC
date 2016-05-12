@@ -1,0 +1,20 @@
+[
+  {
+    "model": "app.tipoetiqueta",
+    "fields": {
+      "nombre": "lenguaje"
+    }
+  },
+  {
+    "model": "app.tipoetiqueta",
+    "fields": {
+      "nombre": "jornada"
+    }
+  },
+  {
+    "model": "app.tipoetiqueta",
+    "fields": {
+      "nombre": "tipo de oferta"
+    }
+  }
+]
