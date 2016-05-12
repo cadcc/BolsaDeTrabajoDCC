@@ -96,16 +96,16 @@
                     <div id="user-comment">
                     {{ comment.comentario }}
                     </div>
-                    <form action="{% url 'editar_comentario' %}" method="POST">
-                    {% csrf_token %}
-                    <input name="valoration" id="user-valoration-input" type="hidden" value="{{ comment.valor }}">
-                    <input name="offer_id" type="hidden" value="{{ oferta.id }}">
-                    <textarea id="user-textarea" name="comment" class="form-control hidden">{{ comment.comentario }}</textarea>
-                    <div class="text-primary text-uppercase text-right">
-                        <button id="cancel-edit-btn" class="hidden" type="button"><b>Cancelar</b></button>
-                        <button id="update-comment-btn" class="hidden" type="submit"><b>Aceptar</b></button>
-                        <button id="edit-comment-btn" type="button"><b>Editar</b></button>
-                    </div>
+                    <form action="{% url 'editar_comentario_oferta' %}" method="POST">
+                        {% csrf_token %}
+                        <input name="valoration" id="user-valoration-input" type="hidden" value="{{ comment.valor }}">
+                        <input name="comment_id" type="hidden" value="{{ comment.id }}">
+                        <textarea id="user-textarea" name="comment" class="form-control hidden">{{ comment.comentario }}</textarea>
+                        <div class="text-primary text-uppercase text-right">
+                            <button id="cancel-edit-btn" class="hidden" type="button"><b>Cancelar</b></button>
+                            <button id="update-comment-btn" class="hidden" type="submit"><b>Aceptar</b></button>
+                            <button id="edit-comment-btn" type="button"><b>Editar</b></button>
+                        </div>
                     </form>
                 {% else %}
                     <div>
@@ -122,4 +122,5 @@
         Aún no hay comentarios en esta oferta.
         </p>
     {% endfor %}
+    </div>
 </div>
