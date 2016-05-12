@@ -2,13 +2,13 @@
   {
     "model": "app.jornada",
     "fields": {
-      "nombre": "parttime"
+      "nombre": "Part-Time"
     }
   },
   {
     "model": "app.jornada",
     "fields": {
-      "nombre": "fulltime"
+      "nombre": "Full-Time"
     }
   }
 ]
