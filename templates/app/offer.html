@@ -164,10 +164,16 @@
             commentButton.removeClass('disabled')
             commentButton.removeAttr('disabled');
         });
+        $('#user-valoration').find('input').on('rating.change', function(){
+            $('#user-valoration-input').val($(this).val());
+        });
     </script>
     <script>
         $(document).ready(function () {
             $('#edit-comment-btn').click(function () {
+                var val = $('#user-valoration');
+                val.parent().find('.badge').addClass('hidden');
+                val.removeClass('hidden');
                 $('#user-textarea').removeClass('hidden');
                 $('#user-comment').addClass('hidden');
                 $('#update-comment-btn').removeClass('hidden');
@@ -176,6 +182,9 @@
             });
 
             $('#cancel-edit-btn').click(function () {
+                var val = $('#user-valoration');
+                val.parent().find('.badge').removeClass('hidden');
+                val.addClass('hidden');
                 $('#user-textarea').addClass('hidden');
                 $('#user-comment').removeClass('hidden');
                 $('#update-comment-btn').addClass('hidden');

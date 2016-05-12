@@ -73,20 +73,32 @@
                             {{ comment.fecha_creacion }}
                         </div>
                     </div>
+                    {% ifequal comment.usuario user.usuario %}
+                    <div class="pull-right">
+                        <div id="user-valoration" class="hidden">
+                            <input required type="number" class="rating" name="valoration" value="{{ comment.valor }}" min="0" max="5" data-show-clear="false" data-show-caption="false" data-step="1" data-size="xs" >
+                        </div>
+                        <div class="badge badge-yellow">
+                            <div class="text-big star-val" data-score={{ comment.valor }}>
+                        </div>
+                    </div>
+                    {% else %}
                     <div class="text-big pull-right">
                         <div class="badge badge-yellow">
                             <div class="text-big star-val" data-score={{ comment.valor }}>
                         </div>
                     </div>
+                    {%  endifequal %}
                 </div>
 
                 </div>
-                <div id="user-comment">
-                    {{ comment.comentario }}
-                </div>
                 {% ifequal comment.usuario user.usuario %}
+                    <div id="user-comment">
+                    {{ comment.comentario }}
+                    </div>
                     <form action="{% url 'editar_comentario' %}" method="POST">
                     {% csrf_token %}
+                    <input name="valoration" id="user-valoration-input" type="hidden" value="{{ comment.valor }}">
                     <input name="offer_id" type="hidden" value="{{ oferta.id }}">
                     <textarea id="user-textarea" name="comment" class="form-control hidden">{{ comment.comentario }}</textarea>
                     <div class="text-primary text-uppercase text-right">
@@ -96,6 +108,9 @@
                     </div>
                     </form>
                 {% else %}
+                    <div>
+                    {{ comment.comentario }}
+                    </div>
                     <div class="text-danger text-uppercase text-right">
                         <button type="button"><b>Reportar</b></button>
                     </div>
