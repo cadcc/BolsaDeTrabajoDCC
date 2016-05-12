@@ -40,6 +40,9 @@
                nueva_empresa.style.display = "none";
            }
         }
+        $('#ingreso_empresa').on('click', function (event) {
+            window.location = "{% url "registro_empresas" %}"
+        })
     </script>
 {% endblock %}
 
