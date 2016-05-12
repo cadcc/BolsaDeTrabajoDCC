@@ -72,11 +72,12 @@
                         <div class="badge badge-orange">
                             {{ comment.fecha_creacion }}
                         </div>
+                        <div class="text-highlight">{{ comment.prioritario|yesno:"Ha trabajado aquí,No ha trabajado aquí,No ha trabajado aquí" }}</div>
                     </div>
                     {% ifequal comment.usuario user.usuario %}
                     <div class="pull-right">
                         <div id="user-valoration" class="hidden">
-                            <input required type="number" class="rating" name="valoration" value="{{ comment.valor }}" min="0" max="5" data-show-clear="false" data-show-caption="false" data-step="1" data-size="xs" >
+                            <input required type="number" class="rating" name="valoration" value="{{ comment.value }}" min="0" max="5" data-show-clear="false" data-show-caption="false" data-step="1" data-size="xs" >
                         </div>
                         <div class="badge badge-yellow">
                             <div class="text-big star-val" data-score={{ comment.valor }}>
@@ -98,8 +99,16 @@
                     </div>
                     <form action="{% url 'editar_comentario_oferta' %}" method="POST">
                         {% csrf_token %}
-                        <input name="valoration" id="user-valoration-input" type="hidden" value="{{ comment.valor }}">
-                        <input name="comment_id" type="hidden" value="{{ comment.id }}">
+                        <input name="valoration" id="user-valoration-input" type="hidden" value="{{ comment.value }}">
+                        <input name="comment_id" type="hidden"  value="{{ comment.id }}">
+                        <div class="checkbox hidden" id="user-importance">
+                                  <label class="sr-only" for="user_is_important">
+                                      Importancia
+                                  </label>
+                                  <input name="is_important" id="user_is_important" type="checkbox" {{ comment.prioritario|yesno:"checked,," }}>
+                                  He trabajado aquí
+                              </label>
+                        </div>
                         <textarea id="user-textarea" name="comment" class="form-control hidden">{{ comment.comentario }}</textarea>
                         <div class="text-primary text-uppercase text-right">
                             <button id="cancel-edit-btn" class="hidden" type="button"><b>Cancelar</b></button>

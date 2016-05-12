@@ -272,7 +272,7 @@ def edit_comment_offer(request):
                 return redirect(reverse(offer, args=[actual_offer.id]))
             context = load_info_offer(actual_offer.id)
             context['form'] = form
-            return render(request, 'app/offer.html', context)
+            return render(request, 'app/home.html', context)
         else:
             return HttpResponseBadRequest('No tienes permisos para editar este comentario')
     else:

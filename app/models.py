@@ -209,6 +209,9 @@ class ValoracionOferta(models.Model):
     def __str__(self):
         return str(self.usuario) + ' - ' + str(self.valor) + ' - ' +self.comentario
 
+    def value(self):
+        return int(self.valor/20)
+
 
 class AdvertenciaValoracionOferta(models.Model):
     valoracion = models.ForeignKey(ValoracionOferta)
