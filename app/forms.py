@@ -134,7 +134,7 @@ class OfferForm(ModelForm):
             'tipo': 'Tipo de Oferta',
             'jornada': 'Tipo de Jornada',
             'descripción': 'Descripción',
-            'requiere_experiencia': 'Experiencia Requerida',
+            'requiere_experiencia': 'Experiencia Requerida (Opcional)',
             'comentario_jornada': 'Comentarios sobre la Jornada (Opcional)',
             'hora_ingreso': 'Horario Ingreso',
             'hora_salida': 'Horario Salida',
@@ -175,6 +175,9 @@ class OfferForm(ModelForm):
         super(OfferForm, self).__init__(*args, **kwargs)
         self.fields['empresa'].required = False
         self.fields['requiere_experiencia'].required = False
+        self.fields['comentario_jornada'].required = False
+        self.fields['comentario_sueldo'].required = False
+        self.fields['comentario_duracion'].required = False
 
     def clean(self):
         data = super(OfferForm, self).clean()

@@ -11,9 +11,20 @@
 
         $('.link-empresa').on('click', function(event){
             event.preventDefault();
-        })
+        });
 
-        $('.select-rem').on('change', function(event){
+        //logica select en la parte de sueldo
+        var sueldo = $('.select-rem');
+        var value = $(sueldo).val();
+            var elem = document.getElementById("div_sueldo");
+            if (value === 'Por Determinar' || value === 'Sin Remuneración'){
+                elem.style.display = "none";
+            }
+            else {
+                elem.style.display = "block";
+            }
+
+        sueldo.on('change', function(event){
             event.preventDefault();
             var value = $(this).val();
             var elem = document.getElementById("div_sueldo");
@@ -23,7 +34,7 @@
             else {
                 elem.style.display = "block";
             }
-        })
+        });
 
 
 

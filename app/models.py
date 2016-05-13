@@ -108,7 +108,7 @@ class Oferta(models.Model):
     fecha_comienzo = models.DateField()
     fecha_termino = models.DateField()
     duracion_minima = models.IntegerField()
-    comentario_duracion = models.TextField()
+    comentario_duracion = models.TextField(null=True)
     direccion = models.CharField(max_length=64)
     comuna = models.ForeignKey(Comuna)
 
@@ -119,7 +119,7 @@ class Oferta(models.Model):
 
     # Jornada
     jornada = models.ForeignKey(Jornada)
-    comentario_jornada = models.TextField()
+    comentario_jornada = models.TextField(null=True)
     hora_ingreso = models.TimeField()
     hora_salida = models.TimeField()
 
@@ -127,7 +127,7 @@ class Oferta(models.Model):
     remunerado = models.CharField(max_length=19,
                                   choices=OPCIONES_REMUNERACION)
     sueldo_minimo = models.IntegerField()
-    comentario_sueldo = models.TextField()
+    comentario_sueldo = models.TextField(null=True)
 
     # Estado de la Oferta
     fecha_ingreso = models.DateTimeField(auto_now_add=True)
@@ -200,7 +200,7 @@ class ValoracionOferta(models.Model):
     usuario = models.ForeignKey(Usuario)
     oferta = models.ForeignKey(Oferta)
     valor = models.IntegerField()
-    comentario = models.TextField()
+    comentario = models.TextField(null=True)
     prioritario = models.BooleanField()
     reportes = models.IntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -227,7 +227,7 @@ class ValoracionEmpresa(models.Model):
     usuario = models.ForeignKey(Usuario)
     empresa = models.ForeignKey(Empresa)
     valor = models.IntegerField()
-    comentario = models.TextField()
+    comentario = models.TextField(null=True)
     prioritario = models.BooleanField()
     reportes = models.IntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
