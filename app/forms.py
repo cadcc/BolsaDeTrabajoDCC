@@ -91,11 +91,11 @@ class MyTimeInput(forms.TimeInput):
     input_type = 'time'
 
 class OfferForm(ModelForm):
-    nombre_empresa = forms.CharField(max_length=64, required=False)
-    tipo = forms.ChoiceField(choices=Oferta.OPCIONES_TIPO, widget=forms.RadioSelect())
+    nombre_empresa = forms.CharField(max_length=64, required=False, label="Nombre Empresa")
+    tipo = forms.ChoiceField(choices=Oferta.OPCIONES_TIPO, widget=forms.RadioSelect(), label="Tipo de Oferta")
     sueldo_minimo = forms.IntegerField(min_value=0, required=False, label="Sueldo Base")
-    duracion_minima = forms.IntegerField(min_value=0)
-    jornada = forms.ModelChoiceField(queryset=Jornada.objects.all(), widget=forms.RadioSelect(), empty_label=None)
+    duracion_minima = forms.IntegerField(min_value=0, label="Duración Mínima (meses)")
+    jornada = forms.ModelChoiceField(queryset=Jornada.objects.all(), widget=forms.RadioSelect(), empty_label=None, label="Tipo de Jornada")
     comuna = forms.ModelChoiceField(queryset=Comuna.objects.all().order_by('nombre'))
 
     class Meta:
@@ -135,16 +135,16 @@ class OfferForm(ModelForm):
             'jornada': 'Tipo de Jornada',
             'descripción': 'Descripción',
             'requiere_experiencia': 'Experiencia Requerida',
-            'comentario_jornada': 'Comentarios sobre la Jornada',
+            'comentario_jornada': 'Comentarios sobre la Jornada (Opcional)',
             'hora_ingreso': 'Horario Ingreso',
             'hora_salida': 'Horario Salida',
             'remunerado': 'Remuneración',
             'sueldo_minimo': 'Sueldo Base',
-            'comentario_sueldo': 'Comentarios sobre la Remuneración',
+            'comentario_sueldo': 'Comentarios sobre la Remuneración (Opcional)',
             'fecha_comienzo': 'Inicio Postulaciones',
             'fecha_termino': 'Fin Postulaciones',
             'duracion_minima': 'Duración mínima (meses)',
-            'comentario_duracion': 'Comentarios sobre la Duración',
+            'comentario_duracion': 'Comentarios sobre la Duración (Opcional)',
             'direccion': 'Dirección',
             'comuna': 'Comuna',
             'nombre_encargado': 'Nombre del Contacto',
@@ -174,6 +174,7 @@ class OfferForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(OfferForm, self).__init__(*args, **kwargs)
         self.fields['empresa'].required = False
+        self.fields['requiere_experiencia'].required = False
 
     def clean(self):
         data = super(OfferForm, self).clean()
@@ -182,11 +183,19 @@ class OfferForm(ModelForm):
         if (empresa == None and nueva_empresa == ''):
             raise forms.ValidationError('Debe elegir una Empresa del listado o agregar una Nueva Empresa')
 
-    def clean_fecha_termino(self):
-        ini = self.cleaned_data['fecha_comienzo']
-        fin = self.cleaned_data['fecha_termino']
-        if (fin < ini):
-            raise forms.ValidationError('La fecha de término es menor a la fecha de inicio')
+        sueldo = data.get("sueldo_minimo")
+        remuneracion = data.get("remunerado")
+        if (remuneracion == 'Mensual'):
+            if sueldo and sueldo < 0:
+                raise forms.ValidationError('El sueldo base mínimo es 0')
+            elif not sueldo:
+                raise forms.ValidationError('Debe especificar un Sueldo Base al elegir una remuneración Mensual')
+
+        ini = data.get("fecha_comienzo")
+        fin = data.get("fecha_termino")
+        if ini and fin:
+            if (fin < ini):
+                raise forms.ValidationError('La fecha de término es menor a la fecha de inicio')
 
     def clean_duracion_minima(self):
         duracion = self.cleaned_data['duracion_minima']
@@ -194,16 +203,8 @@ class OfferForm(ModelForm):
             raise forms.ValidationError('La duración no puede ser menor que 0')
         return duracion
 
-    def clean_sueldo_minimo(self):
-        sueldo = self.cleaned_data['sueldo_minimo']
-        remuneracion = self.cleaned_data['remunerado']
-
-        if (remuneracion == 'Mensual'):
-            if sueldo:
-                if sueldo < 0:
-                    raise forms.ValidationError('El sueldo base mínimo es 0')
-                return sueldo
-            else:
-                raise forms.ValidationError('Este campo es obligatorio')
-        else:
-            return 0
+    def clean_telefono_encargado(self):
+        telefono = self.cleaned_data['telefono_encargado']
+        if not re.match(r'^(\+56 ?)?((9|2) [0-9]{4} [0-9]{4}|(9|2) [0-9]{8}|[0-9]{2} [0-9]{3} [0-9]{4}|[0-9]{9})$', telefono):
+            raise forms.ValidationError("El teléfono debe tener 9 dígitos ('+56' opcional)")
+        return telefono

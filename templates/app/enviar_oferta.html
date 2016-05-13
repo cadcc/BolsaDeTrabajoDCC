@@ -65,6 +65,11 @@
     <h2 class="text-center">
         Publicar una oferta
     </h2><br>
+    <ul>
+        {% for error in form.non_field_errors %}
+            {{ error|escape }}
+        {% endfor %}
+    </ul>
     <form action="" method ="post">
         {% csrf_token %}
         {% for field in form %}
@@ -77,14 +82,25 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
-                    <label class="" for="{{ field.id_for_label }}">
-                        {{ field.label }}
-                        {% if field.help_text %}
-                            <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
+                    {% if user.empresa %}
+                        <label class="" for="{{ field.id_for_label }}">Empresa </label> {{ user.empresa }}
+                    {% else %}
+                        {% if field.errors %}
+                            <ul>
+                                {% for error in field.errors %}
+                                  <li class="error">{{ error|escape }}</li>
+                                {% endfor %}
+                            </ul>
                         {% endif %}
-                    </label>
-                    <a href="#" class="link-empresa" onclick="toggle_visibility('new');">¿La empresa no aparece en el listado?</a>
-                    <br>{{ field|addClass:'form-control' }}<br>
+                        <label class="" for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                            {% if field.help_text %}
+                                <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"></span>
+                            {% endif %}
+                        </label>
+                        <a href="#" class="link-empresa" onclick="toggle_visibility('new');">¿La empresa no aparece en el listado?</a>
+                        <br>{{ field|addClass:'form-control' }}<br>
+                    {% endif %}
                 </div>
             {% elif field == form.nombre_empresa %}
                 <div id="div_nueva_empresa" style="display: none">
@@ -98,11 +114,15 @@
                     <label class="" for="{{ field.id_for_label }}">
                         {{ field.label }}
                         {% if field.help_text %}
-                            <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
+                            <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"></span>
                         {% endif %}
                     </label>
                     <a href="#" class="link-empresa" onclick="toggle_visibility('old');">Seleccionar una empresa existente</a>
-                    <br>{{ field|addClass:'form-control' }}<br>
+                    {% if user.empresa %}
+                        <input class="form-control" id="id_{{ field.html_name }}" name="{{ field.html_name }}" type="hidden" value="{{ user.empresa }}"/>
+                    {% else %}
+                        <br>{{ field|addClass:'form-control' }}<br>
+                    {% endif %}
                 </div>
             {% else %}
                 {% if field == form.tipo %}
@@ -134,7 +154,7 @@
                         <label class="" for="{{ field.id_for_label }}">
                             {{ field.label }}
                             {% if field.help_text %}
-                                <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
+                                <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"></span>
                             {% endif %}
                         </label>
 
@@ -154,7 +174,7 @@
                         <label class="" for="{{ field.id_for_label }}">
                             {{ field.label }}
                             {% if field.help_text %}
-                                <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"/>
+                                <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ field.help_text|safe }}"></span>
                             {% endif %}
                         </label>
                     {% endif %}

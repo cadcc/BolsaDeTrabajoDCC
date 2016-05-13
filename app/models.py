@@ -103,7 +103,7 @@ class Oferta(models.Model):
     habilidades_deseadas = models.TextField()
     habilidades_requeridas = models.TextField()
     descripcion = models.TextField()
-    requiere_experiencia = models.TextField()
+    requiere_experiencia = models.TextField(null=True)
     se_ofrece = models.TextField()
     fecha_comienzo = models.DateField()
     fecha_termino = models.DateField()
