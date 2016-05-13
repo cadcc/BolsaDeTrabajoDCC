@@ -129,3 +129,21 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 STATIC_URL = '/static/'
+
+# carga de url principal
+MAIN_URL = os.getenv('MAIN_URL', default='localhost:8000')
+
+#carga de rutas por defecto
+PATH_LOGOS = os.getenv('PATH_LOGOS', default='static/resources/company/')
+PATH_DOCUMENTS = os.getenv('PATH_DOCUMENTS', default='static/document_user/')
+
+#para creacion de usaurios
+AUTH_USER_MODEL = 'app.UsuarioBase'
+
+#para los archivos a subir
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+#tiempos de sesion en minutos
+SESSION_TIME_NORMAL = int(os.getenv('SESSION_TIME_NORMAL', default=60))*60
+SESSION_TIME_REMEMBER_ME = int(os.getenv('SESSION_TIME_REMEMBER_ME', default=720))*60

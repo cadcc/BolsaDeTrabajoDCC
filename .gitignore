@@ -1,5 +1,10 @@
 .idea
 *.iml
-/.env
+.env
 */__pycache__
 */migrations
+app/templatetags/__pycache__
+
+#para no commitear archivos subidos
+/media/logos/*
+/media/user_document/*

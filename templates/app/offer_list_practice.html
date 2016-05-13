@@ -1,0 +1,58 @@
+{% load staticfiles %}
+<div class="row">
+    <div class="col-md-3 text-center">
+        <div class="text-capitalize text-big row">{{ offer.info.empresa }}</div>
+        <img class="company-logo"
+             src="{% if empresa.logo %}
+                {{ empresa.logo }}
+             {% else %}
+                {% static "resources/company/default-logo-company.png" %}
+             {% endif %}">
+    </div>
+    <div class="col-md-9">
+        <div>
+            <a href="{% url "oferta" offer_id=offer.info.id %}" class="text-highlight text-big text-capitalize">{{ offer.info.titulo }}</a>
+        </div>
+        <div>
+            <div class="badge">
+                <div>Sueldo</div>
+                <div class="text-big text-uppercase">{{ offer.info.formatted_salary }}</div>
+            </div>
+            <div class="badge">
+                <div>Jornada</div>
+                <div class="text-big text-uppercase">{{ offer.info.jornada }}</div>
+            </div>
+            <div class="badge">
+                <div>{{ offer.valid }}</div>
+                <span data-valid="{{ offer.valid }}" class="valid-class" aria-hidden="true"></span>
+            </div>
+            <div class="badge" title="{{ offer.info.puntuacion }}">
+                <div>Valoración</div>
+                <div class="text-big star-val" data-score={{ offer.info.puntuacion }}>
+                </div>
+            </div>
+        </div>
+        <div>
+            <span>
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                {{ offer.info.nombre_encargado }}
+            </span>
+            <span>
+                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                {{ offer.info.email_encargado }}
+            </span>
+            <span>
+                <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span>
+                {{ offer.info.telefono_encargado }}
+            </span>
+        </div>
+        <div>
+            {% for etiqueta in offer.info.etiquetas.all %}
+                <span class="label label-info">{{ etiqueta }}</span>
+            {% empty %}
+                Esta oferta no posee etiquetas
+            {% endfor %}
+            <span class="text-uppercase text-highlight pull-right">{{ offer.info.fecha_publicacion }}</span>
+        </div>
+    </div>
+</div>

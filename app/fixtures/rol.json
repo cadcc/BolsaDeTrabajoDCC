@@ -1,0 +1,38 @@
+[
+  {
+    "model": "app.rol",
+    "fields": {
+      "nombre": "administrador"
+    }
+  },
+  {
+    "model": "app.rol",
+    "fields": {
+      "nombre": "publicador"
+    }
+  },
+  {
+    "model": "app.rol",
+    "fields": {
+      "nombre": "validador"
+    }
+  },
+  {
+    "model": "app.rol",
+    "fields": {
+      "nombre": "moderador"
+    }
+  },
+  {
+    "model": "app.rol",
+    "fields": {
+      "nombre": "normal"
+    }
+  },
+  {
+    "model": "app.rol",
+    "fields": {
+      "nombre": "pendiente"
+    }
+  }
+]

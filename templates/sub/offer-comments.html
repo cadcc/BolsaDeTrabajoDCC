@@ -1,0 +1,135 @@
+<div>
+    {# new valoration #}
+    {% if not user_already_comment %}
+    <div class="frame frame-light">
+        <form role="form" action="{% url "comentar_oferta" %}" method="POST">
+            {% csrf_token %}
+            <div>
+                <div>
+                    <div class="visible-md-inline-block visible-lg-inline-block visible-xs-inline-block visible-sm-inline-block">
+                        Valorando como <span class="text-highlight text-capitalize">{{ user }}</span><br>
+                        <div class="checkbox">
+                              <label>
+                                  {% if form.is_important.errors %}
+                                  <ul>
+                                      {% for error in form.is_important.errors %}
+                                          <label for="is_important" class="error">{{ error|escape }}</label>
+                                      {% endfor %}
+                                  </ul>
+                                  {% endif %}
+                                  <label class="sr-only" for="is_important">
+                                      Importancia
+                                  </label>
+                                  <input name="is_important" id="is_important" type="checkbox" value=on>
+                                  He trabajado aquí
+                              </label>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        {% if form.valoration.errors %}
+                            <ul>
+                            {% for error in form.valoration.errors %}
+                              <label for="valoration" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <label class="sr-only" for="valoration">
+                            Valoración
+                        </label>
+                        <input required id="valoration" type="number" class="rating" name="valoration" min="0" max="5" data-show-clear="false" data-show-caption="false" data-step="1" data-size="xs" >
+                        <input name="offer_id" type="hidden" value="{{ oferta.id }}">
+                    </div>
+                </div>
+            </div>
+            {% if form.comment.errors %}
+                <ul>
+                {% for error in form.comment.errors %}
+                  <label for="comment" class="error">{{ error|escape }}</label>
+                {% endfor %}
+                </ul>
+                <label class="sr-only" for="comment">
+                    Comentario
+                </label>
+            {% endif %}
+            <textarea name="comment" class="form-control" rows="3"></textarea>
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right">
+                    <button id="comment_button" class="m-btn-medium m-btn-darkcyan disabled" type="submit" disabled>Valorar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    {# previous valorations #}
+    {% for comment in comments %}
+        <div class="frame frame-light">
+            <div>
+                <div>
+                    <div class="inline-block">
+                        <div class="badge">
+                            Valoración por <span class="text-capitalize">{{ comment.usuario }}</span>
+                        </div>
+                        <div class="badge badge-orange">
+                            {{ comment.fecha_creacion }}
+                        </div>
+                        <div class="text-highlight">{{ comment.prioritario|yesno:"Ha trabajado aquí,No ha trabajado aquí,No ha trabajado aquí" }}</div>
+                    </div>
+                    {% ifequal comment.usuario user.usuario %}
+                    <div class="pull-right">
+                        <div id="user-valoration" class="hidden">
+                            <input required type="number" class="rating" name="valoration" value="{{ comment.value }}" min="0" max="5" data-show-clear="false" data-show-caption="false" data-step="1" data-size="xs" >
+                        </div>
+                        <div class="badge badge-yellow">
+                            <div class="text-big star-val" data-score={{ comment.valor }}>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-big pull-right">
+                        <div class="badge badge-yellow">
+                            <div class="text-big star-val" data-score={{ comment.valor }}>
+                        </div>
+                    </div>
+                    {%  endifequal %}
+                </div>
+
+                </div>
+                {% ifequal comment.usuario user.usuario %}
+                    <div id="user-comment">
+                    {{ comment.comentario }}
+                    </div>
+                    <form action="{% url 'editar_comentario_oferta' %}" method="POST">
+                        {% csrf_token %}
+                        <input name="valoration" id="user-valoration-input" type="hidden" value="{{ comment.value }}">
+                        <input name="comment_id" type="hidden"  value="{{ comment.id }}">
+                        <div class="checkbox hidden" id="user-importance">
+                                  <label class="sr-only" for="user_is_important">
+                                      Importancia
+                                  </label>
+                                  <input name="is_important" id="user_is_important" type="checkbox" {{ comment.prioritario|yesno:"checked,," }}>
+                                  He trabajado aquí
+                              </label>
+                        </div>
+                        <textarea id="user-textarea" name="comment" class="form-control hidden">{{ comment.comentario }}</textarea>
+                        <div class="text-primary text-uppercase text-right">
+                            <button id="cancel-edit-btn" class="hidden" type="button"><b>Cancelar</b></button>
+                            <button id="update-comment-btn" class="hidden" type="submit"><b>Aceptar</b></button>
+                            <button id="edit-comment-btn" type="button"><b>Editar</b></button>
+                        </div>
+                    </form>
+                {% else %}
+                    <div>
+                    {{ comment.comentario }}
+                    </div>
+                    <div class="text-danger text-uppercase text-right">
+                        <button type="button"><b>Reportar</b></button>
+                    </div>
+                {% endifequal %}
+            </div>
+        </div>
+    {% empty %}
+        <p>
+        Aún no hay comentarios en esta oferta.
+        </p>
+    {% endfor %}
+    </div>
+</div>

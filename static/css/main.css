@@ -1,0 +1,270 @@
+html{
+    min-height:100%;/* make sure it is at least as tall as the viewport */
+    position:relative;
+}
+
+body{
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #FFFFFF;
+}
+
+.column-left{
+    min-height: 100vh;
+    color: #FFFFFF;
+    background-color: rgba(85,179,174,0.9);
+    border-right: 5px solid #1b6d85;
+}
+
+.column-left a{
+    color: #FFFFFF;
+}
+
+.column-left a:hover{
+    color: #FFFFFF;
+}
+
+.column-right{
+    height: 100vh;
+    color: #267AAD;
+    background-color: rgba(255,255,255,0.9);
+    overflow-y: scroll;
+}
+
+.column-right hr{
+    border-color: #CECECE;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.column-right .checkbox{
+    margin-top: 0px;
+    margin-bottom: 3px;
+}
+
+.container{
+    min-height: 100vh;
+}
+
+.logo{
+    background-image: url("/static/resources/image/dcc.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 300px;
+    height: 180px;
+    margin: auto;
+}
+
+.company-logo{
+    width: 80px;
+    height: 80px;
+}
+
+.company-logo-small{
+    width: 50px;
+    height: 50px;
+}
+
+.background div{
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #0B1A3B;
+    opacity: 0.6;
+    z-index: -999;
+}
+.background{
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-image: url("/static/resources/image/back.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    z-index: -999;
+}
+
+.title{
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.m-btn{
+    padding: 6px 12px;
+    margin: 2px;
+    border: 1px solid;
+    font-size: 18px;
+    font-weight: normal;
+    border-radius: 3px;
+}
+
+.m-btn-medium{
+    padding: 6px 12px;
+    margin: 2px;
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: normal;
+    border-radius: 3px;
+}
+
+.m-btn-medium.disabled, .m-btn.disabled{
+    color: #FFF;
+    background-color: hsl(179, 16%, 58%);
+    border-color: hsl(170, 33%, 43%);
+}
+
+.m-btn-full{
+    padding: 6px 0px;
+    margin: 2px;
+    border: 1px solid;
+    font-size: 18px;
+    font-weight: normal;
+    width: 100%;
+    border-radius: 3px;
+}
+
+.m-btn-blue{
+    color: #FFF;
+    background-color: #337ab7;
+    border-color: #286090;
+}
+
+.m-btn-cyan {
+    color: #FFF;
+    background-color: #31BD7F;
+    border-color: #28907F;
+}
+
+.m-btn-darkcyan {
+    color: #FFF;
+    background-color: hsla(179,56%,30%,1);
+    border-color: hsla(170,57%,20%,1);
+}
+
+.m-btn-darkgreen{
+    color: #FFF;
+    background-color: hsla(130,56%,30%,1);
+    border-color: hsla(130,56%,20%,1);
+}
+
+.m-btn-darkred{
+    color: #FFF;
+    background-color: hsl(2, 65%, 28%);
+    border-color: hsla(2,65%,20%,1);
+}
+
+.frame{
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.frame.frame-light{
+    background-color: rgba(0, 0, 0, 0.07);
+    border: 1px solid;
+    border-color: rgba(0, 0, 0, 0.1);
+    margin: 5px 0;
+}
+
+.frame.frame-white{
+    border: 1px solid;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.75);
+    color: #267AAD;
+}
+
+.frame.frame-white hr{
+    border-color: #CECECE;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.opaque{
+    opacity: 1;
+}
+
+.height100{
+    height: 100%;
+}
+
+.height33{
+    height: 33%;
+}
+
+.height50{
+    height: 50%;
+}
+
+.text-highlight{
+    font-weight: bold;
+    color: #31BD7F;
+}
+
+.text-big{
+    font-size: 25px;
+}
+
+.text-big{
+    font-size: 18px;
+}
+
+.badge{
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 14px;
+    background-color: #31BD7F;
+    cursor: default;
+}
+
+.badge.badge-red{
+    background-color: #761c19;
+}
+
+.badge.badge-lightred{
+    background-color: #BD5631;
+}
+
+.badge.badge-lightgreen{
+    background-color: #31BD34;
+}
+
+.badge.badge-orange{
+    background-color: #985f0d;
+}
+
+.badge.badge-yellow{
+    background-color: #BCBD31;
+}
+
+.v-align{
+    vertical-align: middle;
+    display: inline-block;
+    float: none;
+}
+
+.nav-tabs > li > a {
+    font-size: 20px;
+}
+
+.tab-content{
+    background-color: #ffffff;
+    padding: 10px;
+}
+
+.tab-pane > .row{
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #EEEEEE;
+}
+
+.overflow-ellipsis{
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+.inline-block{
+    display: inline-block;
+}

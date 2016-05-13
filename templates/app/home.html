@@ -1,73 +1,67 @@
+{% extends "sub/main.html" %}
 {% load staticfiles %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block content %}
+    <div class="background height100">
+            <div class="height100"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12 m-b-5">
+            <a href="{{ MAIN_URL }}"><div class="logo"></div></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <div class="frame">
+                <div class="title text-center">Publicar ofertas</div>
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3 col-xs-12">
 
-    <title>Bootstrap 3, from LayoutIt!</title>
+                        <div><a href="{% url 'formulario' %}"><button type="submit" class="m-btn-full m-btn-darkcyan">Publicar</button></a></div>
+                        <div><a href="{% url 'registro_empresas' %}"><button type="button" class="m-btn-full m-btn-cyan">Empresas Verificadas</button></a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <div class="frame">
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <div class="title text-center">Ingreso al sistema</div>
+                    </div>
+                    {% if error_login %}
+                         <label class="error">{{ error_login|escape }}</label>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-1 col-xs-12">
+                <form role="form" action = "{% url 'login_user' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="sr-only" for="username">
+                            Usuario/Correo
+                        </label>
+                        <input class="form-control" id="username" name="username" placeholder="Usuario"/>
+                    </div>
+                    <div class="form-group">
 
-    <meta name="description" content="Source code generated using layoutit.com">
-    <meta name="author" content="LayoutIt!">
-
-    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
-    <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
-</head>
-
-<body>
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="row">
-				<div class="col-md-12">
-					<img class="" alt="Bootstrap Image Preview" src="{% static "resources/image/dcc.jpg" %}" />
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-6">
-					<div><span>Publicar ofertas</span></div>
-					<div>
-						<div><button type="button" class="btn btn-default">Publicar</button></div>
-						<div><button type="button" class="btn btn-primary">Empresas verificadas</button></div>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="row">
-						<div class="col-md-12">
-							<span>Ingresar con U-Pasaportes</span>
-						</div>
-					</div>
-					<div>
-							<form role="form">
-								<div class="form-group">
-									<label class="sr-only" for="exampleInputEmail1">
-										Usuario
-									</label>
-									<input class="form-control" id="exampleInputEmail1" type="email" placeholder="Usuario"/>
-								</div>
-								<div class="form-group">
-									 
-									<label class="sr-only" for="exampleInputPassword1">
-										Password
-									</label>
-									<input class="form-control" id="exampleInputPassword1" type="password" placeholder="Contraseña" />
-								</div>
-								<div class="checkbox">
-									<label>
-										<input type="checkbox" /> Recordarme
-									</label>
-								</div> 
-								<button type="submit" class="btn btn-default">
-									Ingresar
-								</button>
-							</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-</body>
-
-</html> 
+                        <label class="sr-only" for="password">
+                            Password
+                        </label>
+                        <input class="form-control" id="password" name="password" type="password" placeholder="Contraseña" />
+                    </div>
+                    <div>
+                        <label class="checkbox-inline">
+                            <input name="remember_me" type="checkbox" value="on"/> Recuérdame
+                        </label>
+                        <div class="pull-right"><a href="{% url "registro" %}">No tengo U-Pasaporte ni cuenta</a></div>
+                    </div>
+                    <button type="submit" class="m-btn m-btn-darkcyan">
+                        Ingresar
+                    </button>
+                </form>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

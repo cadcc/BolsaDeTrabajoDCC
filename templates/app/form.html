@@ -1,144 +1,148 @@
+{% extends "sub/main_column.html" %}
 {% load staticfiles %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Bootstrap 3, from LayoutIt!</title>
+{% block title %} Formulario Empresa {% endblock %}
 
-    <meta name="description" content="Source code generated using layoutit.com">
-    <meta name="author" content="LayoutIt!">
+{% block left_column_content %}
+    {% include "sub/left-panel-company-menu.html" %}
+    <hr>
+    {% include "sub/left-panel-company-login.html" %}
+{% endblock %}
 
-    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
-    <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
-</head>
-
-<body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <div>
-                <img alt="Bootstrap Image Preview" src="{% static "resources/image/dcc.jpg" %}" />
-            </div>
-            <hr>
-            <div>
-                <h3 class="text-center">Publica con el perfil de tu empresa</h3>
-                <button type="button" class="btn btn-default">Ingresar</button>
-            </div>
-            <hr>
-            <div>
+{% block right_column_content %}
+    <h3 class="text-center">
+        Publica una oferta
+    </h3>
+    <form class="form-horizontal" action="{% url 'enviar_oferta' %}" method="POST">
+        <div class="form-group">
+            <label for="titulo_oferta" class="col-sm-2 control-label">Título de oferta:*</label>
+            <div class="col-sm-10">
+                <input type="text" name="titulo_oferta" class="form-control" id="id_titulo_oferta" placeholder="Mi Oferta" required>
             </div>
         </div>
-        <div class="col-md-9">
-            <h3 class="text-center">
-                Publica una oferta
-            </h3>
-            <form class="form-horizontal">
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">Título de oferta</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="Título de oferta">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Nombre empresa</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputPassword3" placeholder="Password">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Jornada de trabajo</label>
-                    <div class="col-sm-10">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" id="inlineCheckbox1" value="option1"> Full-time
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" id="inlineCheckbox2" value="option2"> Part-time
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Tipo de oferta</label>
-                    <div class="col-sm-10">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" id="inlineCheckbox1" value="option1"> Trabajo
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" id="inlineCheckbox2" value="option2"> Práctica/Pasantía
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" id="inlineCheckbox2" value="option3"> Memoria
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Perfil objetivo</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" rows="5"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Habilidades deseadas</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" rows="5"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Habilidades requeridas</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" rows="5"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Remuneración</label>
-                    <div class="col-sm-10">
-                        <div>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" id="inlineCheckbox1" value="option1"> Mensual
-                            </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" id="inlineCheckbox2" value="option2"> Sin determinar
-                            </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" id="inlineCheckbox3" value="option3"> Sin remuneración
-                            </label>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" id="inlineCheckbox3" value="option4"> Otro
-                            </label>
-                        </div>
-                        <div class="form-inline">
-                            <label class="sr-only" for="exampleInputAmount">Sueldo mínimo</label>
-                            <input type="text" class="form-control" id="exampleInputAmount" placeholder="Sueldo mínimo">
-                            <label class="sr-only" for="exampleInputAmount">Sueldo máximo</label>
-                            <input type="text" class="form-control" id="exampleInputAmount" placeholder="Sueldo máximo">
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Se ofrece</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" rows="5"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">Etiquetas</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="Buscar etiqueta">
-                        <div><span class="label label-info">Tag 1</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span></div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary">Enviar</button>
-                        <button type="submit" class="btn btn-danger">Cancelar</button>
-                    </div>
-                </div>
-            </form>
+        <div class="form-group">
+            <label for="nombre_empresa" class="col-sm-2 control-label">Nombre empresa:</label>
+            <div class="col-sm-10">
+                <input type="text" name="nombre_empresa" class="form-control" id="id_nombre_empresa" placeholder="Mi Empresa">
+            </div>
         </div>
-    </div>
-</div>
-</body>
+        <div class="form-group">
+            <label for="jornada" class="col-sm-2 control-label">Jornada de trabajo:*</label>
+            <div class="col-sm-10">
+                <label class="radio-inline">
+                    <input type="radio" id="id_jornada_trabajo_0" name="jornada_trabajo" value="full-time" required>Full-time
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" id="id_jornada_trabajo_1" name="jornada_trabajo" value="part-time">Part-time
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="select_tipo_oferta" class="col-sm-2 control-label">Tipo de oferta:*</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="id_tipo_oferta" name="select_tipo_oferta" required>
+                    <option value="practica">Práctica/Pasantía</option>
+                    <option value="memoria">Memoria</option>
+                    <option value="trabajo">Trabajo</option>
+                    <option selected disabled>Seleccionar</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="perfil_objetivo" class="col-sm-2 control-label">Perfil objetivo:*</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="id_perfil_objetivo" name="perfil_objetivo" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="desc_oferta" class="col-sm-2 control-label">Descripción Oferta:*</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="id_desc_oferta" name="desc_oferta" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="habilidades_deseadas" class="col-sm-2 control-label">Habilidades deseadas:*</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="id_habilidades_deseadas" name="habilidades_deseadas" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword3" class="col-sm-2 control-label">Habilidades requeridas:*</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="id_habilidades_requeridas" name="habilidades_requeridas" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword3" class="col-sm-2 control-label">Remuneración:*</label>
+            <div class="col-sm-10">
+                <div>
+                    <label class="radio-inline">
+                        <input type="radio" name="remuneracion" value="mensual" required>Mensual
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="remuneracion" value="sin determinar" required>Sin determinar
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="remuneracion" value="sin remuneración" required>Sin remuneración
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="remuneracion" value="otro" required>Otro
+                    </label>
 
-</html> 
+                </div>
+                <div class="form-inline">
+                    <label class="sr-only" for="sueldo_minimo">Sueldo mínimo:*</label>
+                    <input type="text" class="form-control" id="id_sueldo_minimo" name="sueldo_minimo" placeholder="Sueldo mínimo" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="se_ofrece" class="col-sm-2 control-label">Se ofrece:*</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="id_se_ofrece" name="se_ofrece" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="fecha_inicio" class="col-sm-2 control-label">Fecha inicio:*</label>
+            <div class="col-sm-10">
+                <input type="date" class="form-control" id="id_fecha_inicio" name="fecha_inicio" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="fecha_fin" class="col-sm-2 control-label">Fecha fin:*</label>
+            <div class="col-sm-10">
+                <input type="date" class="form-control" id="id_fecha_fin" name="fecha_fin" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="select_dur_min" class="col-sm-2 control-label">Duración mínima:*</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="id_dur_min" name="select_dur_min" required>
+                    <option value="1">1 mes</option>
+                    <option value="2">2 meses</option>
+                    <option value="3">3 meses</option>
+                    <option selected disabled>Seleccionar</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="comen_dur" class="col-sm-2 control-label">Comentario duración:</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="id_comen_dur" name="comen_dur"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="etiquetas" class="col-sm-2 control-label">Etiquetas:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="id_etiquetas" name="etiquetas" placeholder="Buscar etiqueta">
+                <div><span class="label label-info">Tag 1</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+                <button type="submit" class="btn btn-danger">Cancelar</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,26 @@
+<div class="frame text-center">
+    <div class="text-center text-capitalize text-big">Filtro de Ofertas</div>
+    <form class="text-left">
+        <div class="form-group">
+            <label>Sueldo base <span class="text-highlight" id="min-price-label">$0</span></label>
+            <div class="price-filter">
+                <div class="price-range-holder">
+                    <input type="text" class="price-slider" value="" >
+                    <input type="hidden" id="min-price" />
+                </div>
+            </div><!-- /.price-filter -->
+        </div>
+        {% for tipo_etiqueta in tipos_etiquetas %}
+            <div class="form-group">
+                <label class="control-label text-capitalize">{{ tipo_etiqueta.tipo }}</label>
+                <div>
+                    {% for etiqueta in tipo_etiqueta.etiquetas %}
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="inlineCheckbox1" value="option1">{{ etiqueta }}                            </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+        <a href="#"><button type="button" class="m-btn-medium m-btn-darkcyan">Filtrar</button></a>
+    </form>
+</div>

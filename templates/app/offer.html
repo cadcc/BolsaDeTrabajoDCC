@@ -1,117 +1,198 @@
+{% extends "sub/main_column.html" %}
 {% load staticfiles %}
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block title %} Oferta {% endblock %}
+{% block left_column_content %}
+    {% include "sub/left-panel-user-profile.html" %}
+{% endblock %}
 
-    <title>Bootstrap 3, from LayoutIt!</title>
+{% block right_column_content %}
+    {% csrf_token %}
+    <h2 class="text-center">{{ oferta.titulo }}</h2>
+    <hr>
+    <div class="row text-center text-uppercase">
+        <div class="col-md-4 col-xs-12">
+            <img class="company-logo"
+                 src="{% if empresa.logo %}
+                    {{ empresa.logo }}
+                 {% else %}
+                    {% static "resources/company/default-logo-company.png" %}
+                 {% endif %}">
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div>Empresa</div>
+            <div class="text-highlight text-big">{{ oferta.empresa }}</div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div>Jornada</div>
+            <div class="text-highlight text-big">{{ oferta.jornada }}</div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div>Tipo de oferta</div>
+            <div class="text-highlight text-big">{{ oferta.tipo }}</div>
+        </div>
+    </div>
+    <hr>
+    <div>
+        <div>
+            <div class="badge">
+                <div>Sueldo base</div>
+                <div class="text-big">{{ oferta.formatted_salary }}</div>
+            </div>
+            <div class="badge">
+                <div>Comuna</div>
+                <div class="text-big">{{ oferta.comuna }}</div>
+            </div>
+            {% ifequal 'Práctica' oferta.tipo %}
+                <div class="badge">
+                    <div>{{ validez }}</div>
+                    <span data-valid="{{ validez }}" class="valid-class" aria-hidden="true"></span>
+                </div>
+            {% endifequal %}
+            <div class="pull-right badge" title="{{ oferta.puntuacion }}">
+                <div>Valoración</div>
+                <div class="text-big star-val" data-score={{ oferta.puntuacion }}>
+                </div>
+            </div>
+        </div>
+        {# Interesst profile #}
+        <p>{{ oferta.descripcion }}</p>
+        <dl class="dl-horizontal">
+            <dt>Experiencia previa</dt>
+            <dd>{{ oferta.requiere_experiencia }}</dd>
+            <dt>Habilidades deseadas</dt>
+            <dd>{{ oferta.habilidades_deseadas }}</dd>
+            <dt>Habilidades requeridas</dt>
+            <dd>{{ oferta.habilidades_requeridas }}</dd>
+            <dt>Se ofrece</dt>
+            <dd>{{ oferta.se_ofrece }}</dd>
+            <dt>Duración mínima</dt>
+            <dd>{{ oferta.duracion_minima }} meses</dd>
+            <dt>Comentario duración</dt>
+            <dd>{{ oferta.comentario_duracion }}</dd>
+            <dt>Fecha postulación</dt>
+            <dd>Desde <b>{{ oferta.fecha_comienzo }}</b> hasta <b>{{ oferta.fecha_termino }}</b></dd>
+            <dt>Hora ingreso</dt>
+            <dd>{{ oferta.hora_ingreso }}</dd>
+            <dt>Hora salida</dt>
+            <dd>{{ oferta.hora_salida}}</dd>
+            <dt>Comentario jornada</dt>
+            <dd>{{ oferta.comentario_jornada }}</dd>
+            <dt>Comentarios remuneración</dt>
+            <dd>{{ oferta.comentario_sueldo }}</dd>
+            <dt>Fecha de publicación</dt>
+            <dd>{{ oferta.fecha_publicacion }}</dd>
+            <dt>Región</dt>
+            <dd>{{ oferta.comuna.region }}</dd>
+            <dt>Dirección</dt>
+            <dd>{{ oferta.direccion }}</dd>
+            <dt>Etiquetas</dt>
+            <dd>
+                {% for etiqueta in oferta.etiquetas.all %}
+                    <span class="label label-info">{{ etiqueta }}</span>
+                {% empty %}
+                    Esta oferta no posee etiquetas
+                {% endfor %}
+            </dd>
+        </dl>
+    </div>
+    <hr>
+    <div class="row text-center text-uppercase">
+        <div class="col-md-4 col-xs-12">
+            <div>Encargado</div>
+            <div class="text-highlight text-big">{{ oferta.nombre_encargado }}</div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div>Correo electrónico</div>
+            <div class="text-highlight text-big">{{ oferta.email_encargado }}</div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div>Teléfono</div>
+            <div class="text-highlight text-big">{{ oferta.telefono_encargado }}</div>
+        </div>
+    </div>
+    <hr>
+    {% if "normal" in roles %}
+        <h3>Comentarios y valoraciones</h3>
+        {% include "sub/offer-comments.html" %}
+    {% endif %}
+{% endblock %}
 
-    <meta name="description" content="Source code generated using layoutit.com">
-    <meta name="author" content="LayoutIt!">
+{% block javascript %}
+    <script type="text/javascript">
+        //colores e iconos en la parte de validar para practica
+        var valid_icons = $('.valid-class');
+        for (var i = 0; i < valid_icons.length; i++) {
+            var valid_icon = $(valid_icons[i]);
+            var icon;
+            if (valid_icon.data('valid') === 'Aprobada') {
+                icon = "glyphicon glyphicon-ok-sign text-big valid-class";
+            } else if (valid_icon.data('valid') === 'No Aprobada') {
+                icon = "glyphicon glyphicon-remove-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-red')
+            } else {
+                icon = "glyphicon glyphicon-question-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-orange')
+            }
+            valid_icon.attr('class', icon);
+        }
+    </script>
+    <script type="text/javascript">
+        //para el llenado de las estrellas
+        var star_vals = $('.star-val');
+        for (var i = 0; i < star_vals.length; i++) {
+            var star_val = $(star_vals[i]);
+            var offer_score = star_val.data('score');
+            //star_val.append($('<span/>', {text: offer_score/20}));
+            for (var score = 20; score <= 100; score+=20) {
+                if (offer_score >= score)
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star',
+                        'aria-hidden': 'true'
+                    }));
+                else
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star-empty',
+                        'aria-hidden': 'true'
+                    }));
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        var commentButton = $('#comment_button');
+        commentButton.prop('disabled', true);
+        $('#valoration').on('rating.change', function() {
+            commentButton.removeClass('disabled')
+            commentButton.removeAttr('disabled');
+        });
+        $('#user-valoration').find('input').on('rating.change', function(){
+            $('#user-valoration-input').val($(this).val());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#edit-comment-btn').click(function () {
+                var val = $('#user-valoration');
+                val.parent().find('.badge').addClass('hidden');
+                val.removeClass('hidden');
+                $('#user-textarea').removeClass('hidden');
+                $('#user-comment').addClass('hidden');
+                $('#update-comment-btn').removeClass('hidden');
+                $('#cancel-edit-btn').removeClass('hidden');
+                $('#user-importance').removeClass('hidden');
+                $(this).addClass('hidden');
+            });
 
-    <link rel="stylesheet" type="text/css" href={% static "css/bootstrap.min.css" %}>
-    <link rel="stylesheet" type="text/css" href={% static "css/style.css" %}>
-
-  </head>
-  <body>
-
-    <div class="container-fluid">
-	<div class="row">
-		<div class="col-md-3">
-			<div>
-				<img alt="Bootstrap Image Preview" src={% static "resources/image/dcc.jpg" %}/>
-			</div>
-			<hr>
-			<div>
-				<h3 class="text-center">Publica con el perfil de tu empresa</h3>
-				<button type="button" class="btn btn-default">Ingresar</button>
-			</div>
-			<hr>
-			<div>
-			</div>
-		</div>
-		<div class="col-md-9">
-			<div class="row">
-					<div class="col-md-4">
-						<div>Empresa</div>
-						<div>Nombre empresa</div>
-					</div>
-					<div class="col-md-4">
-						<div>Jornada</div>
-						<div>Tipos jornadas</div>
-					</div>
-					<div class="col-md-4">
-						<div>Oferta</div>
-						<div>Tipos ofertas</div>
-					</div>
-			</div>
-			<hr>
-			<div>
-				<div class="row">
-						<div class="col-md-9">
-							<h2>Nombre de la oferta</h2>
-						</div>
-						<div class="col-md-3">
-							<div>Abrobada</div>
-							<div>*****</div>
-						</div>
-				</div>
-				<div>
-					<p>Perfil de sujeto buscado</p>
-					<table>
-						<thead>
-						</thead>
-						<tbody>
-							<tr>
-								<td>Campo 1</td>
-								<td>Descripción campo 1</td>
-							</tr>
-							<tr>
-								<td>Campo 1</td>
-								<td>Descripción campo 1</td>
-							</tr>
-							<tr>
-								<td>Campo 1</td>
-								<td>Descripción campo 1</td>
-							</tr>
-							<tr>
-								<td>Campo 1</td>
-								<td>Descripción campo 1</td>
-							</tr>
-							<tr>
-								<td>Campo 1</td>
-								<td>Descripción campo 1</td>
-							</tr>
-							<tr>
-								<td>Campo 1</td>
-								<td>Descripción campo 1</td>
-							</tr>
-							<tr>
-								<td>Campo 1</td>
-								<td>Descripción campo 1</td>
-							</tr>
-						</tbody>
-					</table>
-					<div class="row">
-							<div class="col-md-9">
-								<div>Etiquetas</div>
-								<div><span class="label label-info">Tag 5</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span></div>
-							</div>
-							<div class="col-md-3">
-								<div>Remuneración</div>
-								<div>Un chillión</div>
-							</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-    <script src="{% static "js/jquery.min.js" %}"></script>
-    <script src="{% static "js/bootstrap.min.js" %}"></script>
-    <script src="{% static "js/scripts.js" %}"></script>
-  </body>
-</html>
+            $('#cancel-edit-btn').click(function () {
+                var val = $('#user-valoration');
+                val.parent().find('.badge').removeClass('hidden');
+                val.addClass('hidden');
+                $('#user-textarea').addClass('hidden');
+                $('#user-comment').removeClass('hidden');
+                $('#update-comment-btn').addClass('hidden');
+                $('#edit-comment-btn').removeClass('hidden');
+                $('#user-importance').addClass('hidden');
+                $(this).addClass('hidden');
+            });
+        });
+    </script>
+{% endblock %}

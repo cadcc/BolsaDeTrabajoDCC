@@ -1,0 +1,101 @@
+[
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "java",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:09:42.949000",
+      "tipo_id": 1
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "python",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:10:33.533000",
+      "tipo_id": 1
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "c",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:11:40.870000",
+      "tipo_id": 1
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "c++",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:11:53.461000",
+      "tipo_id": 1
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "javascript",
+      "validado": true,
+      "fecha_creacion": "2016-05-05 16:05:58.472000",
+      "tipo_id": 1
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "práctica 1",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:13:09.845000",
+      "tipo_id": 3
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "práctica 2",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:13:26.228000",
+      "tipo_id": 3
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "memoria",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:13:26.228000",
+      "tipo_id": 3
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "trabajo",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:17:14.040000",
+      "tipo_id": 3
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "full-time",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:12:21.861000",
+      "tipo_id": 2
+    }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "part-time",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:12:36.073000",
+      "tipo_id": 2
+    }
+  }
+]

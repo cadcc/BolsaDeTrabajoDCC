@@ -1,49 +1,151 @@
+{% extends "sub/main_column.html" %}
 {% load staticfiles %}
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block title %} Listado de ofertas {% endblock %}
+{% block left_column_content %}
+    {% include "sub/left-panel-user-profile.html" %}
+    <hr>
+    {% include "sub/filters.html" %}
+{% endblock %}
 
-    <title>Bootstrap 3, from LayoutIt!</title>
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-slider.min.css" %}">
+{% endblock %}
 
-    <meta name="description" content="Source code generated using layoutit.com">
-    <meta name="author" content="LayoutIt!">
+{% block javascript %}
+    <script src="{% static "js/bootstrap-slider.min.js" %}"></script>
+    <script>
+        function CLPFormatter(price){
+            price = price + "";
+            var clp="";
+            var c = 1;
+            for(var i=price.length -1; i >= 0; i--){
+                clp = price[i]+clp;
+                if(c%3==0 && c!=(price.length)){
+                    clp = '.'+clp;
+                }
+                c++;
+            }
+            return '$'+clp;
+        }
+        // Price Slider
+        if ($('.price-slider').length > 0) {
+            $('.price-slider').slider({
+                min: 0,
+                max: 3000000,
+                step: 50000,
+                value: 0,
+                tooltip: "hide",
+                handle: "round",
+                labelledby: 'min-price',
+                //scale: 'logarithmic',
+                formatter: function (value) {
+                    return 'Current value: ' + value;
+                }
 
-    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-    <link href="{% static "css/style.css" %}" rel="stylesheet">
+            }).on('slide', function (slideEvt) {
+                $('.price-filter #min-price').val(slideEvt.value);
+                $('.price-filter #min-price').change();
+            });
 
-  </head>
-  <body>
+            $('.price-filter #min-price').val(0);
+        }
+    </script>
+    <script>
+        $('.price-slider').change(function(){
+            console.log($(this).val());
+        });
+        $('#min-price').change(function(){
+            $('#min-price-label').text(CLPFormatter($(this).val()));
+        });
+        $('#max-price').change(function(){
+            $('#max-price-label').text(CLPFormatter($(this).val()));
+        });
+    </script>
 
-    <div class="container-fluid">
-	<div class="row">
-		<div class="col-md-3">
+    <script type="text/javascript">
+        //colores e iconos en la parte de validar para practica
+        var valid_icons = $('.valid-class');
+        for (var i = 0; i < valid_icons.length; i++) {
+            var valid_icon = $(valid_icons[i]);
+            var icon;
+            if (valid_icon.data('valid') === 'Aprobada') {
+                icon = "glyphicon glyphicon-ok-sign text-big valid-class";
+            } else if (valid_icon.data('valid') === 'No Aprobada') {
+                icon = "glyphicon glyphicon-remove-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-red')
+            } else {
+                icon = "glyphicon glyphicon-question-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-orange')
+            }
+            valid_icon.attr('class', icon);
+        }
+    </script>
+    <script type="text/javascript">
+        //para el llenado de las estrellas
+        var star_vals = $('.star-val');
+        for (var i = 0; i < star_vals.length; i++) {
+            var star_val = $(star_vals[i]);
+            var offer_score = star_val.data('score');
+            for (var score = 20; score <= 100; score+=20) {
+                if (offer_score >= score)
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star',
+                        'aria-hidden': 'true'
+                    }));
+                else
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star-empty',
+                        'aria-hidden': 'true'
+                    }));
+            }
+        }
+        function evaluateOffer(offer_id, accept) {
+            //aqui hay que poner algo para que se vea como carga el sistema, su modal loco
+            $.post('/evaluar-oferta',{
+                'offer_id': offer_id,
+                'accept': accept,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                $('#oferta_' + offer_id).css('display', 'None');
+                console.log(msg);
+            })
+        }
+        function evaluatePractice(offer_id, valid) {
+            //aqui hay que poner algo para que se vea como carga el sistema, su modal loco
+            $.post('/evaluar-practica',{
+                'offer_id': offer_id,
+                'valid': valid,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                $('#oferta_' + offer_id).css('display', 'None');
+                console.log(msg);
+            })
+        }
+    </script>
+{% endblock %}
+
+{% block right_column_content %}
 			<div>
-				<img alt="Bootstrap Image Preview" src="{% static "resources/image/dcc.jpg" %}"/>
+				<form role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar ofertas">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                        </span>
+                    </div>
+                </form>
 			</div>
-			<hr>
-			<div>
-				<h3 class="text-center">Publica con el perfil de tu empresa</h3>
-				<button type="button" class="btn btn-default">Ingresar</button>
-			</div>
-			<hr>
-			<div>
-			</div>
-		</div>
-		<div class="col-md-9">
-			<div>
-				<form class="navbar-form" role="search">
-						<div class="form-group">
-							<input class="form-control" type="text">
-						</div> 
-						<button type="submit" class="btn btn-default">
-							Buscar
-						</button>
-					</form>
-			</div>
+            {% csrf_token %}
 			<div class="tabbable" id="tabs-813395">
+                {% if 'publicador' in roles %}
+                    <h3>Para ver las nuevas ofertas aceptadas en las otras pestañas debes actualizar la página</h3>
+                {% endif %}
 				<ul class="nav nav-tabs">
 					<li class="active">
 						<a href="#panel-804185" data-toggle="tab">Prácticas</a>
@@ -54,130 +156,57 @@
 					<li>
 						<a href="#panel-289391" data-toggle="tab">Trabajos</a>
 					</li>
+                    {% if 'publicador' in roles %}
+                    <li>
+                        <a href="#panel-289392" data-toggle="tab">Ofertas recibidas</a>
+                    </li>
+                    {% endif %}
+                    {% if 'validador' in roles %}
+                    <li>
+                        <a href="#panel-289393" data-toggle="tab">Prácticas por revisar</a>
+                    </li>
+                    {% endif %}
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-804185">
-						<div class="row">
-							<div class="col-md-3">
-								<img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/">
-							</div>
-							<div class="col-md-9">
-								<div class="row">
-									<div class="col-md-8">
-										Práctica 1 - Empresa 1
-									</div>
-									<div class="col-md-2">
-										<span><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> Aprobado</span>
-									</div>
-									<div class="col-md-2">
-										estrellitas
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-8">
-										<span class="label label-info">Tag 1</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span>
-									</div>
-									<div class="col-md-4">
-										<span>$120.000</span>
-										<span>$330.000</span>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-3">
-								<img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/">
-							</div>
-							<div class="col-md-9">
-								<div class="row">
-									<div class="col-md-8">
-										Práctica 1 - Empresa 1
-									</div>
-									<div class="col-md-2">
-										<span><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> Aprobado</span>
-									</div>
-									<div class="col-md-2">
-										estrellitas
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-8">
-										<span class="label label-info">Tag 1</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span>
-									</div>
-									<div class="col-md-4">
-										<span>$120.000</span>
-										<span>$330.000</span>
-									</div>
-								</div>
-							</div>
-						</div>
+                        {% for offer in practices %}
+                            {% include "app/offer_list_practice.html" %}
+                            {% empty %}
+                                Aún no hay ofertas de Práctica.
+                        {% endfor %}
 					</div>
 					<div class="tab-pane" id="panel-289390">
-						<div class="row">
-							<div class="col-md-3">
-								<img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/">
-							</div>
-							<div class="col-md-9">
-								<div class="row">
-									<div class="col-md-8">
-										Memoria 1 - Empresa 2
-									</div>
-									<div class="col-md-2">
-										<span><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> Aprobado</span>
-									</div>
-									<div class="col-md-2">
-										estrellitas
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-8">
-										<span class="label label-info">Tag 5</span><span class="label label-info">Tag 2</span><span class="label label-info">Tag 3</span>
-									</div>
-									<div class="col-md-4">
-										<span>$220.000</span>
-										<span>$530.000</span>
-									</div>
-								</div>
-							</div>
-						</div>
+                        {% for offer in reports %}
+                            {% include "app/offer_list_report_and_job.html" %}
+                            {% empty %}
+                                Aún no hay ofertas de Memoria.
+                        {% endfor %}
 					</div>
 					<div class="tab-pane" id="panel-289391">
-						<div class="row">
-							<div class="col-md-3">
-								<img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/">
-							</div>
-							<div class="col-md-9">
-								<div class="row">
-									<div class="col-md-8">
-										Trabajo 1 - Empresa 3
-									</div>
-									<div class="col-md-2">
-										<span><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> Aprobado</span>
-									</div>
-									<div class="col-md-2">
-										estrellitas
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-8">
-										<span class="label label-info">Tag 4</span><span class="label label-info">Tag 7</span><span class="label label-info">Tag 3</span>
-									</div>
-									<div class="col-md-4">
-										<span>$1.200.000</span>
-										<span>$3.300.000</span>
-									</div>
-								</div>
-							</div>
-						</div>
+						{% for offer in jobs %}
+                            {% include "app/offer_list_report_and_job.html" %}
+                            {% empty %}
+                                Aún no hay ofertas de Trabajo.
+                        {% endfor %}
 					</div>
+                    {% if 'publicador' in roles %}
+                    <div class="tab-pane" id="panel-289392">
+                        {% for offer in offers_to_check %}
+                            {% include "app/offer_list_acept_offer.html" %}
+                            {% empty %}
+                                Todas las ofertas han sido revisadas.
+                        {% endfor %}
+					</div>
+                    {% endif %}
+                    {% if 'validador' in roles %}
+                    <div class="tab-pane" id="panel-289393">
+                        {% for offer in practices_to_check %}
+                            {% include "app/offer_list_valid_prac.html" %}
+                            {% empty %}
+                                Todas las prácticas han sido revisadas.
+                        {% endfor %}
+					</div>
+                    {% endif %}
 				</div>
 			</div>
-		</div>
-	</div>
-</div>
-
-    <script src="{% static "js/jquery.min.js" %}"></script>
-    <script src="{% static "js/bootstrap.min.js" %}"></script>
-    <script src="{% static "js/scripts.js" %}"></script>
-  </body>
-</html>
+{% endblock %}
