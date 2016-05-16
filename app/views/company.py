@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from app.forms import CompanyForm
-from app.models import Empresa, Encargado
+from app.models import Empresa, Encargado, ValoracionEmpresa, Usuario
 from app.views.common import home, getUser
 
 
@@ -45,6 +45,11 @@ def empresa(request, nombre_empresa):
         return redirect(reverse(home))
     context['empresa'] = empresa
     context['user'] = getUser(request.user)
+    context['comments'] = ValoracionEmpresa.objects.filter(empresa=empresa).order_by('fecha_creacion')
+    context['encargado'] = Encargado.objects.filter(empresa=empresa, administrador=True).first()
+    context['roles'] = []
+    if isinstance(context['user'], Usuario):
+        context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=context['user'].id).roles.all()))
     return render(request, 'app/company.html', context)
 
 @csrf_exempt
@@ -73,3 +78,9 @@ def wait_for_check_company(request):
         return render(request, 'app/empresa_pendiente.html', context)
     else:
         return HttpResponseNotAllowed('GET')
+
+def comment_company(request):
+    return redirect(reverse(home))
+
+def edit_comment_company(request):
+    return redirect(reverse(home))

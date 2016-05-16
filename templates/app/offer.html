@@ -20,7 +20,11 @@
         </div>
         <div class="col-md-4 col-xs-12">
             <div>Empresa</div>
-            <div class="text-highlight text-big">{{ oferta.empresa }}</div>
+            <div class="text-highlight text-big">
+                <a href="{% url "empresa" nombre_empresa=oferta.empresa.url_encoded_name %}">
+                    {{ oferta.empresa }}
+                </a>
+            </div>
         </div>
         <div class="col-md-4 col-xs-12">
             <div>Jornada</div>

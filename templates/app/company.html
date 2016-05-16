@@ -47,24 +47,28 @@
     <div>
         <div class="title">Descripción</div>
         {# Interesst profile #}
-        <p>Lorem ipsum dolor sit amet, porttitor metus scelerisque, nullam hymenaeos, justo in lobortis. Consectetur proin, placerat scelerisque. Pellentesque tincidunt convallis, quis ornare, at dolor. Aenean ultrices, blandit mattis, amet ut nec. Mattis aliquam. At in. Morbi ac orci, sit semper. Lacinia arcu.</p>
+        <p>{{ empresa.descripcion|default_if_none:"Empresa no verificada" }}</p>
     </div>
     <hr>
-    <div class="row text-center text-uppercase">
-        <div class="col-md-4 col-xs-12">
-            <div>Encargado</div>
-            <div class="text-highlight text-big">Ricardo Ruiz</div>
+    {% if encargado %}
+        <div class="row text-center text-uppercase">
+            <div class="col-md-4 col-xs-12">
+                <div>Encargado administrador</div>
+                <div class="text-highlight text-big">{{ encargado.nombre }}</div>
+            </div>
+            <div class="col-md-4 col-xs-12">
+                <div>Correo electrónico</div>
+                <div class="text-highlight text-big">{{ encargado.email }}</div>
+            </div>
+            <div class="col-md-4 col-xs-12">
+                <div>Teléfono</div>
+                <div class="text-highlight text-big">{{ encargado.telefono }}</div>
+            </div>
         </div>
-        <div class="col-md-4 col-xs-12">
-            <div>Correo electrónico</div>
-            <div class="text-highlight text-big">rruiz@company.cl</div>
-        </div>
-        <div class="col-md-4 col-xs-12">
-            <div>Teléfono</div>
-            <div class="text-highlight text-big">2 111 1111</div>
-        </div>
-    </div>
+    {% endif %}
     <hr>
-    <h3>Comentarios y valoraciones</h3>
-    {% include "sub/company-comments.html" %}
+    {% if "normal" in roles %}
+        <h3>Comentarios y valoraciones</h3>
+        {% include "sub/company-comments.html" %}
+    {% endif %}
 {% endblock %}
