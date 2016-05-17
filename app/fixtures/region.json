@@ -3,7 +3,7 @@
     "model": "app.region",
     "fields": {
       "id": 1,
-      "nombre": "Región de Tarapaca"
+      "nombre": "Región de Tarapacá"
     }
   },
   {
@@ -38,7 +38,7 @@
     "model": "app.region",
     "fields": {
       "id": 6,
-      "nombre": "Región del Libertador Bernardo Ohiggins"
+      "nombre": "Región del Libertador Bernardo O'Higgins"
     }
   },
   {
@@ -94,7 +94,7 @@
     "model": "app.region",
     "fields": {
       "id": 14,
-      "nombre": "Región de los Rios"
+      "nombre": "Región de los Ríos"
     }
   },
   {

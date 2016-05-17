@@ -1,7 +1,11 @@
 {% load staticfiles %}
 <div class="row">
     <div class="col-md-3 text-center">
-        <div class="text-capitalize text-big row">{{ offer.empresa }}</div>
+        <div class="text-capitalize text-big row">
+            <a href="{% url "empresa" nombre_empresa=offer.empresa.url_encoded_name %}">
+                {{ offer.empresa }}
+            </a>
+        </div>
         <img class="company-logo"
              src="{% if empresa.logo %}
                 {{ empresa.logo }}
