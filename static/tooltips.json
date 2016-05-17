@@ -1,0 +1,136 @@
+{
+    "template": {
+        "label": "",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "titulo": {
+        "label": "Título de la Oferta",
+        "help_text": "Título que tendrá la publicación.",
+        "placeholder": "Título"
+    },
+    "empresa": {
+        "label": "Empresa",
+        "help_text": "Empresa que ofrece el trabajo.",
+        "placeholder": ""
+    },
+    "nueva_empresa": {
+        "label": "Nombre Empresa",
+        "help_text": "Empresa que ofrece el trabajo.",
+        "placeholder": "Nombre Empresa"
+    },
+    "tipo": {
+        "label": "Tipo de Oferta",
+        "help_text": "Indicar si se trata de una oferta de Práctica, de Memoria o de Trabajo."
+    },
+    "descripcion": {
+        "label": "Descripción de la Oferta",
+        "help_text": "Descripción general de la oferta.",
+        "placeholder": "Descripción"
+    },
+    "experiencia": {
+        "label": "Experiencia Requerida",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "habilidades_requeridas": {
+        "label": "Habilidades Requeridas",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "habilidades_deseadas": {
+        "label": "Habilidades Deseadas",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "se_ofrece": {
+        "label": "Se Ofrece",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "jornada": {
+        "label": "Tipo de Jornada",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "hora_ingreso": {
+        "label": "Horario Ingreso",
+        "help_text": "",
+        "placeholder": "HH:MM"
+    },
+    "hora_salida": {
+        "label": "Horario Salida",
+        "help_text": "",
+        "placeholder": "HH:MM"
+    },
+    "remuneracion": {
+        "label": "Remuneración",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "sueldo_base": {
+        "label": "Sueldo Base",
+        "help_text": "",
+        "placeholder": "0"
+    },
+    "comentario_sueldo": {
+        "label": "Comentarios sobre la Remuneración (Opcional)",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "fecha_comienzo": {
+        "label": "Inicio Postulaciones",
+        "help_text": "",
+        "placeholder": "DD-MM-YYYY"
+    },
+    "fecha_termino": {
+        "label": "Fin Postulaciones",
+        "help_text": "",
+        "placeholder": "DD-MM-YYYY"
+    },
+    "duracion": {
+        "label": "Duración Minima",
+        "help_text": "",
+        "placeholder": "0"
+    },
+    "comentario_duracion": {
+        "label": "Comentarios sobre la Duración (Opcional)",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "direccion": {
+        "label": "Dirección",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "region": {
+        "label": "Región",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "comuna": {
+        "label": "Comuna",
+        "help_text": "",
+        "placeholder": ""
+    },
+    "encargado": {
+        "label": "Nombre del Contacto",
+        "help_text": "",
+        "placeholder": "Nombre"
+    },
+    "email": {
+        "label": "Email de Contacto",
+        "help_text": "",
+        "placeholder": "contacto@empresa.com"
+    },
+    "telefono": {
+        "label": "Teléfono de Contacto",
+        "help_text": "",
+        "placeholder": "+56 9 XXXX XXXX"
+    },
+    "notificar": {
+        "label": "Deseo recibir feedback",
+        "help_text": "",
+        "placeholder": "+56 9 XXXX XXXX"
+    }
+}

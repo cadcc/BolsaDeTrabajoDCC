@@ -117,7 +117,12 @@ TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
+TIME_INPUT_FORMATS = [
+    '%H:%M:%S',
+    '%H:%M %p',
+    '%H:%M'
+]
 
 USE_TZ = True
 

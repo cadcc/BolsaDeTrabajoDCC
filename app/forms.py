@@ -84,19 +84,18 @@ class CommentOfferForm(forms.Form):
             raise forms.ValidationError('Las puntuaciones van entre 1 y 5 estrellas.')
         return valoration * 20
 
-class MyDateInput(forms.DateInput):
-    input_type = 'date'
-
-class MyTimeInput(forms.TimeInput):
-    input_type = 'time'
-
 class OfferForm(ModelForm):
     nombre_empresa = forms.CharField(max_length=64, required=False, label="Nombre Empresa")
     tipo = forms.ChoiceField(choices=Oferta.OPCIONES_TIPO, widget=forms.RadioSelect(), label="Tipo de Oferta")
     sueldo_minimo = forms.IntegerField(min_value=0, required=False, label="Sueldo Base")
     duracion_minima = forms.IntegerField(min_value=0, label="Duración Mínima (meses)")
     jornada = forms.ModelChoiceField(queryset=Jornada.objects.all(), widget=forms.RadioSelect(), empty_label=None, label="Tipo de Jornada")
+    empresa = forms.ModelChoiceField(queryset=Empresa.objects.all().order_by('nombre'))
     comuna = forms.ModelChoiceField(queryset=Comuna.objects.all().order_by('nombre'))
+    fecha_comienzo = forms.DateField(input_formats=('%d-%m-%Y', '%d/%m/%Y', '%d-%m-%y', '%d/%m/%y'))
+    fecha_termino = forms.DateField(input_formats=('%d-%m-%Y', '%d/%m/%Y', '%d-%m-%y', '%d/%m/%y'))
+    hora_ingreso = forms.TimeField()
+    hora_salida = forms.TimeField()
 
     class Meta:
         model = Oferta
@@ -129,47 +128,6 @@ class OfferForm(ModelForm):
             'telefono_encargado',
             'notificar',
         )
-        labels = {
-            'titulo': 'Título de la Oferta',
-            'tipo': 'Tipo de Oferta',
-            'jornada': 'Tipo de Jornada',
-            'descripción': 'Descripción',
-            'requiere_experiencia': 'Experiencia Requerida (Opcional)',
-            'comentario_jornada': 'Comentarios sobre la Jornada (Opcional)',
-            'hora_ingreso': 'Horario Ingreso',
-            'hora_salida': 'Horario Salida',
-            'remunerado': 'Remuneración',
-            'sueldo_minimo': 'Sueldo Base',
-            'comentario_sueldo': 'Comentarios sobre la Remuneración (Opcional)',
-            'fecha_comienzo': 'Inicio Postulaciones',
-            'fecha_termino': 'Fin Postulaciones',
-            'duracion_minima': 'Duración mínima (meses)',
-            'comentario_duracion': 'Comentarios sobre la Duración (Opcional)',
-            'direccion': 'Dirección',
-            'comuna': 'Comuna',
-            'nombre_encargado': 'Nombre del Contacto',
-            'email_encargado': 'Email de Contacto',
-            'telefono_encargado': 'Teléfono de Contacto',
-            'notificar': 'Deseo recibir feedback de la oferta',
-        }
-        help_texts = {
-            'titulo': 'Tooltip Titulo'
-        }
-        widgets = {
-            #forms.Textarea(attrs={'rows':4, 'cols':15}),
-            'hora_ingreso': MyTimeInput(),
-            'hora_salida': MyTimeInput(),
-            'fecha_comienzo': forms.SelectDateWidget,
-            'fecha_termino': forms.SelectDateWidget,
-            'descripcion': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'requiere_experiencia': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'habilidades_deseadas': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'habilidades_requeridas': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'se_ofrece': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'comentario_jornada': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'comentario_sueldo': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'comentario_duracion': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-        }
 
     def __init__(self, *args, **kwargs):
         super(OfferForm, self).__init__(*args, **kwargs)
@@ -183,7 +141,7 @@ class OfferForm(ModelForm):
         data = super(OfferForm, self).clean()
         empresa = data.get("empresa")
         nueva_empresa = data.get("nombre_empresa")
-        if (empresa == None and nueva_empresa == ''):
+        if ((empresa == None or empresa == 'Otra') and nueva_empresa == ''):
             raise forms.ValidationError('Debe elegir una Empresa del listado o agregar una Nueva Empresa')
 
         sueldo = data.get("sueldo_minimo")
