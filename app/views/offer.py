@@ -11,14 +11,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
 
 from app.forms import OfferForm
-from app.models import Oferta, Empresa, Usuario, Encargado, Etiqueta, Validacion, ValoracionOferta, TipoEtiqueta
+from app.models import Oferta, Empresa, Usuario, Encargado, Etiqueta, Validacion, ValoracionOferta, TipoEtiqueta, Region, Comuna
 from app.views.common import getUser
 
 
 class OfertaCreate(CreateView):
     model = Oferta
     form_class = OfferForm
-    template_name = 'app/enviar_oferta.html'
+    template_name = 'app/enviar_oferta_alt.html'
 
     def get_success_url(self):
         return reverse('home')
@@ -46,6 +46,15 @@ class OfertaCreate(CreateView):
                 context['user'] = usuario
             elif encargado is not None:
                 context['user'] = encargado
+
+        # Información extra formulario
+        json_file = open('./static/tooltips.json')
+        json_data = json_file.read()
+        context['info'] = json.loads(json_data)
+        json_file.close()
+        context['regiones'] = Region.objects.all()
+        context['comunas'] = Comuna.objects.all().order_by('nombre')
+        context['empresas'] = Empresa.objects.all().order_by('nombre')
         return context
 
 @login_required
