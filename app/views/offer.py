@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
 
 from app.forms import OfferForm
-from app.models import Oferta, Empresa, Usuario, Encargado, Etiqueta, Validacion, ValoracionOferta, TipoEtiqueta, Region, Comuna
+from app.models import Oferta, Empresa, Usuario, Encargado, Etiqueta, Validacion, ValoracionOferta, TipoEtiqueta, Region, Comuna, Jornada
 from app.views.common import getUser
 
 
@@ -52,9 +52,26 @@ class OfertaCreate(CreateView):
         json_data = json_file.read()
         context['info'] = json.loads(json_data)
         json_file.close()
-        context['regiones'] = Region.objects.all()
-        context['comunas'] = Comuna.objects.all().order_by('nombre')
         context['empresas'] = Empresa.objects.all().order_by('nombre')
+        context['jornadas'] = Jornada.objects.all().order_by('nombre')
+        context['remuneraciones'] = Oferta.OPCIONES_REMUNERACION
+        context['tipos'] = Oferta.OPCIONES_TIPO
+
+        etiquetas = Etiqueta.objects.filter(validado=True).order_by('nombre')
+        #tipos_etiquetas = TipoEtiqueta.objects.exclude(nombre='tipo de oferta').exclude(nombre='jornada')
+        tipos_etiquetas = TipoEtiqueta.objects.all()
+        dict_etiquetas = {}
+        for tipo in tipos_etiquetas:
+            dict_etiquetas[tipo.nombre] = etiquetas.filter(tipo_id=tipo.id)
+        context['etiquetas'] = dict_etiquetas
+
+        regiones = Region.objects.all().order_by('id')
+        comunas = Comuna.objects.all().order_by('nombre')
+        dict_comunas = {}
+        for region in regiones:
+            dict_comunas[region.nombre] = comunas.filter(region_id=region.id)
+        context['comunas'] = dict_comunas
+        context['regiones'] = regiones
         return context
 
 @login_required

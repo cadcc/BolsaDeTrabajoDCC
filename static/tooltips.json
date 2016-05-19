@@ -12,7 +12,7 @@
     "empresa": {
         "label": "Empresa",
         "help_text": "Empresa que ofrece el trabajo.",
-        "placeholder": ""
+        "placeholder": "Seleccionar una empresa..."
     },
     "nueva_empresa": {
         "label": "Nombre Empresa",
@@ -47,6 +47,11 @@
         "label": "Se Ofrece",
         "help_text": "",
         "placeholder": ""
+    },
+    "etiquetas": {
+        "label": "Etiquetas",
+        "help_text": "Palabras clave que describen la oferta y ayudan a los usuarios a encontrar ofertas de interés",
+        "placeholder": "Seleccionar etiquetas..."
     },
     "jornada": {
         "label": "Tipo de Jornada",
@@ -106,12 +111,12 @@
     "region": {
         "label": "Región",
         "help_text": "",
-        "placeholder": ""
+        "placeholder": "Seleccionar una región..."
     },
     "comuna": {
         "label": "Comuna",
         "help_text": "",
-        "placeholder": ""
+        "placeholder": "Seleccionar una comuna..."
     },
     "encargado": {
         "label": "Nombre del Contacto",

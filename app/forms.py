@@ -122,7 +122,7 @@ class OfferForm(ModelForm):
             'comentario_duracion',
             'direccion',
             'comuna',
-            #'etiquetas',
+            'etiquetas',
             'nombre_encargado',
             'email_encargado',
             'telefono_encargado',
