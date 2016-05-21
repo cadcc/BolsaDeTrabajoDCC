@@ -73,7 +73,7 @@ class UserForm(forms.Form):
             raise forms.ValidationError('El archivo subido supera los 5MB')
         return document
 
-class CommentOfferForm(forms.Form):
+class CommentForm(forms.Form):
     valoration = forms.IntegerField()
     is_important = forms.BooleanField(required=False)
     comment = forms.CharField(required=False)

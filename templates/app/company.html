@@ -31,13 +31,7 @@
                 </div>
                 <div class="badge badge-yellow" title="4.2">
                     <div>Valoración</div>
-                    <div class="text-big">
-                        <span>4.2</span>
-                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                        <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                        <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+                    <div class="text-big star-val" data-score={{ empresa.puntaje }}>
                     </div>
                 </div>
             </div>
@@ -71,4 +65,84 @@
         <h3>Comentarios y valoraciones</h3>
         {% include "sub/company-comments.html" %}
     {% endif %}
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        //colores e iconos en la parte de validar para practica
+        var valid_icons = $('.valid-class');
+        for (var i = 0; i < valid_icons.length; i++) {
+            var valid_icon = $(valid_icons[i]);
+            var icon;
+            if (valid_icon.data('valid') === 'Aprobada') {
+                icon = "glyphicon glyphicon-ok-sign text-big valid-class";
+            } else if (valid_icon.data('valid') === 'No Aprobada') {
+                icon = "glyphicon glyphicon-remove-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-red')
+            } else {
+                icon = "glyphicon glyphicon-question-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-orange')
+            }
+            valid_icon.attr('class', icon);
+        }
+    </script>
+    <script type="text/javascript">
+        //para el llenado de las estrellas
+        var star_vals = $('.star-val');
+        for (var i = 0; i < star_vals.length; i++) {
+            var star_val = $(star_vals[i]);
+            var offer_score = star_val.data('score');
+            //star_val.append($('<span/>', {text: offer_score/20}));
+            for (var score = 20; score <= 100; score+=20) {
+                if (offer_score >= score)
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star',
+                        'aria-hidden': 'true'
+                    }));
+                else
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star-empty',
+                        'aria-hidden': 'true'
+                    }));
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        var commentButton = $('#comment_button');
+        commentButton.prop('disabled', true);
+        $('#valoration').on('rating.change', function() {
+            commentButton.removeClass('disabled')
+            commentButton.removeAttr('disabled');
+        });
+        $('#user-valoration').find('input').on('rating.change', function(){
+            $('#user-valoration-input').val($(this).val());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#edit-comment-btn').click(function () {
+                var val = $('#user-valoration');
+                val.parent().find('.badge').addClass('hidden');
+                val.removeClass('hidden');
+                $('#user-textarea').removeClass('hidden');
+                $('#user-comment').addClass('hidden');
+                $('#update-comment-btn').removeClass('hidden');
+                $('#cancel-edit-btn').removeClass('hidden');
+                $('#user-importance').removeClass('hidden');
+                $(this).addClass('hidden');
+            });
+
+            $('#cancel-edit-btn').click(function () {
+                var val = $('#user-valoration');
+                val.parent().find('.badge').removeClass('hidden');
+                val.addClass('hidden');
+                $('#user-textarea').addClass('hidden');
+                $('#user-comment').removeClass('hidden');
+                $('#update-comment-btn').addClass('hidden');
+                $('#edit-comment-btn').removeClass('hidden');
+                $('#user-importance').addClass('hidden');
+                $(this).addClass('hidden');
+            });
+        });
+    </script>
 {% endblock %}

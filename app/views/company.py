@@ -36,20 +36,29 @@ def registrar_empresa(request):
     else:
         return HttpResponseNotAllowed('POST')
 
+def load_info_company(user, empresa):
+    context = {}
+    if empresa is None:
+        return redirect(reverse(home))
+    context['empresa'] = empresa
+    context['encargado'] = Encargado.objects.filter(empresa=empresa, administrador=True).first()
+    context['user'] = user
+    context['roles'] = []
+    context['comments'] = ValoracionEmpresa.objects.filter(empresa=empresa).order_by('fecha_creacion')
+    if isinstance(context['user'], Usuario):
+        context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=context['user'].id).roles.all()))
+        context['user_already_comment'] = len(
+            ValoracionEmpresa.objects.filter(empresa=empresa, usuario=user)) > 0
+    return context
+
 @login_required
 def empresa(request, nombre_empresa):
-    context = {}
     nombre_empresa = nombre_empresa.replace('-', ' ')
     empresa = Empresa.objects.filter(nombre=nombre_empresa).first()
     if empresa is None:
         return redirect(reverse(home))
-    context['empresa'] = empresa
-    context['user'] = getUser(request.user)
-    context['comments'] = ValoracionEmpresa.objects.filter(empresa=empresa).order_by('fecha_creacion')
-    context['encargado'] = Encargado.objects.filter(empresa=empresa, administrador=True).first()
-    context['roles'] = []
-    if isinstance(context['user'], Usuario):
-        context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=context['user'].id).roles.all()))
+    user = getUser(request.user)
+    context = load_info_company(user, empresa)
     return render(request, 'app/company.html', context)
 
 @csrf_exempt
@@ -78,9 +87,3 @@ def wait_for_check_company(request):
         return render(request, 'app/empresa_pendiente.html', context)
     else:
         return HttpResponseNotAllowed('GET')
-
-def comment_company(request):
-    return redirect(reverse(home))
-
-def edit_comment_company(request):
-    return redirect(reverse(home))
