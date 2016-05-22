@@ -152,6 +152,7 @@ def offer(request, offer_id):
     user = getUser(request.user)
     context = load_info_offer(offer_id)
     if isinstance(user, Usuario):
+        context['isFollowed'] = user.marcadores.all().filter(id=offer_id).last() is not None
         context['user_already_comment'] = len(
             ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
         context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
@@ -207,3 +208,23 @@ def offer_list(request):
 def suscription(request):
     context = {}
     return render(request, 'app/suscription.html', context)
+
+@login_required
+def followOffer(request):
+    if request.method == 'POST':
+        user = getUser(request.user)
+        if not isinstance(user, Usuario):
+            return HttpResponseBadRequest('No tienes los permisos para hacer esta accion')
+        offer_id = request.POST.get('offer_id')
+        actual_state = request.POST.get('actual_state')
+        offer = Oferta.objects.get(pk=offer_id)
+
+        if actual_state == 'True':
+            user.marcadores.remove(offer)
+        else:
+            user.marcadores.add(offer)
+        user.save()
+        return HttpResponse(json.dumps({'msg': 'Cambiado el estado de seguimiento de la oferta'}),
+                                content_type='application/json')
+    else:
+        return HttpResponseNotAllowed('POST')

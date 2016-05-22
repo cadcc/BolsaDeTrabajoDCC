@@ -8,6 +8,9 @@
 {% block right_column_content %}
     {% csrf_token %}
     <h2 class="text-center">{{ oferta.titulo }}</h2>
+    <button class="btn btn-info btn-lg" onclick="followOffer({{ oferta.id }})">
+        <span id="follow_icon" data-follow="{{ isFollowed }}" class="center-block glyphicon glyphicon-heart-empty"></span>
+    </button>
     <hr>
     <div class="row text-center text-uppercase">
         <div class="col-md-4 col-xs-12">
@@ -198,5 +201,35 @@
                 $(this).addClass('hidden');
             });
         });
+    </script>
+    <script type="text/javascript">
+        function updateDataIconFollow() {
+            var iconFollow = $('#follow_icon');
+            if (iconFollow.data('follow') === 'True')
+                iconFollow.data('follow', 'False');
+            else iconFollow.data('follow', 'True');
+        }
+        function updateIconFollow() {
+            var iconFollow = $('#follow_icon');
+            if (iconFollow.data('follow') === 'True')
+                iconFollow.attr('class', "center-block glyphicon glyphicon-heart");
+            else iconFollow.attr('class', "center-block glyphicon glyphicon-heart-empty")
+        }
+        function followOffer(offer_id) {
+            //aqui hay que poner algo para que se vea como carga el sistema, su modal loco
+            var actual_state = $('#follow_icon').data('follow');
+            $.post('/seguir-oferta',{
+                'offer_id': offer_id,
+                'actual_state': actual_state,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                updateDataIconFollow();
+                updateIconFollow();
+                console.log(msg);
+            })
+        }
+        updateIconFollow();
     </script>
 {% endblock %}
