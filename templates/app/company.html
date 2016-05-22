@@ -39,16 +39,21 @@
     </div>
     <hr>
     <div>
-        <div class="title">Descripción</div>
+        <h3>Descripción</h3>
         {# Interesst profile #}
-        <p>{{ empresa.descripcion|default_if_none:"Empresa no verificada" }}</p>
+        {% if empresa.validada %}
+            <p>{{ empresa.descripcion|default_if_none:"Sin descripción." }}</p>
+        {% else %}
+            <p>Esta empresa aún no ha sido verificada.</p>
+        {% endif %}
+
     </div>
     <hr>
     {% if encargado %}
         <div class="row text-center text-uppercase">
             <div class="col-md-4 col-xs-12">
                 <div>Encargado administrador</div>
-                <div class="text-highlight text-big">{{ encargado.nombre }}</div>
+                <div class="text-highlight text-big">{{ encargado.first_name }}</div>
             </div>
             <div class="col-md-4 col-xs-12">
                 <div>Correo electrónico</div>
@@ -60,6 +65,15 @@
             </div>
         </div>
     {% endif %}
+    <hr>
+    <div>
+        <h3>Ofertas</h3>
+        {% for offer in empresa.oferta_set.all %}
+        {% empty %}
+            <p>Esta empresa no ha publicado ninguna oferta.</p>
+        {% endfor %}
+
+    </div>
     <hr>
     {% if "normal" in roles %}
         <h3>Comentarios y valoraciones</h3>

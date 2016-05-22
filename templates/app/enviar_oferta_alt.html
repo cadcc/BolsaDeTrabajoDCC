@@ -165,14 +165,20 @@
                 {% endif %}
             </label>
             <div class="col-sm-9">
-                <select id="select-empresa" class="form-control selectpicker show-tick show-menu-arrow" name="{{ form.empresa.html_name }}" value="{{ form.empresa.value|default_if_none:'' }}" data-live-search="true" data-hide-disabled="true" data-header="{{ info.empresa.placeholder }}" title="{{ info.empresa.placeholder }}">
-                    <option value="" selected="selected" disabled>{{ info.empresa.placeholder }}</option>
-                    <option value="">Otra</option>
-                    <option data-divider="true"></option>
-                    {% for empresa in empresas %}
-                        <option value="{{ empresa.id }}">{{ empresa.nombre }}</option>
-                    {% endfor %}
-                </select>
+                    {% if user.is_authenticated and user.empresa %}
+                        <select id="select-empresa" class="form-control show-tick show-menu-arrow" name="{{ form.empresa.html_name }}" value="{{ user.empresa.id }}" data-live-search="false" data-hide-disabled="true" data-header="" title="{{ info.empresa.placeholder }}">
+                        <option value="{{ user.empresa.id }}">{{ user.empresa.nombre }}</option>
+                        </select>
+                    {% else %}
+                        <select id="select-empresa" class="form-control selectpicker show-tick show-menu-arrow" name="{{ form.empresa.html_name }}" value="{{ form.empresa.value|default_if_none:'' }}" data-live-search="true" data-hide-disabled="true" data-header="{{ info.empresa.placeholder }}" title="{{ info.empresa.placeholder }}">
+                        <option value="" selected="selected" disabled>{{ info.empresa.placeholder }}</option>
+                        <option value="">Otra</option>
+                        <option data-divider="true"></option>
+                        {% for empresa in empresas %}
+                            <option value="{{ empresa.id }}">{{ empresa.nombre }}</option>
+                        {% endfor %}
+                        </select>
+                    {% endif %}
                 {% if info.empresa.help_text %}
                     <div id="empresa_helptext" class="helptext" style="display:none">
                         <div class="alert alert-info" role="alert">
@@ -905,7 +911,11 @@
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-user"></span>
                     </span>
-                    <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text" placeholder="{{ info.encargado.placeholder }}" value="{{ form.nombre_encargado.value|default_if_none:'' }}"/>
+                    {% if user.is_authenticated and user.empresa %}
+                        <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text" placeholder="{{ info.encargado.placeholder }}" value="{{ form.nombre_encargado.value|default_if_none:user.first_name }}"/>
+                    {% else %}
+                        <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text" placeholder="{{ info.encargado.placeholder }}" value="{{ form.nombre_encargado.value|default_if_none:'' }}"/>
+                    {% endif %}
                 </div>
                 {% if info.encargado.help_text %}
                     <div id="encargado_helptext" class="helptext" style="display:none">
@@ -940,7 +950,11 @@
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-envelope"></span>
                     </span>
-                    <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}" value="{{ form.email_encargado.value|default_if_none:'' }}"/>
+                    {% if user.is_authenticated and user.empresa %}
+                        <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}" value="{{ form.email_encargado.value|default_if_none:user.email }}"/>
+                    {% else %}
+                        <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}" value="{{ form.email_encargado.value|default_if_none:'' }}"/>
+                    {% endif %}
                 </div>
                 {% if info.email.help_text %}
                     <div id="email_helptext" class="helptext" style="display:none">
