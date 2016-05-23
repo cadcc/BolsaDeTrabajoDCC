@@ -126,87 +126,125 @@
             })
         }
     </script>
+    <script type="text/javascript">
+        function updateDataIconFollow(id) {
+            var iconFollow = $('#follow_icon_' + id);
+            if (iconFollow.data('follow') === 'True')
+                iconFollow.data('follow', 'False');
+            else iconFollow.data('follow', 'True');
+        }
+        function updateIconFollow(id) {
+            var iconFollow = $('#follow_icon_' + id);
+            if (iconFollow.data('follow') === 'True')
+                iconFollow.attr('class', "glyphicon glyphicon-heart");
+            else iconFollow.attr('class', "glyphicon glyphicon-heart-empty")
+        }
+        function followOffer(offer_id) {
+            //aqui hay que poner algo para que se vea como carga el sistema, su modal loco
+            var actual_state = $('#follow_icon_' + offer_id).data('follow');
+            $.post('/seguir-oferta',{
+                'offer_id': offer_id,
+                'actual_state': actual_state,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                updateDataIconFollow(offer_id);
+                updateIconFollow(offer_id);
+                console.log(msg);
+            })
+        }
+    </script>
 {% endblock %}
 
 {% block right_column_content %}
-			<div>
-				<form role="search">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Buscar ofertas">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit">
-                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                            </button>
-                        </span>
-                    </div>
-                </form>
-			</div>
-            {% csrf_token %}
-			<div class="tabbable" id="tabs-813395">
+    {% if marcadores %}
+        <h1>Mis marcadores</h1>
+    {% else %}
+        <div>
+            <form role="search">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Buscar ofertas">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                    </button>
+                </span>
+                </div>
+            </form>
+        </div>
+        <h1>Todas las ofertas</h1>
+    {% endif %}
+    {% csrf_token %}
+    <div class="tabbable" id="tabs-813395">
+        {% if 'publicador' in roles and not marcadores %}
+            <h3>Para ver las nuevas ofertas aceptadas en las otras pestañas debes actualizar la página</h3>
+        {% endif %}
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a href="#panel-804185" data-toggle="tab">Prácticas</a>
+            </li>
+            <li>
+                <a href="#panel-289390" data-toggle="tab">Memorias</a>
+            </li>
+            <li>
+                <a href="#panel-289391" data-toggle="tab">Trabajos</a>
+            </li>
+            {% if not marcadores %}
                 {% if 'publicador' in roles %}
-                    <h3>Para ver las nuevas ofertas aceptadas en las otras pestañas debes actualizar la página</h3>
-                {% endif %}
-				<ul class="nav nav-tabs">
-					<li class="active">
-						<a href="#panel-804185" data-toggle="tab">Prácticas</a>
-					</li>
-					<li>
-						<a href="#panel-289390" data-toggle="tab">Memorias</a>
-					</li>
-					<li>
-						<a href="#panel-289391" data-toggle="tab">Trabajos</a>
-					</li>
-                    {% if 'publicador' in roles %}
                     <li>
                         <a href="#panel-289392" data-toggle="tab">Ofertas recibidas</a>
                     </li>
-                    {% endif %}
-                    {% if 'validador' in roles %}
+                {% endif %}
+                {% if 'validador' in roles %}
                     <li>
                         <a href="#panel-289393" data-toggle="tab">Prácticas por revisar</a>
                     </li>
-                    {% endif %}
-				</ul>
-				<div class="tab-content">
-					<div class="tab-pane active" id="panel-804185">
-                        {% for offer in practices %}
-                            {% include "app/offer_list_practice.html" %}
-                            {% empty %}
-                                Aún no hay ofertas de Práctica.
-                        {% endfor %}
-					</div>
-					<div class="tab-pane" id="panel-289390">
-                        {% for offer in reports %}
-                            {% include "app/offer_list_report_and_job.html" %}
-                            {% empty %}
-                                Aún no hay ofertas de Memoria.
-                        {% endfor %}
-					</div>
-					<div class="tab-pane" id="panel-289391">
-						{% for offer in jobs %}
-                            {% include "app/offer_list_report_and_job.html" %}
-                            {% empty %}
-                                Aún no hay ofertas de Trabajo.
-                        {% endfor %}
-					</div>
-                    {% if 'publicador' in roles %}
-                    <div class="tab-pane" id="panel-289392">
-                        {% for offer in offers_to_check %}
-                            {% include "app/offer_list_acept_offer.html" %}
-                            {% empty %}
-                                Todas las ofertas han sido revisadas.
-                        {% endfor %}
-					</div>
-                    {% endif %}
-                    {% if 'validador' in roles %}
-                    <div class="tab-pane" id="panel-289393">
-                        {% for offer in practices_to_check %}
-                            {% include "app/offer_list_valid_prac.html" %}
-                            {% empty %}
-                                Todas las prácticas han sido revisadas.
-                        {% endfor %}
-					</div>
-                    {% endif %}
-				</div>
-			</div>
+                {% endif %}
+            {% endif %}
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="panel-804185">
+                {% for offer in practices %}
+                    {% include "app/offer_list_practice.html" %}
+                    {% empty %}
+                        Aún no hay ofertas de Práctica.
+                {% endfor %}
+            </div>
+            <div class="tab-pane" id="panel-289390">
+                {% for offer in reports %}
+                    {% include "app/offer_list_report_and_job.html" %}
+                    {% empty %}
+                        Aún no hay ofertas de Memoria.
+                {% endfor %}
+            </div>
+            <div class="tab-pane" id="panel-289391">
+                {% for offer in jobs %}
+                    {% include "app/offer_list_report_and_job.html" %}
+                    {% empty %}
+                        Aún no hay ofertas de Trabajo.
+                {% endfor %}
+            </div>
+            {% if not marcadores %}
+                {% if 'publicador' in roles %}
+                <div class="tab-pane" id="panel-289392">
+                    {% for offer in offers_to_check %}
+                        {% include "app/offer_list_acept_offer.html" %}
+                        {% empty %}
+                            Todas las ofertas han sido revisadas.
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'validador' in roles %}
+                <div class="tab-pane" id="panel-289393">
+                    {% for offer in practices_to_check %}
+                        {% include "app/offer_list_valid_prac.html" %}
+                        {% empty %}
+                            Todas las prácticas han sido revisadas.
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

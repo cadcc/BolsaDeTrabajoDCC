@@ -26,5 +26,6 @@ urlpatterns = [
     url(r'^comentar-empresa$', view=valoration.comment_company, name="comentar_empresa"),
     url(r'^editar-comentario-oferta', view=valoration.edit_comment_offer, name="editar_comentario_oferta"),
     url(r'^editar-comentario-empresa', view=valoration.edit_comment_company, name="editar_comentario_empresa"),
-    url(r'^seguir-oferta', view=offer.followOffer, name="seguir_oferta")
+    url(r'^seguir-oferta', view=offer.followOffer, name="seguir_oferta"),
+    url(r'^mis-marcadores', view=offer.markers, name="mis_marcadores")
 ]

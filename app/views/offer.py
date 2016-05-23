@@ -188,7 +188,7 @@ def offer_list(request):
     context['jobs'] = Oferta.objects.filter(tipo='Trabajo', publicada=True).order_by('-fecha_publicacion')
     context['reports'] = Oferta.objects.filter(tipo='Memoria', publicada=True).order_by('-fecha_publicacion')
     context['offers_to_check'] = Oferta.objects.filter(publicada=False).order_by('fecha_ingreso')
-    context['practices_to_check'] = reversed(wait_practices)
+    context['practices_to_check'] = wait_practices
 
     #cargar etiquetas para filtrar
     tipos_etiqueta_query = TipoEtiqueta.objects.all().order_by('nombre')
@@ -201,7 +201,7 @@ def offer_list(request):
         })
 
     context['tipos_etiquetas'] = tipos_etiqueta
-
+    context['ids_marcadores'] = list(map(lambda offer: offer.id, user.marcadores.all()))
     return render(request, 'app/offer_list.html', context)
 
 @csrf_exempt
@@ -228,3 +228,44 @@ def followOffer(request):
                                 content_type='application/json')
     else:
         return HttpResponseNotAllowed('POST')
+
+def markers(request):
+    user = getUser(request.user)
+    if not isinstance(user, Usuario):
+        return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+
+    # obtener fecha para comparar
+    date_now = timezone.now()
+    date_seven_days = date_now - timedelta(days=7)
+
+    # obtener ofertas de los marcadores
+    marcadores = user.marcadores.all()
+    context = {'user': user}
+    roles = map(lambda rol: str(rol), user.roles.all())
+    context['roles'] = list(roles)
+    valid_practices = []
+    pre_practices = marcadores.filter(tipo='Práctica', publicada=True).order_by('-fecha_publicacion')
+    for i in range(len(pre_practices)):
+        practice = {'info': pre_practices[i]}
+        valid = Validacion.objects.filter(oferta=pre_practices[i]).last()
+        practice['valid'] = str(valid) if valid is not None else 'Sin Validar'
+        if valid is not None or pre_practices[i].fecha_ingreso < date_seven_days:
+            valid_practices.append(practice)
+    context['practices'] = valid_practices
+    context['jobs'] = marcadores.filter(tipo='Trabajo', publicada=True).order_by('-fecha_publicacion')
+    context['reports'] = marcadores.filter(tipo='Memoria', publicada=True).order_by('-fecha_publicacion')
+
+    # cargar etiquetas para filtrar
+    tipos_etiqueta_query = TipoEtiqueta.objects.all().order_by('nombre')
+    tipos_etiqueta = []
+
+    for tipo_etiqueta_query in tipos_etiqueta_query:
+        tipos_etiqueta.append({
+            'tipo': tipo_etiqueta_query,
+            'etiquetas': Etiqueta.objects.filter(tipo=tipo_etiqueta_query).order_by('nombre')
+        })
+
+    context['tipos_etiquetas'] = tipos_etiqueta
+    context['marcadores'] = True
+    context['ids_marcadores'] = list(map(lambda offer: offer.id, marcadores))
+    return render(request, 'app/offer_list.html', context)

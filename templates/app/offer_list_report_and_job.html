@@ -16,6 +16,12 @@
     <div class="col-md-9">
         <div>
             <a href="{% url "oferta" offer_id=offer.id %}" class="text-highlight text-big text-capitalize">{{ offer.titulo }}</a>
+            <span class="glyphicon glyphicon-heart{% if not offer.id in ids_marcadores %}-empty{% endif %}"
+                  id="follow_icon_{{ offer.id }}"
+                  onclick="followOffer({{ offer.id }})"
+                  data-follow="{% if offer.id in ids_marcadores %}True{% else %}False{% endif %}"
+                  style="cursor: pointer">
+            </span>
         </div>
         <div>
             <div class="badge">
