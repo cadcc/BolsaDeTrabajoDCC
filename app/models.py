@@ -202,7 +202,7 @@ class ValoracionOferta(models.Model):
     valor = models.IntegerField()
     comentario = models.TextField(null=True)
     prioritario = models.BooleanField()
-    reportes = models.IntegerField(default=0)
+    reportes = models.ManyToManyField(Usuario, related_name='gameclaim_reporteoferta')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(null=True)
 
@@ -229,7 +229,7 @@ class ValoracionEmpresa(models.Model):
     valor = models.IntegerField()
     comentario = models.TextField(null=True)
     prioritario = models.BooleanField()
-    reportes = models.IntegerField(default=0)
+    reportes = models.ManyToManyField(Usuario, related_name='gameclaim_reporteempresa')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(null=True)
 
