@@ -6,10 +6,9 @@ from django.utils import timezone
 
 from app.forms import CommentForm
 from app.models import ValoracionOferta, Usuario, Oferta, Empresa, ValoracionEmpresa
-from app.views import offer
 from app.views.common import getUser
 from app.views.company import load_info_company, empresa
-from app.views.offer import load_info_offer
+from app.views.offer import load_info_offer, offer
 
 def new_score(valorations):
     sum = 0
