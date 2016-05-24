@@ -232,4 +232,16 @@
         }
         updateIconFollow();
     </script>
+    <script type="text/javascript">
+        function reportComment(comment_id) {
+            $.post('/reportar-comentario',{
+                'comment_id': comment_id,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                console.log(msg);
+            })
+        }
+    </script>
 {% endblock %}

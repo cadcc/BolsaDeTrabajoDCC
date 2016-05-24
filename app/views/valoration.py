@@ -171,3 +171,9 @@ def edit_comment_company(request):
             return HttpResponseBadRequest('No tienes permisos para editar este comentario')
     else:
         return HttpResponseNotAllowed('POST')
+
+@login_required
+def reportComment(request):
+    if request.method == 'POST':
+        user = getUser(request.user)
+    return HttpResponseNotAllowed('POST')
