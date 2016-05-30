@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^enviar-oferta$', offer.OfertaCreate.as_view(), name='formulario'),
     url(r'^oferta/(?P<offer_id>(\d{1,}))$', offer.offer, name='oferta'),
     url(r'^lista-de-ofertas/$', offer.offer_list, name='listado_ofertas'),
+    url(r'^buscar/$', offer.search_offer, name='busqueda'),
     url(r'^$', common.home, name='home'),
     url(r'^login_user$', user.login_user, name='login_user'),
     url(r'^logout$', common.logout_user, name='logout'),

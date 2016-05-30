@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
@@ -9,6 +10,7 @@ from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
+from django.db.models import Q
 
 from app.forms import OfferForm
 from app.models import Oferta, Empresa, Usuario, Encargado, Etiqueta, Validacion, ValoracionOferta, TipoEtiqueta, Region, Comuna, Jornada
@@ -62,7 +64,7 @@ class OfertaCreate(CreateView):
         tipos_etiquetas = TipoEtiqueta.objects.all()
         dict_etiquetas = {}
         for tipo in tipos_etiquetas:
-            dict_etiquetas[tipo.nombre] = etiquetas.filter(tipo_id=tipo.id)
+            dict_etiquetas[tipo.nombre] = etiquetas.filter(tipo_id=tipo.id).order_by('nombre')
         context['etiquetas'] = dict_etiquetas
 
         regiones = Region.objects.all().order_by('id')
@@ -203,6 +205,81 @@ def offer_list(request):
     context['tipos_etiquetas'] = tipos_etiqueta
     context['ids_marcadores'] = list(map(lambda offer: offer.id, user.marcadores.all()))
     return render(request, 'app/offer_list.html', context)
+
+
+# Busqueda -----------------------------------------------------------------------------
+
+def normalize_query(query_string,
+                    findterms=re.compile(r'"([^"]+)"|(\S+)').findall,
+                    normspace=re.compile(r'\s{2,}').sub):
+    ''' Splits the query string in invidual keywords, getting rid of unecessary spaces
+        and grouping quoted words together.
+
+        Example:
+        >>> normalize_query('  some random  words "with   quotes  " and   spaces')
+        ['some', 'random', 'words', 'with quotes', 'and', 'spaces']
+    '''
+    return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)]
+
+def get_query(query_string, search_fields):
+    ''' Returns a query, that is a combination of Q objects. That combination
+        aims to search keywords within a model by testing the given search fields.
+    '''
+    query = None # Query to search for every search term
+    terms = normalize_query(query_string)
+    for term in terms:
+        or_query = None # Query to search for a given term in each field
+        for field_name in search_fields:
+            q = Q(**{"%s__icontains" % field_name: term})
+            if or_query is None:
+                or_query = q
+            else:
+                or_query = or_query | q
+        if query is None:
+            query = or_query
+        else:
+            query = query & or_query
+    return query
+
+@login_required
+def search_offer(request):
+    busqueda = ''
+    if ('q' in request.GET) and request.GET['q'].strip():
+        busqueda = request.GET['q']
+
+    # No hacer búsquedas muy cortas
+    if (len(busqueda) < 3):
+        return offer_list(request)
+
+    user = getUser(request.user)
+    if not isinstance(user, Usuario):
+        return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+
+    context = {'user': user}
+    roles = map(lambda rol: str(rol), user.roles.all())
+    context['roles'] = list(roles)
+
+    # Generar Q's
+    query = get_query(busqueda, ['titulo', 'empresa__nombre'])
+    # query = Q(titulo__icontains=busqueda) | Q(empresa__nombre__icontains=busqueda)
+
+    results = Oferta.objects.filter(query).order_by('fecha_publicacion')
+    publicadas = results.filter(publicada=True)
+
+    deadline = timezone.now() - timedelta(days=7)
+    q_aprobadas = Q(validacion__isnull=False) & Q(validacion__aceptado=True)
+    q_sin_validar = Q(validacion__isnull=True) & Q(fecha_publicacion__lte=deadline)
+    context['practices'] = publicadas.filter(q_sin_validar | q_aprobadas, tipo='Práctica')
+    context['practices_to_check'] = publicadas.filter(tipo='Práctica', validacion__isnull=True)
+    context['reports'] = publicadas.filter(tipo='Memoria')
+    context['jobs'] = publicadas.filter(tipo='Trabajo')
+    context['offers_to_check'] = results.filter(publicada=False).order_by('-fecha_publicacion')
+    context['query'] = busqueda
+    context['busqueda'] = True
+
+    return render(request, 'app/offer_list.html', context)
+
+# --------------------------------------------------------------------------------------
 
 @csrf_exempt
 def suscription(request):

@@ -162,22 +162,26 @@
         <h1>Mis marcadores</h1>
     {% else %}
         <div>
-            <form role="search">
+            <form action="{% url 'busqueda' %}" method="GET" role="search">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Buscar ofertas">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
-                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                    </button>
-                </span>
+                    <input type="text" name="q" class="form-control" placeholder="Buscar ofertas">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                        </button>
+                    </span>
                 </div>
             </form>
         </div>
-        <h1>Todas las ofertas</h1>
+        {% if busqueda %}
+            <h1>Resultados de la búsqueda: {{ query }}</h1>
+        {% else %}
+            <h1>Todas las ofertas</h1>
+        {% endif %}
     {% endif %}
     {% csrf_token %}
     <div class="tabbable" id="tabs-813395">
-        {% if 'publicador' in roles and not marcadores %}
+        {% if 'publicador' in roles and not marcadores and not busqueda %}
             <h3>Para ver las nuevas ofertas aceptadas en las otras pestañas debes actualizar la página</h3>
         {% endif %}
         <ul class="nav nav-tabs">
