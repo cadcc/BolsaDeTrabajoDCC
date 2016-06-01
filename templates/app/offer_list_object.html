@@ -34,8 +34,13 @@
             </div>
             {% ifequal offer.tipo "Práctica" %}
             <div class="badge">
-                <div>{{ offer.valid }}</div>
-                <span data-valid="{{ offer.valid }}" class="valid-class" aria-hidden="true"></span>
+                {% if offer.aprobada %}
+                    <div>Aprobada</div>
+                    <span data-valid="Aprobada" class="valid-class" aria-hidden="true"></span>
+                {% else %}
+                    <div>Sin Aprobar</div>
+                    <span data-valid="Sin Aprobar" class="valid-class" aria-hidden="true"></span>
+                {% endif %}
             </div>
             {% endifequal %}
             <div class="badge" title="{{ offer.puntuacion }}">
