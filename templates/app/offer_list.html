@@ -210,21 +210,21 @@
         <div class="tab-content">
             <div class="tab-pane active" id="panel-804185">
                 {% for offer in practices %}
-                    {% include "app/offer_list_practice.html" %}
+                    {% include "app/offer_list_object.html" %}
                     {% empty %}
                         Aún no hay ofertas de Práctica.
                 {% endfor %}
             </div>
             <div class="tab-pane" id="panel-289390">
                 {% for offer in reports %}
-                    {% include "app/offer_list_report_and_job.html" %}
+                    {% include "app/offer_list_object.html" %}
                     {% empty %}
                         Aún no hay ofertas de Memoria.
                 {% endfor %}
             </div>
             <div class="tab-pane" id="panel-289391">
                 {% for offer in jobs %}
-                    {% include "app/offer_list_report_and_job.html" %}
+                    {% include "app/offer_list_object.html" %}
                     {% empty %}
                         Aún no hay ofertas de Trabajo.
                 {% endfor %}
