@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.edit import CreateView
-from django.db.models import Q
+from django.db.models import Q, Case, When, BooleanField
 
 from app.forms import OfferForm
 from app.models import Oferta, Empresa, Usuario, Encargado, Etiqueta, Validacion, ValoracionOferta, TipoEtiqueta, Region, Comuna, Jornada
@@ -60,8 +60,8 @@ class OfertaCreate(CreateView):
         context['tipos'] = Oferta.OPCIONES_TIPO
 
         etiquetas = Etiqueta.objects.filter(validado=True).order_by('nombre')
-        #tipos_etiquetas = TipoEtiqueta.objects.exclude(nombre='tipo de oferta').exclude(nombre='jornada')
-        tipos_etiquetas = TipoEtiqueta.objects.all()
+        tipos_etiquetas = TipoEtiqueta.objects.exclude(nombre='tipo de oferta').exclude(nombre='jornada')
+        #tipos_etiquetas = TipoEtiqueta.objects.all()
         dict_etiquetas = {}
         for tipo in tipos_etiquetas:
             dict_etiquetas[tipo.nombre] = etiquetas.filter(tipo_id=tipo.id).order_by('nombre')
@@ -161,14 +161,18 @@ def offer(request, offer_id):
         context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=request.user.id).roles.all()))
     return render(request, 'app/offer.html', context)
 
-def filter_offers(offers_to_filter):
+def classify_offers(offers_to_filter):
     publicadas = offers_to_filter.filter(publicada=True)
 
     deadline = timezone.now() - timedelta(days=7)
     q_aprobadas = Q(validacion__isnull=False) & Q(validacion__aceptado=True)
     q_sin_validar = Q(validacion__isnull=True) & Q(fecha_publicacion__lte=deadline)
     return {
-        'practices': publicadas.filter(q_sin_validar | q_aprobadas, tipo='Práctica'),
+        'practices': publicadas.filter(q_sin_validar | q_aprobadas, tipo='Práctica')
+                               .annotate(aprobada=Case(When(q_aprobadas, then=True),
+                                                       When(q_sin_validar, then=False),
+                                                       default=False,
+                                                       output_field=BooleanField())),
         'practices_to_check': publicadas.filter(tipo='Práctica', validacion__isnull=True),
         'reports': publicadas.filter(tipo='Memoria'),
         'jobs': publicadas.filter(tipo='Trabajo'),
@@ -194,7 +198,7 @@ def offer_list(request):
         return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
     #obtener ofertas
-    context = filter_offers(Oferta.objects.all().order_by('fecha_publicacion'))
+    context = classify_offers(Oferta.objects.all().order_by('fecha_publicacion'))
 
     #datos de usuario
     context['user'] = user
@@ -264,16 +268,18 @@ def search_offer(request):
     # query = Q(titulo__icontains=busqueda) | Q(empresa__nombre__icontains=busqueda)
 
     results = Oferta.objects.filter(query).order_by('fecha_publicacion')
-    publicadas = results.filter(publicada=True)
 
-    deadline = timezone.now() - timedelta(days=7)
-    q_aprobadas = Q(validacion__isnull=False) & Q(validacion__aceptado=True)
-    q_sin_validar = Q(validacion__isnull=True) & Q(fecha_publicacion__lte=deadline)
-    context['practices'] = publicadas.filter(q_sin_validar | q_aprobadas, tipo='Práctica')
-    context['practices_to_check'] = publicadas.filter(tipo='Práctica', validacion__isnull=True)
-    context['reports'] = publicadas.filter(tipo='Memoria')
-    context['jobs'] = publicadas.filter(tipo='Trabajo')
-    context['offers_to_check'] = results.filter(publicada=False).order_by('-fecha_publicacion')
+    # publicadas = results.filter(publicada=True)
+    # deadline = timezone.now() - timedelta(days=7)
+    # q_aprobadas = Q(validacion__isnull=False) & Q(validacion__aceptado=True)
+    # q_sin_validar = Q(validacion__isnull=True) & Q(fecha_publicacion__lte=deadline)
+    # context['practices'] = publicadas.filter(q_sin_validar | q_aprobadas, tipo='Práctica')
+    # context['practices_to_check'] = publicadas.filter(tipo='Práctica', validacion__isnull=True)
+    # context['reports'] = publicadas.filter(tipo='Memoria')
+    # context['jobs'] = publicadas.filter(tipo='Trabajo')
+    # context['offers_to_check'] = results.filter(publicada=False).order_by('-fecha_publicacion')
+    context.update(classify_offers(results))
+
     context['query'] = busqueda
     context['busqueda'] = True
 
@@ -312,7 +318,7 @@ def markers(request):
         return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
     # obtener ofertas
-    context = filter_offers(user.marcadores.all())
+    context = classify_offers(user.marcadores.all())
 
     # datos de usuario
     context['user'] = user
