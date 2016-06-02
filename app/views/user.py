@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from app.forms import UserForm
 from app.models import Usuario, Rol
 from app.views.common import getUser, home
-
+import requests
 
 def login_user(request):
     if request.method == 'POST':
@@ -27,11 +27,14 @@ def login_user(request):
             request.session.set_expiry(time_session)
             #loguear
             login(request, baseUser)
-        elif False: #por aca hay que ver el tema con u-pasaporte
-            print('Aún no tenemos U-Pasaporte')
-        else:   #No hay registros de existencia del usuario
-            context['error_login'] = 'Nombre de usuario o contraseña no válido!'
-            return render(request, 'app/home.html', context)
+        else: #por aca hay que ver el tema con u-pasaporte
+            post_data = { 'username': username, 'password': password, 'servicio':'bolsa_cadcc', 'debug': 2}
+            response = requests.post('https://www.u-cursos.cl/upasaporte/adi', post_data)
+            content = response.content
+            print(content)
+        #else:   #No hay registros de existencia del usuario
+        #    context['error_login'] = 'Nombre de usuario o contraseña no válido!'
+        #    return render(request, 'app/home.html', context)
         return redirect(reverse(home))
     return HttpResponseNotAllowed('POST')
 
