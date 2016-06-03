@@ -152,3 +152,18 @@ MEDIA_URL = '/media/'
 #tiempos de sesion en minutos
 SESSION_TIME_NORMAL = int(os.getenv('SESSION_TIME_NORMAL', default=60))*60
 SESSION_TIME_REMEMBER_ME = int(os.getenv('SESSION_TIME_REMEMBER_ME', default=720))*60
+
+
+# Configuración Email ---------------------------------------------
+# Para tests: python -m smtpd -n -c DebuggingServer localhost:1025
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Host for sending e-mail. (SMTP)
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
