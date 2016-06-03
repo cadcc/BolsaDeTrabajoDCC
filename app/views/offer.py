@@ -111,17 +111,20 @@ def evaluate_practice(request):
         validation.save()
         offer.save()
 
-        if accept:
-            email = EmailMessage(
-                        '[Bolsa de Trabajo DCC] Tu Oferta ha sido publicada!',
-                        'Tu oferta {} ha sido aceptada como práctica por nuestro staff, y ya está disponible para los usuarios del sistema.'.format(offer.titulo),
-                        to=['{}'.format(offer.email_encargado)])
-        else:
-            email = EmailMessage(
-                        '[Bolsa de Trabajo DCC] Tu Oferta ha sido rechazada.',
-                        'Tu oferta {} no ha sido aceptada como práctica por nuestro staff.\n Consulta las Preguntas Frecuentes para ver qué es una práctica válida.'.format(offer.titulo),
-                        to=['{}'.format(offer.email_encargado)])
-        email.send()
+        # Enviar Emails
+        if offer.notificar:
+            if accept:
+                email = EmailMessage(
+                            '[Bolsa de Trabajo DCC] Tu Oferta ha sido publicada!',
+                            'Tu oferta "{}" ha sido aceptada como práctica por nuestro staff, y ya está disponible para los usuarios del sistema.'.format(offer.titulo),
+                            to=['{}'.format(offer.email_encargado)])
+            else:
+                email = EmailMessage(
+                            '[Bolsa de Trabajo DCC] Tu Oferta ha sido rechazada.',
+                            'Tu oferta "{}" no ha sido aceptada como práctica por nuestro staff.\n Consulta las Preguntas Frecuentes para ver qué es una práctica válida.'.format(offer.titulo),
+                            to=['{}'.format(offer.email_encargado)])
+            email.send()
+
         return HttpResponse(json.dumps({'msg': 'Validada como: ' + valid}), content_type='application/json')
     else:
         return HttpResponseNotAllowed('POST')
@@ -148,13 +151,19 @@ def evaluate_offer(request):
             if offer.notificar and tipo != 'práctica':
                 email = EmailMessage(
                             '[Bolsa de Trabajo DCC] Tu Oferta ha sido publicada!',
-                            'Tu oferta {} ha sido aceptada por nuestro staff, y ya está disponible para los usuarios del sistema.'.format(offer.titulo),
+                            'Tu oferta "{}" ha sido aceptada por nuestro staff, y ya está disponible para los usuarios del sistema.'.format(offer.titulo),
                             to=['{}'.format(offer.email_encargado)])
                 email.send()
             return HttpResponse(json.dumps({'msg': 'Oferta agregada del sistema'}), content_type='application/json')
         else:
             # hacer cosas de rechazo de oferta como mandar correo y cosas
             # offer.delete() #dejar comentado para no borrar ofertas accidentalmente
+            if offer.notificar:
+                email = EmailMessage(
+                            '[Bolsa de Trabajo DCC] Tu Oferta ha sido rechazada.',
+                            'Tu oferta "{}" ha sido rechazada por nuestro staff.\n Consulta las Preguntas Frecuentes para conocer los motivos de rechazo de ofertas.'.format(offer.titulo),
+                            to=['{}'.format(offer.email_encargado)])
+                email.send()
             return HttpResponse(json.dumps({'msg': 'Oferta eliminada del sistema'}),
                                 content_type='application/json')
     else:
