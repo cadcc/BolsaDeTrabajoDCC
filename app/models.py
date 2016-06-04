@@ -7,6 +7,12 @@ from django.contrib.auth.models import AbstractUser
 class UsuarioBase(AbstractUser):
     pass
 
+    def isUsuario(self):
+        return False
+
+    def isEncargado(self):
+        return False
+
     def __str__(self):
         return self.first_name + " " + self.last_name
 
@@ -36,6 +42,9 @@ class Encargado(UsuarioBase):
     administrador = models.BooleanField(default=False)
     telefono = models.CharField(max_length=15)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+
+    def isEncargado(self):
+        return True
 
 class Region(models.Model):
     nombre = models.CharField(max_length=64)
@@ -164,6 +173,9 @@ class Usuario(UsuarioBase):
     documento = models.FileField(upload_to='user_document', null=True)
     roles = models.ManyToManyField(Rol)
     marcadores = models.ManyToManyField(Oferta)
+
+    def isUsuario(self):
+        return True
 
     def __str__(self):
         return self.first_name + " " + self.last_name

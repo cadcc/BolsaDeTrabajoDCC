@@ -81,7 +81,7 @@ class OfertaCreate(CreateView):
 def evaluate_practice(request):
     if request.method == 'POST':
         user = getUser(request.user)
-        if not isinstance(user, Usuario):
+        if not user.isUsuario():
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         if 'validador' not in map(lambda rol: str(rol), user.roles.all()):
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
@@ -133,7 +133,7 @@ def evaluate_practice(request):
 def evaluate_offer(request):
     if request.method == 'POST':
         user = getUser(request.user)
-        if not isinstance(user, Usuario):
+        if not user.isUsuario():
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         if 'publicador' not in map(lambda rol: str(rol), user.roles.all()):
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
@@ -181,7 +181,7 @@ def load_info_offer(offer_id):
 def offer(request, offer_id):
     user = getUser(request.user)
     context = load_info_offer(offer_id)
-    if isinstance(user, Usuario):
+    if user.isUsuario():
         context['isFollowed'] = user.marcadores.all().filter(id=offer_id).last() is not None
         context['user_already_comment'] = len(
             ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
@@ -222,7 +222,7 @@ def get_tags():
 @login_required
 def offer_list(request):
     user = getUser(request.user)
-    if not isinstance(user, Usuario):
+    if not user.isUsuario():
         return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
     #obtener ofertas
@@ -284,7 +284,7 @@ def search_offer(request):
         return offer_list(request)
 
     user = getUser(request.user)
-    if not isinstance(user, Usuario):
+    if not user.isUsuario():
         return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
     context = {'user': user}
@@ -324,7 +324,7 @@ def suscription(request):
 def followOffer(request):
     if request.method == 'POST':
         user = getUser(request.user)
-        if not isinstance(user, Usuario):
+        if not user.isUsuario():
             return HttpResponseBadRequest('No tienes los permisos para hacer esta accion')
         offer_id = request.POST.get('offer_id')
         actual_state = request.POST.get('actual_state')
@@ -342,7 +342,7 @@ def followOffer(request):
 
 def markers(request):
     user = getUser(request.user)
-    if not isinstance(user, Usuario):
+    if not user.isUsuario():
         return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
     # obtener ofertas
