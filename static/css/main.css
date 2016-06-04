@@ -50,8 +50,8 @@ body{
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-    width: 300px;
-    height: 180px;
+    width: 270px;
+    height: 150px;
     margin: auto;
 }
 
@@ -267,4 +267,8 @@ body{
 
 .inline-block{
     display: inline-block;
+}
+
+.filter-panel{
+    margin-left: 30px;
 }
