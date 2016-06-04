@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from app.views import common, company, offer, user, valoration
+from app.views import common, company, offer, user, valoration, admin
 
 urlpatterns = [
     url(r'^enviar-oferta$', offer.OfertaCreate.as_view(), name='formulario'),
@@ -29,5 +29,6 @@ urlpatterns = [
     url(r'^editar-comentario-empresa$', view=valoration.edit_comment_company, name="editar_comentario_empresa"),
     url(r'^seguir-oferta$', view=offer.followOffer, name="seguir_oferta"),
     url(r'^mis-marcadores$', view=offer.markers, name="mis_marcadores"),
-    url(r'^reportar-comentario$', view=valoration.reportComment, name="reportar_comentario")
+    url(r'^reportar-comentario$', view=valoration.reportComment, name="reportar_comentario"),
+    url(r'^permisos$', view=admin.manage_permissions, name="permisos")
 ]

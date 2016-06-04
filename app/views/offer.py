@@ -211,10 +211,10 @@ def get_tags():
     tipos_etiqueta_query = TipoEtiqueta.objects.all().order_by('nombre')
     tipos_etiqueta = []
 
-    for tipo_etiqueta_query in tipos_etiqueta_query:
+    for tipo_etiqueta in tipos_etiqueta_query:
         tipos_etiqueta.append({
-            'tipo': tipo_etiqueta_query,
-            'etiquetas': Etiqueta.objects.filter(tipo=tipo_etiqueta_query).order_by('nombre')
+            'tipo': tipo_etiqueta,
+            'etiquetas': Etiqueta.objects.filter(tipo=tipo_etiqueta).order_by('nombre')
         })
 
     return tipos_etiqueta

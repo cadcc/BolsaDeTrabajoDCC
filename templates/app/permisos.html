@@ -1,0 +1,252 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+{% load filtros %}
+
+{% block title %} Administrar Permisos {% endblock %}
+
+{% block javascript %}
+    <script>
+
+        // Toggle Panels
+        $(document).on('click', '.panel-heading span.clickable', function(e){
+            var $this = $(this);
+            if(!$this.hasClass('panel-collapsed')) {
+                $this.parents('.panel').find('.panel-body').slideUp();
+                $this.addClass('panel-collapsed');
+                $this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+            } else {
+                $this.parents('.panel').find('.panel-body').slideDown();
+                $this.removeClass('panel-collapsed');
+                $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+            }
+        })
+    </script>
+{% endblock %}
+
+{% block left_column_content %}
+    {% include "sub/left-panel-user-profile.html" %}
+    <hr>
+{% endblock %}
+
+{% block right_column_content %}
+    <h2 class="text-center"> Administrar Permisos </h2>
+    <hr><br>
+
+    <!-- Template
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title">Rol</h2>
+                <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+            </div>
+            <div class="panel-body">
+                <p> Descripción del rol</p>
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Correo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in publicadores %}
+                            <tr>
+                                <td>{{ p.first_name }} {{ p.last_name }}</td>
+                                <td>{{ p.email }}</td>
+                                <td><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    -->
+
+    <!-- Publicadores -->
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h2 class="panel-title"><strong>Publicadores</strong></h2>
+            <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+        </div>
+        <div class="panel-body">
+            <p class="text-info  text-justify">
+                Encargados de revisar las ofertas recibidas. Pueden cambiar el estado las ofertas a <strong>Publicadas</strong>, haciéndolas visibles para el
+                resto de los usuarios, o <strong>Rechazadas</strong>, eliminando la oferta del sistema.
+            </p>
+            <hr>
+            <table class="table table-hover table-striped text-info">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Correo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in publicadores %}
+                        <tr>
+                            <td>{{ p.first_name }} {{ p.last_name }}</td>
+                            <td>{{ p.email }}</td>
+                            <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                        <form action="" method="post" class="form-horizontal">
+                            <tr>
+                                <td colspan="2">
+                                    <select class="form-control selectpicker" name="admin" value="" data-show-subtext="true" data-live-search="true" data-hide-disabled="true" title="Añadir Publicador">
+                                        {% for u in usuarios %}
+                                            <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-success" type="submit">Agregar</button>
+                                </td>
+                        </form>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Validadores de Práctica -->
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h2 class="panel-title"><strong>Validadores</strong></h2>
+            <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+        </div>
+        <div class="panel-body">
+            <p class="text-success text-justify">
+                Encargados de revisar las ofertas de Práctica. Pueden clasificar las ofertas de práctica recibidas (y previamente publicadas
+                por un Publicador) como <strong>Práctica 1</strong>, <strong>Práctica 2</strong>, <strong>Práctica 1 y 2</strong> o <strong>No Válida</strong>.
+            </p>
+            <hr>
+            <table class="table table-hover table-striped text-success">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Correo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in validadores %}
+                    <tr>
+                        <td>{{ p.first_name }} {{ p.last_name }}</td>
+                        <td>{{ p.email }}</td>
+                        <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                    <form action="" method="post" class="form-horizontal">
+                        <tr>
+                            <td colspan="2">
+                                <select class="form-control selectpicker" name="admin" value="" data-show-subtext="true" data-live-search="true" data-hide-disabled="true" title="Añadir Validador">
+                                    {% for u in usuarios %}
+                                        <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-success" type="submit">Agregar</button>
+                            </td>
+                    </form>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Moderadores -->
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h2 class="panel-title"><strong>Moderadores</strong></h2>
+            <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+        </div>
+        <div class="panel-body">
+            <p class="text-warning text-justify">
+                Encargados de supervisar las secciones de comentarios. Pueden <strong>ocultar</strong> y <strong>eliminar</strong> comentarios ofensivos, dando la oportunidad
+                al autor de editar el contenido para que pueda volver a ser visible de ser aceptada la modificación.
+            </p>
+            <hr>
+            <table class="table table-hover table-striped text-warning">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Correo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in moderadores %}
+                    <tr>
+                        <td>{{ p.first_name }} {{ p.last_name }}</td>
+                        <td>{{ p.email }}</td>
+                        <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                    <form action="" method="post" class="form-horizontal">
+                        <tr>
+                            <td colspan="2">
+                                <select class="form-control selectpicker" name="admin" value="" data-show-subtext="true" data-live-search="true" data-hide-disabled="true" title="Añadir Moderador">
+                                    {% for u in usuarios %}
+                                        <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-success" type="submit">Agregar</button>
+                            </td>
+                    </form>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Administradores -->
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h2 class="panel-title"><strong>Administradores</strong></h2>
+            <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+        </div>
+        <div class="panel-body">
+            <p class="text-danger text-justify">
+                Encargados de manejar permisos y cuentas de usuario y empresa. Pueden otorgar o quitar permisos a otros usuarios mediante la asignación
+                de Roles (<strong>Publicador</strong>, <strong>Verificador</strong>, <strong>Moderador</strong>, <strong>Administrador</strong>). Tienen
+                acceso a las solicitudes de registro de usuarios y empresas, encargándose de verificar la información entregada para aceptar o eliminar
+                cada solicitud.
+            </p>
+            <hr>
+            <div class="container-fluid">
+                <table class="table table-hover table-striped text-danger">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Correo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in administradores %}
+                        <tr>
+                            <td>{{ p.first_name }} {{ p.last_name }}</td>
+                            <td>{{ p.email }}</td>
+                            <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                        <form action="" method="post" class="form-horizontal">
+                            <tr>
+                                <td colspan="2">
+                                    <select class="form-control selectpicker" name="admin" value="" data-show-subtext="true" data-live-search="true" data-hide-disabled="true" title="Añadir Administrador">
+                                        {% for u in usuarios %}
+                                            <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-success" type="submit">Agregar</button>
+                                </td>
+                        </form>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
