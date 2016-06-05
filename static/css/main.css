@@ -268,3 +268,8 @@ body{
 .inline-block{
     display: inline-block;
 }
+
+.vertical-margin{
+    margin-top: 2px;
+    margin-bottom: 2px;
+}

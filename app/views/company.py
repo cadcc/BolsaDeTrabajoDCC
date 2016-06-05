@@ -58,6 +58,8 @@ def empresa(request, nombre_empresa):
     if empresa is None:
         return redirect(reverse(home))
     user = getUser(request.user)
+    if isinstance(user, Encargado) and user.empresa != empresa:
+        return redirect(reverse(home))
     context = load_info_company(user, empresa)
     return render(request, 'app/company.html', context)
 

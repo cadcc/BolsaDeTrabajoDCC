@@ -29,9 +29,9 @@
                     <div>Publicaciones</div>
                     <div class="text-big">{{ empresa.oferta_set.count }}</div>
                 </div>
-                <div class="badge badge-yellow" title="4.2">
+                <div class="badge badge-yellow" title="{{ empresa.puntaje }}">
                     <div>Valoración</div>
-                    <div class="text-big star-val" data-score={{ empresa.puntuacion }}>
+                    <div class="text-big star-val" data-score={{ empresa.puntaje }}>
                     </div>
                 </div>
             </div>
@@ -39,7 +39,10 @@
     </div>
     <hr>
     <div>
-        <h3>Descripción</h3>
+        <h3>
+            Descripción
+            <button type="button" class="m-btn-medium m-btn-blue">Editar perfil</button>
+        </h3>
         {# Interesst profile #}
         {% if empresa.validada %}
             <p>{{ empresa.descripcion|default_if_none:"Sin descripción." }}</p>
@@ -68,18 +71,20 @@
     <hr>
     <div>
         <h3>Ofertas</h3>
-        <div>
+        <ul>
         {% for offer in empresa.oferta_set.all %}
+            <li class="vertical-margin">
             <div class="badge">
                 <div class="text-big">
-                    {% offer.tipo %}
+                    {{ offer.tipo }}
                 </div>
             </div>
-            <a href="{% offer.get_absolute_url %}">{% offer.titulo %}</a>
+            <a href="{% url "oferta" offer_id=offer.id %}">{{ offer.titulo }}</a>
+            </li>
         {% empty %}
             <p>Esta empresa no ha publicado ninguna oferta.</p>
         {% endfor %}
-        </div>
+        </ul>
     </div>
     <hr>
     {% if "normal" in roles %}
