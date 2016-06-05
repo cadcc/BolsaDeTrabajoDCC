@@ -31,7 +31,7 @@
                 </div>
                 <div class="badge badge-yellow" title="4.2">
                     <div>Valoración</div>
-                    <div class="text-big star-val" data-score={{ empresa.puntaje }}>
+                    <div class="text-big star-val" data-score={{ empresa.puntuacion }}>
                     </div>
                 </div>
             </div>
@@ -68,11 +68,18 @@
     <hr>
     <div>
         <h3>Ofertas</h3>
+        <div>
         {% for offer in empresa.oferta_set.all %}
+            <div class="badge">
+                <div class="text-big">
+                    {% offer.tipo %}
+                </div>
+            </div>
+            <a href="{% offer.get_absolute_url %}">{% offer.titulo %}</a>
         {% empty %}
             <p>Esta empresa no ha publicado ninguna oferta.</p>
         {% endfor %}
-
+        </div>
     </div>
     <hr>
     {% if "normal" in roles %}
