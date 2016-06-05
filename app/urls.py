@@ -30,5 +30,6 @@ urlpatterns = [
     url(r'^seguir-oferta$', view=offer.followOffer, name="seguir_oferta"),
     url(r'^mis-marcadores$', view=offer.markers, name="mis_marcadores"),
     url(r'^reportar-comentario$', view=valoration.reportComment, name="reportar_comentario"),
-    url(r'^permisos$', view=admin.manage_permissions, name="permisos")
+    url(r'^permisos$', view=admin.manage_permissions, name="permisos"),
+    url(r'^filtrar/$', view=offer.filter, name='filtros')
 ]

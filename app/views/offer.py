@@ -340,6 +340,7 @@ def followOffer(request):
     else:
         return HttpResponseNotAllowed('POST')
 
+@login_required
 def markers(request):
     user = getUser(request.user)
     if not user.isUsuario():
@@ -357,3 +358,31 @@ def markers(request):
     context['tipos_etiquetas'] = get_tags()
     context['marcadores'] = True
     return render(request, 'app/offer_list.html', context)
+
+@login_required
+def filter(request):
+    if request.method == 'GET':
+        user = getUser(request.user)
+        if not user.isUsuario():
+            return HttpResponseBadRequest('No tienes permisos necesarios!!!')
+        filters = list(map(lambda filter: int(filter), request.GET.getlist('filters')))
+        salary = int(request.GET.get('salary'))
+
+        results = Oferta.objects.filter(sueldo_minimo__gte=salary)
+        for f in filters:
+            results = results.filter(etiquetas__id=f)
+
+        context = classify_offers(results)
+        context['filters'] = filters
+        context['min_salary'] = salary
+
+        # datos de usuario
+        context['user'] = user
+        context['roles'] = list(map(lambda rol: str(rol), user.roles.all()))
+        context['ids_marcadores'] = list(map(lambda offer: offer.id, user.marcadores.all()))
+
+        # cargar etiquetas para filtrar
+        context['tipos_etiquetas'] = get_tags()
+        return render(request, 'app/offer_list.html', context)
+    else:
+        return HttpResponseNotAllowed('GET')
