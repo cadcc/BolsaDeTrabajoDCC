@@ -20,9 +20,9 @@ def home(request):
     context = {'user': user_request}
     if user_request.is_authenticated():
         user = getUser(user_request)
-        if isinstance(user, Usuario):
+        if user.isUsuario():
             return redirect(reverse('listado_ofertas'))
-        elif isinstance(user, Encargado):
+        elif user.isEncargado():
             return redirect(reverse('empresa', args=[user.empresa.url_encoded_name()]))
     return render(request, 'app/home.html', context)
 

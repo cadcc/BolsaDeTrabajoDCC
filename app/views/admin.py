@@ -12,7 +12,7 @@ from app.views.common import getUser
 def manage_permissions(request):
     user = getUser(request.user)
     context = {'user': user }
-    if not isinstance(user, Usuario):
+    if not user.isUsuario():
         return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
     if 'administrador' not in map(lambda rol: str(rol), user.roles.all()):
         return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
