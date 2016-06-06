@@ -35,10 +35,14 @@ def login_user(request):
             login(request, baseUser)
         else: #por aca hay que ver el tema con u-pasaporte
             post_data= {'username':username, 'password':password, 'servicio': 'bolsa_cadcc', 'debug':1}
-            response = requests.post("https://www.u-cursos.cl/upasaporte/adi", data=post_data)
+            try:
+                response = requests.post("https://www.u-cursos.cl/upasaporte/adi", data=post_data)
+            except requests.exceptions.RequestException:
+                context['error_login'] = 'Error de conexión con servidor U-Pasaporte'
+                return render(request, 'app/home.html', context)
             soup = BeautifulSoup(response.text,'html.parser')
             try:
-                parsing = (urlparse("http://localhost:8000?"+response.text[response.text.index('alias'):]))
+                parsing = (urlparse(settings.MAIN_URL+"?"+response.text[response.text.index('alias'):]))
             except ValueError:
                 if response.status_code == 200 and soup.find(id="merror") is not None:
                     #No hay registros de existencia del usuario
@@ -65,7 +69,7 @@ def login_user(request):
                 usuario.set_unusable_password()
                 usuario.save()
             baseUser = U_PasaporteBackend.authenticate(U_PasaporteBackend,username=username)
-            if baseUser is not None and isinstance(getUser(baseUser),Usuario):
+            if baseUser is not None and getUser(baseUser).isUsuario():
                 baseUser.usuario.backend = 'app.backends.U_PasaporteBackend'
                 time_session = settings.SESSION_TIME_REMEMBER_ME if remember_me else settings.SESSION_TIME_NORMAL
                 request.session.set_expiry(time_session)
@@ -74,7 +78,9 @@ def login_user(request):
             else: 
                 context['error_login'] = 'Nombre de usuario o contraseña no válido!'
                 return render(request, 'app/home.html', context)
+        #Esta redirección es cuando todo sale bien
         return redirect(reverse(home))
+    #Esta redirección es cuando no manda método POST
     return HttpResponseNotAllowed('POST')
 
 @csrf_exempt
