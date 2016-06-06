@@ -28,7 +28,7 @@ def new_score_company(company):
 def comment_offer(request):
     if request.method == 'POST':
         user = getUser(request.user)
-        if not isinstance(user, Usuario):
+        if not user.isUsuario():
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
         offer_id = request.POST.get('offer_id')
@@ -65,7 +65,7 @@ def comment_offer(request):
 def edit_comment_offer(request):
     if request.method == 'POST':
         user = getUser(request.user)
-        if not isinstance(user, Usuario):
+        if not user.isUsuario():
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         comment_id = request.POST.get('comment_id')
         actual_valoration = ValoracionOferta.objects.get(pk=comment_id)
@@ -102,7 +102,7 @@ def edit_comment_offer(request):
 def comment_company(request):
     if request.method == 'POST':
         user = getUser(request.user)
-        if not isinstance(user, Usuario):
+        if not user.isUsuario():
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
         company_id = request.POST.get('company_id')
@@ -138,7 +138,7 @@ def comment_company(request):
 def edit_comment_company(request):
     if request.method == 'POST':
         user = getUser(request.user)
-        if not isinstance(user, Usuario):
+        if not user.isUsuario():
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         comment_id = request.POST.get('comment_id')
         actual_valoration = ValoracionEmpresa.objects.get(pk=comment_id)

@@ -45,7 +45,7 @@ def load_info_company(user, empresa):
     context['user'] = user
     context['roles'] = []
     context['comments'] = ValoracionEmpresa.objects.filter(empresa=empresa).order_by('fecha_creacion')
-    if isinstance(context['user'], Usuario):
+    if user.isUsuario():
         context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=context['user'].id).roles.all()))
         context['user_already_comment'] = len(
             ValoracionEmpresa.objects.filter(empresa=empresa, usuario=user)) > 0
@@ -58,6 +58,8 @@ def empresa(request, nombre_empresa):
     if empresa is None:
         return redirect(reverse(home))
     user = getUser(request.user)
+    if isinstance(user, Encargado) and user.empresa != empresa:
+        return redirect(reverse(home))
     context = load_info_company(user, empresa)
     return render(request, 'app/company.html', context)
 
@@ -68,7 +70,7 @@ def login_empresa(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         baseUser = authenticate(username=email, password=password)
-        if baseUser is not None and isinstance(getUser(baseUser), Encargado):    #verificar en nuestra base de datos
+        if baseUser is not None and getUser(baseUser).isEncargado():    #verificar en nuestra base de datos
             #verificar si el usuario esta pendiente
             if baseUser.encargado.empresa.validada == False:
                 return redirect(reverse(wait_for_check_company))

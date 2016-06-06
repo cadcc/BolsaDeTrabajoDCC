@@ -23,7 +23,7 @@ def login_user(request):
         password = request.POST.get('password')
         remember_me = request.POST.get('remember_me', False)
         baseUser = authenticate(username=username, password=password)
-        if baseUser is not None and isinstance(getUser(baseUser), Usuario):    #verificar en nuestra base de datos
+        if baseUser is not None and getUser(baseUser).isUsuario():    #verificar en nuestra base de datos
             #verificar si el usuario esta pendiente
             if 'pendiente' in map(lambda rol: str(rol), baseUser.usuario.roles.all()):
                 return redirect(reverse(wait_for_check_user))

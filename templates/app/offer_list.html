@@ -33,7 +33,7 @@
                 min: 0,
                 max: 3000000,
                 step: 50000,
-                value: 0,
+                value: parseInt({% if min_salary %}{{ min_salary }}{% else %}0{% endif %}),
                 tooltip: "hide",
                 handle: "round",
                 labelledby: 'min-price',
@@ -46,14 +46,13 @@
                 $('.price-filter #min-price').val(slideEvt.value);
                 $('.price-filter #min-price').change();
             });
-
-            $('.price-filter #min-price').val(0);
         }
     </script>
     <script>
         $('.price-slider').change(function(){
             console.log($(this).val());
         });
+        $('#min-price-label').text(CLPFormatter($('#min-price').val()));
         $('#min-price').change(function(){
             $('#min-price-label').text(CLPFormatter($(this).val()));
         });
