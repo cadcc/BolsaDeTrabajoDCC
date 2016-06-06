@@ -54,6 +54,12 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+#Authentication backends
+AUTHENTICATION_BACKENDS = (
+        'app.backends.U_PasaporteBackend',
+        'django.contrib.auth.backends.ModelBackend',
+    )
+
 ROOT_URLCONF = 'bolsa_trabajo.urls'
 
 TEMPLATES = [
