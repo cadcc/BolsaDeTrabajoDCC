@@ -9,6 +9,8 @@ from app.forms import UserForm
 from app.models import Usuario, Rol
 from app.views.common import getUser, home
 import requests
+from urllib.parse import urlparse, parse_qs, urlsplit
+
 
 def login_user(request):
     if request.method == 'POST':
@@ -28,10 +30,38 @@ def login_user(request):
             #loguear
             login(request, baseUser)
         else: #por aca hay que ver el tema con u-pasaporte
-            post_data = { 'username': username, 'password': password, 'servicio':'bolsa_cadcc', 'debug': 2}
-            response = requests.post('https://www.u-cursos.cl/upasaporte/adi', post_data)
-            content = response.content
-            print(content)
+            print('Aún no tenemos U-Pasaporte')
+            post_data= {'username':username, 'password':password, 'servicio': 'bolsa_cadcc', 'debug':1}
+            response = requests.post("https://www.u-cursos.cl/upasaporte/adi", data=post_data)
+            print(response.encoding)
+            print(response.status_code)
+            print(response.text)
+            parsing = (urlparse("http://localhost:8000?"+response.text[response.text.index('alias'):]))
+            parsed = parse_qs(parsing.query)
+            print(parsed)
+            base = parsed['base'][0]
+            rut = parsed['rut'][0]
+            email = parsed['email'][0]
+            first_name = parsed['nombre1'][0]
+            last_name = parsed['apellido1'][0]
+            hash_photo = urlparse(parsed['img'][0]).path.split("/")[2]
+            datos_extra = { 'first_name': first_name, 'last_name': last_name, 'documento': None,}
+            username = "UPass"+rut+"Base"+base
+            try:
+                usuario = Usuario.objects.create_user(username=username, email=email,**datos_extra)
+                rol = Rol.objects.get(nombre='normal')
+                usuario.roles.add(rol)
+                usuario.set_unusable_password()
+                usuario.save()
+            except: 
+                print(sys.exc_info()[0])
+            baseUser = authenticate(username=username)
+            if baseUser is not None and isinstance(getUser(baseUser),Usuario):
+                time_session = settings.SESSION_TIME_REMEMBER_ME if remember_me else settings.SESSION_TIME_NORMAL
+                request.session.set_expiry(time_session)
+                #loguear
+                login(request, baseUser)
+            #login(request, parse_qs(request,parse_qs(parsed.query)['img']))
         #else:   #No hay registros de existencia del usuario
         #    context['error_login'] = 'Nombre de usuario o contraseña no válido!'
         #    return render(request, 'app/home.html', context)
