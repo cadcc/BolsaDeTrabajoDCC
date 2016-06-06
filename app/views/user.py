@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+from app.backends import U_PasaporteBackend
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import redirect, render
@@ -10,6 +11,9 @@ from app.models import Usuario, Rol
 from app.views.common import getUser, home
 import requests
 from urllib.parse import urlparse, parse_qs, urlsplit
+import sys
+from bs4 import BeautifulSoup
+
 
 
 def login_user(request):
@@ -30,15 +34,20 @@ def login_user(request):
             #loguear
             login(request, baseUser)
         else: #por aca hay que ver el tema con u-pasaporte
-            print('Aún no tenemos U-Pasaporte')
             post_data= {'username':username, 'password':password, 'servicio': 'bolsa_cadcc', 'debug':1}
             response = requests.post("https://www.u-cursos.cl/upasaporte/adi", data=post_data)
-            print(response.encoding)
-            print(response.status_code)
-            print(response.text)
-            parsing = (urlparse("http://localhost:8000?"+response.text[response.text.index('alias'):]))
+            soup = BeautifulSoup(response.text,'html.parser')
+            try:
+                parsing = (urlparse("http://localhost:8000?"+response.text[response.text.index('alias'):]))
+            except ValueError:
+                if response.status_code == 200 and soup.find(id="merror") is not None:
+                    #No hay registros de existencia del usuario
+                    context['error_login'] = 'U-Pasaporte: '+soup.find(id="merror").li.text
+                    return render(request, 'app/home.html', context)
+                else: 
+                    context['error_login'] = 'Error interno del servidor U-Pasaporte'
+                    return render(request, 'app/home.html', context)
             parsed = parse_qs(parsing.query)
-            print(parsed)
             base = parsed['base'][0]
             rut = parsed['rut'][0]
             email = parsed['email'][0]
@@ -48,23 +57,23 @@ def login_user(request):
             datos_extra = { 'first_name': first_name, 'last_name': last_name, 'documento': None,}
             username = "UPass"+rut+"Base"+base
             try:
+                usuario = Usuario.objects.get(username=username)
+            except Usuario.DoesNotExist:
                 usuario = Usuario.objects.create_user(username=username, email=email,**datos_extra)
                 rol = Rol.objects.get(nombre='normal')
                 usuario.roles.add(rol)
                 usuario.set_unusable_password()
                 usuario.save()
-            except: 
-                print(sys.exc_info()[0])
-            baseUser = authenticate(username=username)
+            baseUser = U_PasaporteBackend.authenticate(U_PasaporteBackend,username=username)
             if baseUser is not None and isinstance(getUser(baseUser),Usuario):
+                baseUser.usuario.backend = 'app.backends.U_PasaporteBackend'
                 time_session = settings.SESSION_TIME_REMEMBER_ME if remember_me else settings.SESSION_TIME_NORMAL
                 request.session.set_expiry(time_session)
                 #loguear
-                login(request, baseUser)
-            #login(request, parse_qs(request,parse_qs(parsed.query)['img']))
-        #else:   #No hay registros de existencia del usuario
-        #    context['error_login'] = 'Nombre de usuario o contraseña no válido!'
-        #    return render(request, 'app/home.html', context)
+                login(request, baseUser.usuario)
+            else: 
+                context['error_login'] = 'Nombre de usuario o contraseña no válido!'
+                return render(request, 'app/home.html', context)
         return redirect(reverse(home))
     return HttpResponseNotAllowed('POST')
 
