@@ -1,6 +1,8 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseBadRequest, HttpResponseNotAllowed
+from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
@@ -176,4 +178,22 @@ def edit_comment_company(request):
 def reportComment(request):
     if request.method == 'POST':
         user = getUser(request.user)
+        if not user.isUsuario():
+            return HttpResponseBadRequest('No tienes permisos!!!')
+        comment_id = request.POST.get('comment_id')
+        type = request.POST.get('type')
+        if type == 'offer':
+            actual_comment = ValoracionOferta.objects.get(pk=int(comment_id))
+            already_comment = actual_comment.reportes.filter(id=user.id)
+        else:
+            actual_comment = ValoracionEmpresa.objects.get(pk=int(comment_id))
+            already_comment = actual_comment.reportes.filter(id=user.id)
+        if len(already_comment) > 0:
+            return HttpResponse(json.dumps({'msg': 'ya reportado'}),
+                                content_type='application/json')
+        else:
+            actual_comment.reportes.add(user)
+            actual_comment.save()
+        return HttpResponse(json.dumps({'msg': 'ok'}),
+                            content_type='application/json')
     return HttpResponseNotAllowed('POST')

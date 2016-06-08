@@ -62,7 +62,7 @@
     {% endif %}
     {# previous valorations #}
     {% for comment in comments %}
-        <div class="frame frame-light">
+        <div class="frame frame-light" id="comment_id_{{ comment.id }}">
             <div>
                 <div>
                     <div class="inline-block">
@@ -121,7 +121,11 @@
                     {{ comment.comentario }}
                     </div>
                     <div class="text-danger text-uppercase text-right">
-                        <button onclick="reportComment({{ comment.id }})" type="button"><b>Reportar</b></button>
+                        <button id="comment_button_id_{{ comment.id }}"
+                                onclick="reportComment({{ comment.id }}, 'offer')"
+                                type="button">
+                            <b>Reportar</b>
+                        </button>
                     </div>
                 {% endifequal %}
             </div>

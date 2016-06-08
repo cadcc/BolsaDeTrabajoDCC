@@ -235,14 +235,27 @@
         updateIconFollow();
     </script>
     <script type="text/javascript">
-        function reportComment(comment_id) {
+        function desactivateButton(comment_id) {
+            var button = $('#comment_button_id_' + comment_id);
+            $(button.children()).text('Reportado');
+            button.prop('disabled', true);
+            button.addClass('disabled');
+        }
+        function reportComment(comment_id, type) {
             $.post('/reportar-comentario',{
                 'comment_id': comment_id,
+                'type': type,
                 'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
             }).fail(function(err) {
                 console.log(err)
             }).done(function(msg) {
-                console.log(msg);
+                if (msg.msg === 'ok') {
+                    desactivateButton(comment_id);
+                    console.log('reporte exitoso');
+                } else {
+                    desactivateButton(comment_id);
+                    console.log('Ya se reporto por este usuario');
+                }
             })
         }
     </script>
