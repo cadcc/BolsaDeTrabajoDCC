@@ -4,6 +4,9 @@
         <a href="{% url 'formulario' %}"><button type="button" class="m-btn-medium m-btn-darkcyan">Publicar</button></a></br>
         <a href="{% url 'suscription' %}"><button type="button" class="m-btn-medium m-btn-darkgreen">Suscripciones</button></a></br>
         <a href="{% url 'mis_marcadores' %}"><button type="button" class="m-btn-medium m-btn-darkred">Marcadores</button></a>
+        {% if 'administrador' in roles %}
+            <a href="{% url 'permisos' %}"><button type="button" class="m-btn-medium m-btn-cyan">Permisos</button></a>
+        {% endif %}
     </div>
     <div class="text-center">
         <span><a href="{% url "logout" %}" id="logout">Cerrar Sesión</a></span>

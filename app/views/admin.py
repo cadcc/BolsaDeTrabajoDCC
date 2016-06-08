@@ -14,9 +14,9 @@ def manage_permissions(request):
     context = {'user': user }
     if not user.isUsuario():
         return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
-    if 'administrador' not in map(lambda rol: str(rol), user.roles.all()):
+    context['roles'] = list(map(lambda rol: str(rol), user.roles.all()))
+    if 'administrador' not in context['roles']:
         return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
-
     context['administradores'] = Rol.objects.get(pk=1).usuario_set.all()
     context['publicadores'] = Rol.objects.get(pk=2).usuario_set.all()
     context['validadores'] = Rol.objects.get(pk=3).usuario_set.all()
