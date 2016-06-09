@@ -1,0 +1,6 @@
+Estimado {{ usuario }}:
+
+    Tu oferta "{{ titulo }}" ha sido rechazada por nuestro staff. Consulta las
+Preguntas Frecuentes para conocer los motivos de rechazo de ofertas.
+
+Bolsa de Trabajo DCC

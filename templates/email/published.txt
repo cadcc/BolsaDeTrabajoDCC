@@ -1,0 +1,6 @@
+Estimado {{ usuario }}:
+
+    Tu oferta "{{ titulo }}" ha sido aceptada por nuestro staff, y ya está disponible
+para los usuarios del sistema.
+
+Bolsa de Trabajo DCC
