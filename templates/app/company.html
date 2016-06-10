@@ -41,20 +41,20 @@
     <div>
         <h3>
             Descripción
-            {% if encargado and encargado.administrador %}
+            {% if user.isEncargado and user.administrador %}
             <button id="edit-description" type="button" class="m-btn-medium m-btn-blue">Editar</button>
             {% endif %}
         </h3>
         {# Interesst profile #}
         {% if empresa.validada %}
             <p id="description">{{ empresa.descripcion|default_if_none:"Sin descripción." }}</p>
-            {% if encargado and encargado.administrador %}
+            {% if user.isEncargado and user.administrador %}
             <form id="description-form" method="post" action="{% url 'descripcion_empresa' %}" class="hidden">
             {% csrf_token %}
                 <textarea name="description" rows="3" class="form-control">{{ empresa.descripcion|default_if_none:"" }}</textarea>
                 <div>
                     <input type="submit" class="m-btn-medium m-btn-cyan" />
-                    <button id="cancel-description" type="button" class="m-btn-medium m-btn-cyan">Cancelar</button>
+                    <button id="cancel-description" type="button" class="m-btn-medium m-btn-darkred">Cancelar</button>
                 </div>
             </form>
             {% endif %}

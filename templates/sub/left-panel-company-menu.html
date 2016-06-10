@@ -4,7 +4,7 @@
     <div>
         <a href="{% url 'formulario' %}"><button type="button" class="m-btn-full m-btn-darkcyan">Publicar</button></a>
         <a href="{% url 'empresa' user.empresa.url_encoded_name %}"><button type="button" class="m-btn-full m-btn-cyan">Perfil</button></a>
-        {% if encargado and encargado.administrador %}
+        {% if user.administrador %}
         <a href="{% url 'encargados' %}"><button type="button" class="m-btn-full m-btn-darkred">Encargados</button></a>
         {% endif %}
     </div>
