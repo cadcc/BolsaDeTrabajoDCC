@@ -1,0 +1,87 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+{% block title %} Perfil de {{ empresa.nombre }} {% endblock %}
+{% block left_column_content %}
+    {% include "sub/left-panel-company-menu.html" %}
+{% endblock %}
+
+{% block right_column_content %}
+    <h2>Encargados de {{ empresa.nombre }}</h2>
+    <hr>
+    <div class="panel panel-default">
+        <!-- Table -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo electrónico</th>
+                    <th>Teléfono</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            {% if encargado.administrador %}
+            <tfoot>
+                <tr>
+                    <td><input type="text" placeholder="Nuevo encargado"></td>
+                    <td><input type="text" placeholder="Email encargado"></td>
+                    <td><input type="text" placeholder="Teléfono encargado"></td>
+                    <td>
+                        <a href="#">
+                            <div class="badge">
+                                <span class="glyphicon glyphicon-plus text-big" aria-hidden="true"></span>
+                            </div>
+                        </a>
+                    </td>
+                </tr>
+            </tfoot>
+            {% endif %}
+            <tbody>
+            {% for enc in encargados %}
+                <tr>
+                {% if encargado == enc or encargado.administrador %}
+                    <td><input type="text" class="name" value="{{ enc.first_name }}"></td>
+                    <td><input type="email" class="email" value="{{ enc.email }}"/></td>
+                    <td><input type="text" class="phone" value="{{ enc.telefono }}"/></td>
+                    <td>
+                        <a href="#">
+                            <div class="badge">
+                                <span class="glyphicon glyphicon-floppy-disk text-big" aria-hidden="true"></span>
+                            </div>
+                        </a>
+                        {% if encargado.administrador %}
+                        <a href="#">
+                            <div class="badge badge-lightgreen">
+                                <span class="glyphicon glyphicon-certificate text-big" aria-hidden="true"></span>
+                            </div>
+                        </a>
+                        <a href="#">
+                            <div class="badge badge-red">
+                                <span class="glyphicon glyphicon-remove text-big" aria-hidden="true"></span>
+                            </div>
+                        </a>
+                            {% endif %}
+                    </td>
+                {% else %}
+                    <td>{{ enc.first_name }}</td>
+                    <td>{{ enc.email }}</td>
+                    <td>{{ enc.telefono }}</td>
+                    <td></td>
+                {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <hr>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+            $('#cancel-description').click(function(){
+                $('#description').toggleClass('hidden');
+                $('#description-form').toggleClass('hidden');
+            });
+        });
+    </script>
+{% endblock %}

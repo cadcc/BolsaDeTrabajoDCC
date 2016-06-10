@@ -1,11 +1,11 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
-from app.forms import CompanyForm
+from app.forms import CompanyForm, CompanyDescriptionForm
 from app.models import Empresa, Encargado, ValoracionEmpresa, Usuario
 from app.views.common import home, getUser
 
@@ -89,3 +89,39 @@ def wait_for_check_company(request):
         return render(request, 'app/empresa_pendiente.html', context)
     else:
         return HttpResponseNotAllowed('GET')
+
+@login_required
+def change_description(request):
+    if request.method == 'POST':
+        user = getUser(request.user)
+        if not user.isEncargado() or not user.empresa.validada or not user.administrador:
+            return HttpResponseBadRequest('No tienes permisos.')
+
+        form = CompanyDescriptionForm(request.POST)
+        if form.is_valid():
+            description = form.cleaned_data['description']
+            user.empresa.descripcion = description
+            user.empresa.save()
+        return redirect('/empresa/' + user.empresa.url_encoded_name())
+    else:
+        return redirect(reverse(home))
+
+@login_required
+def encargados(request):
+    if request.method == 'GET':
+        user = getUser(request.user)
+        if not user.isEncargado() or not user.empresa.validada or not user.administrador:
+            return redirect(reverse(home))
+
+        empresa = user.empresa
+        encargados = empresa.encargado_set.all()
+        context = {
+            'empresa' : empresa,
+            'encargado' : user,
+            'user' : user,
+            'encargados' : encargados,
+        }
+        return render(request, 'app/encargados_empresa.html', context)
+    else:
+        context = {}
+        return render(request, 'app/encargados_empresa.html', context)

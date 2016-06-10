@@ -84,6 +84,10 @@ class CommentForm(forms.Form):
             raise forms.ValidationError('Las puntuaciones van entre 1 y 5 estrellas.')
         return valoration * 20
 
+class CompanyDescriptionForm(forms.Form):
+    description = forms.CharField(required=True)
+
+
 class OfferForm(ModelForm):
     nombre_empresa = forms.CharField(max_length=64, required=False, label="Nombre Empresa")
     tipo = forms.ChoiceField(choices=Oferta.OPCIONES_TIPO, widget=forms.RadioSelect(), label="Tipo de Oferta")
