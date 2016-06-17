@@ -88,6 +88,38 @@ class CompanyDescriptionForm(forms.Form):
     description = forms.CharField(required=True)
 
 
+class AddPublicadorForm(forms.Form):
+    publicador = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(roles__nombre__in=['normal'])
+                                .exclude(roles__nombre__in=['publicador'])
+                                .order_by('last_name'),
+        required=True)
+
+
+class AddValidadorForm(forms.Form):
+    validador = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(roles__nombre__in=['normal'])
+                                .exclude(roles__nombre__in=['validador'])
+                                .order_by('last_name'),
+        required=True)
+
+
+class AddModeradorForm(forms.Form):
+    moderador = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(roles__nombre__in=['normal'])
+                                .exclude(roles__nombre__in=['moderador'])
+                                .order_by('last_name'),
+        required=True)
+
+
+class AddAdministradorForm(forms.Form):
+    administrador = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(roles__nombre__in=['normal'])
+                                .exclude(roles__nombre__in=['administrador'])
+                                .order_by('last_name'),
+        required=True)
+
+
 class OfferForm(ModelForm):
     nombre_empresa = forms.CharField(max_length=64, required=False, label="Nombre Empresa")
     tipo = forms.ChoiceField(choices=Oferta.OPCIONES_TIPO, widget=forms.RadioSelect(), label="Tipo de Oferta")

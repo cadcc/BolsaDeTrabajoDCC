@@ -5,8 +5,7 @@
 {% block title %} Administrar Permisos {% endblock %}
 
 {% block javascript %}
-    <script>
-
+    <script type="text/javascript">
         // Toggle Panels
         $(document).on('click', '.panel-heading span.clickable', function(e){
             var $this = $(this);
@@ -31,36 +30,6 @@
 {% block right_column_content %}
     <h2 class="text-center"> Administrar Permisos </h2>
     <hr><br>
-
-    <!-- Template
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h2 class="panel-title">Rol</h2>
-                <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
-            </div>
-            <div class="panel-body">
-                <p> Descripción del rol</p>
-                <table class="table table-hover table-striped">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Correo</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for p in publicadores %}
-                            <tr>
-                                <td>{{ p.first_name }} {{ p.last_name }}</td>
-                                <td>{{ p.email }}</td>
-                                <td><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    -->
 
     <!-- Publicadores -->
     <div class="panel panel-info">
@@ -90,23 +59,25 @@
                             <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
                         </tr>
                         {% endfor %}
-                        <form action="" method="post" class="form-horizontal">
-                            <tr>
-                                <td colspan="2">
-                                    <select class="form-control selectpicker" name="admin" value="" data-show-subtext="true" data-live-search="true" data-hide-disabled="true" title="Añadir Publicador">
-                                        {% for u in usuarios %}
-                                            <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn btn-success" type="submit">Agregar</button>
-                                </td>
-                        </form>
                 </tbody>
             </table>
+            <form action="" method="post" class="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-8">
+                        <select class="form-control selectpicker" name="publicador" title="Añadir Publicador"
+                                data-show-subtext="true" data-live-search="true" data-hide-disabled="true" data-size="5">
+                            {% for u in not_publicadores %}
+                                <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-success col-sm-2" name="add_pub" type="submit">Agregar</button>
+                </div>
+            </form>
         </div>
     </div>
+
     <!-- Validadores de Práctica -->
     <div class="panel panel-success">
         <div class="panel-heading">
@@ -135,21 +106,23 @@
                         <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
                     </tr>
                     {% endfor %}
-                    <form action="" method="post" class="form-horizontal">
-                        <tr>
-                            <td colspan="2">
-                                <select class="form-control selectpicker" name="admin" value="" data-show-subtext="true" data-live-search="true" data-hide-disabled="true" title="Añadir Validador">
-                                    {% for u in usuarios %}
-                                        <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
-                            <td class="text-center">
-                                <button class="btn btn-success" type="submit">Agregar</button>
-                            </td>
-                    </form>
                 </tbody>
             </table>
+
+            <form action="" method="post" class="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-8">
+                        <select class="form-control selectpicker" name="validador" title="Añadir Validador"
+                                data-show-subtext="true" data-live-search="true" data-hide-disabled="true" data-size="5">
+                            {% for u in not_validadores %}
+                                <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                     <button class="btn btn-success col-sm-2" name="add_val" type="submit">Agregar</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -181,21 +154,23 @@
                         <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
                     </tr>
                     {% endfor %}
-                    <form action="" method="post" class="form-horizontal">
-                        <tr>
-                            <td colspan="2">
-                                <select class="form-control selectpicker" name="admin" value="" data-show-subtext="true" data-live-search="true" data-hide-disabled="true" title="Añadir Moderador">
-                                    {% for u in usuarios %}
-                                        <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
-                            <td class="text-center">
-                                <button class="btn btn-success" type="submit">Agregar</button>
-                            </td>
-                    </form>
                 </tbody>
             </table>
+
+            <form action="" method="post" class="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-8">
+                        <select class="form-control selectpicker" name="moderador" title="Añadir Moderador"
+                                data-show-subtext="true" data-live-search="true" data-hide-disabled="true" data-size="5">
+                            {% for u in not_moderadores %}
+                                <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-success col-sm-2" name="add_mod" type="submit">Agregar</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -213,8 +188,7 @@
                 cada solicitud.
             </p>
             <hr>
-            <div class="container-fluid">
-                <table class="table table-hover table-striped text-danger">
+            <table class="table table-hover table-striped text-danger">
                     <thead>
                         <tr>
                             <th>Usuario</th>
@@ -227,25 +201,32 @@
                         <tr>
                             <td>{{ p.first_name }} {{ p.last_name }}</td>
                             <td>{{ p.email }}</td>
-                            <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
+                            <td class="text-center">
+                                {% ifequal p.id user.id %}
+                                    <i style="color:rgb(88, 88, 88)" class="glyphicon glyphicon-remove"></i>
+                                {% else %}
+                                    <a href="#"><i style="color:#F71D00" class="glyphicon glyphicon-remove"></i></a>
+                                {% endifequal %}
+                            </td>
                         </tr>
                         {% endfor %}
-                        <form action="" method="post" class="form-horizontal">
-                            <tr>
-                                <td colspan="2">
-                                    <select class="form-control selectpicker" name="admin" value="" data-show-subtext="true" data-live-search="true" data-hide-disabled="true" title="Añadir Administrador">
-                                        {% for u in usuarios %}
-                                            <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn btn-success" type="submit">Agregar</button>
-                                </td>
-                        </form>
                     </tbody>
                 </table>
-            </div>
+
+            <form action="" method="post" class="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-8">
+                        <select class="form-control selectpicker" name="administrador"  title="Añadir Administrador"
+                                data-show-subtext="true" data-live-search="true" data-hide-disabled="true" data-size="5">
+                            {% for u in not_administradores %}
+                                <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-success col-sm-2" name="add_admin" type="submit">Agregar</button>
+                </div>
+            </form>
         </div>
     </div>
 
