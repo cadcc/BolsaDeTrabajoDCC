@@ -1,9 +1,8 @@
-from django.contrib.auth import logout
+import json
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
 
 from app.forms import AddPublicadorForm, AddAdministradorForm, AddValidadorForm, AddModeradorForm
 from app.models import Usuario, Rol
@@ -92,3 +91,28 @@ def add_role(request):
             if form.is_valid():
                 Usuario.objects.get(pk=request.POST['administrador']).roles.add(Rol.objects.get(nombre='administrador'))
     return redirect(reverse(manage_permissions))
+
+@login_required
+def remove_role(request):
+    if request.method == 'POST':
+        user = getUser(request.user)
+        context = {'user': user}
+        if not user.isUsuario():
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+        context['roles'] = list(map(lambda rol: str(rol), user.roles.all()))
+        if 'administrador' not in context['roles']:
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+
+        user_id = request.POST.get('user_id')
+        rol_name = request.POST.get('rol')
+
+        if user_id == user.id and rol_name == 'administrador':
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+        usuario = Usuario.objects.get(pk=user_id)
+        rol = Rol.objects.get(nombre=rol_name)
+        usuario.roles.remove(rol)
+        message = 'El usuario ' + usuario.first_name + ' ' + usuario.last_name + ' ha perdido el rol ' + rol_name + '.'
+        return HttpResponse(json.dumps({'msg': message}),
+                            content_type='application/json')
+    else:
+        return HttpResponseNotAllowed('POST')

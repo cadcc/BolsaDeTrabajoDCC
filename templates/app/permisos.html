@@ -3,7 +3,9 @@
 {% load filtros %}
 
 {% block title %} Administrar Permisos {% endblock %}
-
+{% block css %}
+<link href="https://fonts.googleapis.com/css?family=Cairo" rel="stylesheet">
+{% endblock %}
 {% block javascript %}
     <script type="text/javascript">
         // Toggle Panels
@@ -18,7 +20,47 @@
                 $this.removeClass('panel-collapsed');
                 $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
             }
-        })
+        });
+    </script>
+    <script type="text/javascript">
+        function updateUserList(user_id, rol){
+            var row_id = '#usuario_' + rol + '_' + user_id;
+            //$( row_id ).remove();
+            $( row_id ).css("display", "none");
+        }
+
+        function removeRole(user_id, rol) {
+            $.post('{% url 'quitar_permisos' %}',{
+                'user_id': user_id,
+                'rol': rol,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                updateUserList(user_id, rol);
+                console.log(msg);
+            });
+            $('#confirmation_modal').modal('hide');
+        }
+    </script>
+
+    <script type="text/javascript">
+        $('#confirmation_modal').on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var user_name = button.data('username');
+            var user_id = button.data('userid');
+            var role_name = button.data('rolename');
+
+            var modal = $(this);
+            var modal_text = modal.find('.modal-body p');
+            modal_text.text('¿Está seguro que desea quitar al usuario \'' + user_name + '\' de ' +
+                'la lista de ' + role_name + 'es?'
+            );
+            var modal_button = modal.find('#btn_confirmar');
+            modal_button.text('Quitar de ' + role_name + 'es');
+            modal_button.attr('onclick', "removeRole('"+user_id+"', '"+role_name+"')");
+            modal_button.css("text-transform", "capitalize");
+        });
     </script>
 {% endblock %}
 
@@ -38,7 +80,7 @@
             <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
         </div>
         <div class="panel-body">
-            <p class="text-info  text-justify">
+            <p class="text-info text-justify">
                 Encargados de revisar las ofertas recibidas. Pueden cambiar el estado las ofertas a <strong>Publicadas</strong>, haciéndolas visibles para el
                 resto de los usuarios, o <strong>Rechazadas</strong>, eliminando la oferta del sistema.
             </p>
@@ -53,12 +95,39 @@
                 </thead>
                 <tbody>
                     {% for p in publicadores %}
-                        <tr>
+                        <tr id="usuario_publicador_{{ p.id }}">
                             <td>{{ p.first_name }} {{ p.last_name }}</td>
                             <td>{{ p.email }}</td>
-                            <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
+                            <td class="text-center">
+                                {% ifequal p.id user.id %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          style="color:rgb(88, 88, 88)">
+                                    </span>
+                                    <button type="button" class="btn btn-danger" disabled="disabled">
+                                        Quitar
+                                    </button>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="publicador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% else %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          onclick="removeRole({{ p.id }}, 'publicador')"
+                                          style="color:#F71D00">
+                                    </span>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="publicador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% endifequal %}
+
+                            </td>
                         </tr>
-                        {% endfor %}
+                    {% endfor %}
                 </tbody>
             </table>
             <form action="" method="post" class="">
@@ -100,11 +169,38 @@
                 </thead>
                 <tbody>
                     {% for p in validadores %}
-                    <tr>
-                        <td>{{ p.first_name }} {{ p.last_name }}</td>
-                        <td>{{ p.email }}</td>
-                        <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
-                    </tr>
+                        <tr id="usuario_validador_{{ p.id }}">
+                            <td>{{ p.first_name }} {{ p.last_name }}</td>
+                            <td>{{ p.email }}</td>
+                            <td class="text-center">
+                                {% ifequal p.id user.id %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          style="color:rgb(88, 88, 88)">
+                                    </span>
+                                    <button type="button" class="btn btn-danger" disabled="disabled">
+                                        Quitar
+                                    </button>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="validador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% else %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          onclick="removeRole({{ p.id }}, 'validador')"
+                                          style="color:#F71D00">
+                                    </span>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="validador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% endifequal %}
+
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -148,11 +244,37 @@
                 </thead>
                 <tbody>
                     {% for p in moderadores %}
-                    <tr>
-                        <td>{{ p.first_name }} {{ p.last_name }}</td>
-                        <td>{{ p.email }}</td>
-                        <td class="text-center"><a href="#"><i style="color:#F71D00"class="glyphicon glyphicon-remove"></i></a></td>
-                    </tr>
+                        <tr id="usuario_moderador_{{ p.id }}">
+                            <td>{{ p.first_name }} {{ p.last_name }}</td>
+                            <td>{{ p.email }}</td>
+                            <td class="text-center">
+                                {% ifequal p.id user.id %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          style="color:rgb(88, 88, 88)">
+                                    </span>
+                                    <button type="button" class="btn btn-danger" disabled="disabled">
+                                        Quitar
+                                    </button>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="moderador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% else %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          onclick="removeRole({{ p.id }}, 'moderador')"
+                                          style="color:#F71D00">
+                                    </span>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="moderador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% endifequal %}
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -198,17 +320,31 @@
                     </thead>
                     <tbody>
                         {% for p in administradores %}
-                        <tr>
-                            <td>{{ p.first_name }} {{ p.last_name }}</td>
-                            <td>{{ p.email }}</td>
-                            <td class="text-center">
-                                {% ifequal p.id user.id %}
-                                    <i style="color:rgb(88, 88, 88)" class="glyphicon glyphicon-remove"></i>
-                                {% else %}
-                                    <a href="#"><i style="color:#F71D00" class="glyphicon glyphicon-remove"></i></a>
-                                {% endifequal %}
-                            </td>
-                        </tr>
+                            <tr id="usuario_administrador_{{ p.id }}">
+                                <td>{{ p.first_name }} {{ p.last_name }}</td>
+                                <td>{{ p.email }}</td>
+                                <td class="text-center">
+                                    {% ifequal p.id user.id %}
+                                        <!--<span class="glyphicon glyphicon-remove"
+                                              style="color:rgb(88, 88, 88)">
+                                        </span>-->
+                                        <button type="button" class="btn btn-danger" disabled="disabled">
+                                            Quitar
+                                        </button>
+                                    {% else %}
+                                        <!--<span class="glyphicon glyphicon-remove"
+                                              onclick="removeRole({{ p.id }}, 'administrador')"
+                                              style="color:#F71D00">
+                                        </span>-->
+                                        <button type="button" class="btn btn-danger btn_quitar"
+                                                data-toggle="modal" data-target="#confirmation_modal"
+                                                data-username="{{ p.first_name }} {{ p.last_name }}"
+                                                data-rolename="administrador" data-userid="{{ p.id }}">
+                                            Quitar
+                                        </button>
+                                    {% endifequal %}
+                                </td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -229,5 +365,23 @@
             </form>
         </div>
     </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="confirmation_modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Confirmación</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-justify" id="confirmation_text"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btn_confirmar">Quitar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
 {% endblock %}
