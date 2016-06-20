@@ -34,5 +34,6 @@ urlpatterns = [
     url(r'^reportar-comentario$', view=valoration.reportComment, name="reportar_comentario"),
     url(r'^permisos$', view=admin.manage_permissions, name="permisos"),
     url(r'^permisos/remove$', view=admin.remove_role, name="quitar_permisos"),
-    url(r'^filtrar/$', view=offer.filter, name='filtros')
+    url(r'^filtrar/$', view=offer.filter, name='filtros'),
+    url(r'^moderar-comentarios/$', view=valoration.moderateComments, name='moderar-cometarios')
 ]

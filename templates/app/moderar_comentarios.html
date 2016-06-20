@@ -1,0 +1,116 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+{% block title %} Moderación de comentarios {% endblock %}
+{% block left_column_content %}
+    {% include "sub/left-panel-user-profile.html" %}
+{% endblock %}
+
+{% block right_column_content %}
+    <h1>Comentarios Reportados</h1>
+    <div class="frame frame-light">
+    {% for comment in report_comments %}
+        <div class="panel panel-default" id="comment_{{ comment.id }}">
+            <div class="panel-heading" style="padding-top: 1px; padding-bottom: 1px">
+                <div>
+                    <h4>
+                        <span class="label label-danger pull-right">
+                            Reportes: {{ comment.reportes.all|length }}
+                        </span>
+                        <span class="text-capitalize">{{ comment.usuario }}</span>
+                        en
+                        {% if comment.oferta %}
+                            oferta <span class="text-capitalize">"{{ comment.oferta }}"</span>
+                        {% else %}
+                            empresa <span class="text-capitalize">"{{ comment.empresa }}"</span>
+                        {% endif %}
+                    </h4>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div id="user-comment">
+                    <h4>{{ comment.comentario }}</h4>
+                </div>
+            </div>
+            <div class="panel-footer" style="padding-top: 5px; padding-bottom: 5px">
+                <button data-idcomment="{{ comment.id }}" type="button" class="btn btn-success btn-sm resolveButton">Resolver</button>
+                <div class="pull-right">
+                    <button data-idcomment="{{ comment.id }}" type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ModalAdvertencia">Enviar Advertencia</button>
+                    <button data-idcomment="{{ comment.id }}" type="button" class="btn btn-danger btn-sm deleteButton">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>
+            No hay comentarios reportados
+        </p>
+    {% endfor %}
+    </div>
+
+
+    <div class="modal fade" id="ModalAdvertencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <button type="button" class="close"
+                       data-dismiss="modal">
+                           <span aria-hidden="true">&times;</span>
+                           <span class="sr-only">Cerrar</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        Mandar advertencia
+                    </h4>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form role="form">
+                      <div class="form-group">
+                        <label for="razonAdvertencia">Razón de la advertencia</label>
+                          <textarea class="form-control" id="razonAdvertencia" rows="3"></textarea>
+                          <input type="hidden" id="hidden_comment_id" value="">
+                      </div>
+                    </form>
+                </div>
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">
+                                Cerrar
+                    </button>
+                    <button type="button" class="btn btn-warning warningButton">
+                        Advertir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        // resolver un comentario
+        $('.resolveButton').on('click', function (event) {
+            var id = $(this).data('idcomment');
+            $('#comment_' + id).hide(1000)
+        });
+        //eliminar un comentario
+        $('.deleteButton').on('click', function (event) {
+            var id = $(this).data('idcomment');
+            $('#comment_' + id).hide(1000)
+        });
+        //advertir un comentario
+        $('.warningButton').on('click', function (event) {
+            var id = $('#hidden_comment_id').val();
+            $('#ModalAdvertencia').modal('hide');
+            $('#comment_' + id).hide();
+        });
+
+        $('#ModalAdvertencia').on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var id = button.data('idcomment');
+            $('#hidden_comment_id').val(id);
+        });
+    </script>
+{% endblock %}

@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponse
@@ -197,3 +198,26 @@ def reportComment(request):
         return HttpResponse(json.dumps({'msg': 'ok'}),
                             content_type='application/json')
     return HttpResponseNotAllowed('POST')
+
+@login_required
+def moderateComments(request):
+    if request.method == 'GET':
+        user = getUser(request.user)
+        if not user.isUsuario():
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+        roles = list(map(lambda rol: str(rol), user.roles.all()))
+        if 'moderador' not in roles:
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+
+        # obtencion de comnetarios reportados
+        offers_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER, ValoracionOferta.objects.all()))
+        company_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER, ValoracionEmpresa.objects.all()))
+
+        context = {
+            'user': user,
+            'roles': roles,
+            'report_comments': offers_report_comments + company_report_comments
+        }
+        return render(request, 'app/moderar_comentarios.html', context)
+    else:
+        return HttpResponseNotAllowed('GET')

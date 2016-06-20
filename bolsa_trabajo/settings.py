@@ -144,6 +144,9 @@ STATIC_URL = '/static/'
 # carga de url principal
 MAIN_URL = os.getenv('MAIN_URL', default='localhost:8000')
 
+# numero maximo de reportes antes de pasar a moderacion
+MAX_REPORTS_NUMBER = int(os.getenv('MAX_REPORTS_NUMBER', default=2))
+
 #carga de rutas por defecto
 PATH_LOGOS = os.getenv('PATH_LOGOS', default='static/resources/company/')
 PATH_DOCUMENTS = os.getenv('PATH_DOCUMENTS', default='static/document_user/')

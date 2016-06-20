@@ -7,6 +7,9 @@
         {% if 'administrador' in roles %}
             <a href="{% url 'permisos' %}"><button type="button" class="m-btn-full m-btn-cyan">Permisos</button></a>
         {% endif %}
+        {% if 'moderador' in roles %}
+            <a href="{% url 'moderar-cometarios' %}"><button type="button" class="m-btn-full m-btn-blue">Moderación</button></a>
+        {% endif %}
     </div>
     <div class="text-center">
         <span><a href="{% url "logout" %}" id="logout">Cerrar Sesión</a></span>
