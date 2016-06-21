@@ -93,18 +93,20 @@
         // resolver un comentario
         $('.resolveButton').on('click', function (event) {
             var id = $(this).data('idcomment');
-            $('#comment_' + id).hide(1000)
+            $('#comment_' + id).hide('drop', {'direction': 'left'}, 500)
         });
         //eliminar un comentario
         $('.deleteButton').on('click', function (event) {
             var id = $(this).data('idcomment');
-            $('#comment_' + id).hide(1000)
+            $('#comment_' + id).hide('drop', {'direction': 'rigth'}, 500)
         });
         //advertir un comentario
         $('.warningButton').on('click', function (event) {
             var id = $('#hidden_comment_id').val();
             $('#ModalAdvertencia').modal('hide');
-            $('#comment_' + id).hide();
+            setTimeout(function() {
+                $('#comment_' + id).hide('highlight', 1000);
+            }, 500)
         });
 
         $('#ModalAdvertencia').on('show.bs.modal', function (e) {
