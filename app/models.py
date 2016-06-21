@@ -224,6 +224,10 @@ class ValoracionOferta(models.Model):
     def value(self):
         return int(self.valor/20)
 
+    def hasWarning(self):
+        warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=self, resuelto=False)
+        return len(warnings)>0
+
 
 class AdvertenciaValoracionOferta(models.Model):
     valoracion = models.ForeignKey(ValoracionOferta)
@@ -247,6 +251,10 @@ class ValoracionEmpresa(models.Model):
 
     def __str__(self):
         return str(self.usuario) + ' - ' + str(self.valor) + ' - ' + self.comentario
+
+    def hasWarning(self):
+        warnings = AdvertenciaValoracionEmpresa.objects.filter(valoracion=self, resuelto=False)
+        return len(warnings) > 0
 
 
 class AdvertenciaValoracionEmpresa(models.Model):

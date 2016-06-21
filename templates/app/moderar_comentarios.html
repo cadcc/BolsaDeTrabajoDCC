@@ -120,8 +120,9 @@
         //advertir un comentario
         $('.warningButton').on('click', function (event) {
             var id = $('#hidden_comment_id').val();
+            var warning = $('#razonAdvertencia').val();
             $('#ModalAdvertencia').modal('hide');
-            sendInfo('/enviar-advertencia', {'id_comment': id}, function() {
+            sendInfo('/enviar-advertencia', {'id_comment': id, 'warning': warning}, function() {
                 setTimeout(function() {
                     $('#comment_' + id).hide('highlight', 1000);
                 }, 500)

@@ -8,7 +8,8 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from app.forms import CommentForm
-from app.models import ValoracionOferta, Usuario, Oferta, Empresa, ValoracionEmpresa
+from app.models import ValoracionOferta, Usuario, Oferta, Empresa, ValoracionEmpresa, AdvertenciaValoracionOferta, \
+    AdvertenciaValoracionEmpresa
 from app.views.common import getUser
 from app.views.company import load_info_company, empresa
 from app.views.offer import load_info_offer, offer
@@ -210,8 +211,8 @@ def moderateComments(request):
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
         # obtencion de comnetarios reportados
-        offers_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER, ValoracionOferta.objects.all()))
-        company_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER, ValoracionEmpresa.objects.all()))
+        offers_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER and not comment.hasWarning(), ValoracionOferta.objects.all()))
+        company_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER and not comment.hasWarning(), ValoracionEmpresa.objects.all()))
 
         context = {
             'user': user,
@@ -271,5 +272,45 @@ def deleteComment(request):
         # eliminar comentario
         comment.delete()
         return HttpResponse(json.dumps({'msg': 'ok'}), content_type='application/json')
+    else:
+        return HttpResponseNotAllowed('POST')
+
+@login_required
+def sendWarning(request):
+    if request.method == 'POST':
+        user = getUser(request.user)
+        if not user.isUsuario():
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+        roles = list(map(lambda rol: str(rol), user.roles.all()))
+        if 'moderador' not in roles:
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+
+        # recuperar datos
+        id_comment = int(request.POST.get('id_comment'))
+        type_comment = request.POST.get('type')
+        warning = request.POST.get('warning')
+
+        if type_comment == 'offer':
+            comment = ValoracionOferta.objects.get(pk=id_comment)
+            if comment.hasWarning():
+                return HttpResponse(json.dumps({'msg': 'El comentario ya había sido advertido'}), content_type='application/json')
+            comment_warning = AdvertenciaValoracionOferta(
+                valoracion=comment,
+                advertencia=warning
+            )
+        elif type_comment == 'company':
+            comment = ValoracionEmpresa.objects.get(pk=id_comment)
+            if comment.hasWarning():
+                return HttpResponse(json.dumps({'msg': 'El comentario ya había sido advertido'}),
+                                    content_type='application/json')
+            comment_warning = AdvertenciaValoracionEmpresa(
+                valoracion=comment,
+                advertencia=warning
+            )
+        else:
+            return HttpResponseBadRequest('Error al obtener el tipo de comentario')
+        # guardar advertencia
+        comment_warning.save()
+        return HttpResponse(json.dumps({'msg': 'Advertencia realizada corectamente'}), content_type='application/json')
     else:
         return HttpResponseNotAllowed('POST')

@@ -37,5 +37,6 @@ urlpatterns = [
     url(r'^filtrar/$', view=offer.filter, name='filtros'),
     url(r'^moderar-comentarios/$', view=valoration.moderateComments, name='moderar-cometarios'),
     url(r'^resolver-reporte$', view=valoration.resolveReport, name='resolver-reporte'),
-    url(r'^eliminar-comentario$', view=valoration.deleteComment, name='eliminar-comentario')
+    url(r'^eliminar-comentario$', view=valoration.deleteComment, name='eliminar-comentario'),
+    url(r'^enviar-advertencia$', view=valoration.sendWarning, name='enviar-advertencia')
 ]
