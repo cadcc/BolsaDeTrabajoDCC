@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block right_column_content %}
+    {% csrf_token %}
     <h1>Comentarios Reportados</h1>
     <div class="frame frame-light">
     {% for comment in report_comments %}
@@ -90,23 +91,41 @@
 
 {% block javascript %}
     <script type="text/javascript">
+        function sendInfo(url, data, done) {
+            data.csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value
+            data.type = 'offer';
+            $.post(url, data).fail(function(msg) {
+                console.log('Fallo el post a: ' + url);
+                console.log(msg)
+            }).done(function(msg) {
+                console.log(msg);
+                done()
+            })
+        }
+
         // resolver un comentario
         $('.resolveButton').on('click', function (event) {
             var id = $(this).data('idcomment');
-            $('#comment_' + id).hide('drop', {'direction': 'left'}, 500)
+            sendInfo('/resolver-reporte', {'id_comment': id}, function() {
+                $('#comment_' + id).hide('drop', {'direction': 'left'}, 500)
+            })
         });
         //eliminar un comentario
         $('.deleteButton').on('click', function (event) {
             var id = $(this).data('idcomment');
-            $('#comment_' + id).hide('drop', {'direction': 'rigth'}, 500)
+            sendInfo('/eliminar-comentario', {'id_comment': id}, function() {
+                $('#comment_' + id).hide('drop', {'direction': 'rigth'}, 500)
+            })
         });
         //advertir un comentario
         $('.warningButton').on('click', function (event) {
             var id = $('#hidden_comment_id').val();
             $('#ModalAdvertencia').modal('hide');
-            setTimeout(function() {
-                $('#comment_' + id).hide('highlight', 1000);
-            }, 500)
+            sendInfo('/eliminar-comentario', {'id_comment': id}, function() {
+                setTimeout(function() {
+                    $('#comment_' + id).hide('highlight', 1000);
+                }, 500)
+            })
         });
 
         $('#ModalAdvertencia').on('show.bs.modal', function (e) {
