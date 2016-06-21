@@ -247,3 +247,29 @@ def resolveReport(request):
         return HttpResponse(json.dumps({'msg': 'ok'}), content_type='application/json')
     else:
         return HttpResponseNotAllowed('POST')
+
+@login_required
+def deleteComment(request):
+    if request.method == 'POST':
+        user = getUser(request.user)
+        if not user.isUsuario():
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+        roles = list(map(lambda rol: str(rol), user.roles.all()))
+        if 'moderador' not in roles:
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+
+        # recuperar datos
+        id_comment = int(request.POST.get('id_comment'))
+        type_comment = request.POST.get('type')
+
+        if type_comment == 'offer':
+            comment = ValoracionOferta.objects.get(pk=id_comment)
+        elif type_comment == 'company':
+            comment = ValoracionEmpresa.objects.get(pk=id_comment)
+        else:
+            return HttpResponseBadRequest('Error al obtener el tipo de comentario')
+        # eliminar comentario
+        comment.delete()
+        return HttpResponse(json.dumps({'msg': 'ok'}), content_type='application/json')
+    else:
+        return HttpResponseNotAllowed('POST')
