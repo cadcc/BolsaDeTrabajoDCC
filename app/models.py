@@ -180,6 +180,12 @@ class Usuario(UsuarioBase):
     def __str__(self):
         return self.first_name + " " + self.last_name
 
+    def getCommentsWithWarning(self):
+        offers_warnings_comments = list(
+            filter(lambda comment: comment.hasWarning(), ValoracionOferta.objects.filter(usuario=self)))
+        company_warnings_comments = list(
+            filter(lambda comment: comment.hasWarning(), ValoracionEmpresa.objects.filter(usuario=self)))
+        return offers_warnings_comments + company_warnings_comments
 
 class Validacion(models.Model):
     aceptado = models.BooleanField()
@@ -227,6 +233,10 @@ class ValoracionOferta(models.Model):
     def hasWarning(self):
         warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=self, resuelto=False)
         return len(warnings)>0
+
+    def getLastWarning(self):
+        warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=self, resuelto=False)
+        return warnings.last()
 
 
 class AdvertenciaValoracionOferta(models.Model):

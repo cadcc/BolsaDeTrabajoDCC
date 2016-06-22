@@ -154,6 +154,18 @@
             })
         }
     </script>
+    <script type="text/javascript">
+        var nWarnings = parseInt({{ user.getCommentsWithWarning|length }});
+        if (nWarnings > 0){
+            noty({
+                text: 'Tienes ' + nWarnings + ' advertencia(s)',
+                layout: 'topRight',
+                type: 'information',
+                timeout: 5000
+            });
+        }
+
+    </script>
 {% endblock %}
 
 {% block right_column_content %}

@@ -361,3 +361,24 @@ def sendWarning(request):
         return HttpResponse(json.dumps({'msg': 'Advertencia realizada corectamente'}), content_type='application/json')
     else:
         return HttpResponseNotAllowed('POST')
+
+@login_required
+def myWarnings(request):
+    if request.method == 'GET':
+        user = getUser(request.user)
+        if not user.isUsuario():
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+        roles = list(map(lambda rol: str(rol), user.roles.all()))
+
+        # obtencion de comnetarios reportados
+        offers_warnings_comments = list(filter(lambda comment: comment.hasWarning(), ValoracionOferta.objects.filter(usuario=user)))
+        company_warnings_comments = list(filter(lambda comment: comment.hasWarning(), ValoracionEmpresa.objects.filter(usuario=user)))
+
+        context = {
+            'user': user,
+            'roles': roles,
+            'report_comments': offers_warnings_comments + company_warnings_comments
+        }
+        return render(request, 'app/mis_advertencias.html', context)
+    else:
+        return HttpResponseNotAllowed('GET')
