@@ -20,7 +20,7 @@
                     <div class="col-md-12 col-xs-12">
                         <p>
                             Debes esperar a que tu cuenta sea activada antes de poder ingresar con ella.
-                            Serás redireccionado en 5 segundos...
+                            Serás redireccionado en <span id="time">5</span> segundos...
                         </p>
                     </div>
                 </div>
@@ -29,9 +29,15 @@
     </div>
 {% endblock %}
 {% block javascript %}
-<script type="text/javascript">
-setTimeout(function() {
-    window.location = "{% url "home" %}";
-}, 5000)
-</script>
+    <script type="text/javascript">
+        var i = 5;
+        function theFinalCoutdown() {
+            i--;
+            if (i >= 0) $('#time').text(i);
+            else window.location = "{% url "home" %}";
+        }
+        setInterval(function() {
+            theFinalCoutdown();
+        }, 1000);
+        </script>
 {% endblock %}
