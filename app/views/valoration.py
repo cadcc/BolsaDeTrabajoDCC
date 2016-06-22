@@ -370,14 +370,9 @@ def myWarnings(request):
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
         roles = list(map(lambda rol: str(rol), user.roles.all()))
 
-        # obtencion de comnetarios reportados
-        offers_warnings_comments = list(filter(lambda comment: comment.hasWarning(), ValoracionOferta.objects.filter(usuario=user)))
-        company_warnings_comments = list(filter(lambda comment: comment.hasWarning(), ValoracionEmpresa.objects.filter(usuario=user)))
-
         context = {
             'user': user,
-            'roles': roles,
-            'report_comments': offers_warnings_comments + company_warnings_comments
+            'roles': roles
         }
         return render(request, 'app/mis_advertencias.html', context)
     else:
