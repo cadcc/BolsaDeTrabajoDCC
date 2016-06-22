@@ -205,6 +205,7 @@ def offer(request, offer_id):
     user = getUser(request.user)
     context = load_info_offer(offer_id)
     if user.isUsuario():
+        context['user'] = user
         context['isFollowed'] = user.marcadores.all().filter(id=offer_id).last() is not None
         context['user_already_comment'] = len(
             ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
