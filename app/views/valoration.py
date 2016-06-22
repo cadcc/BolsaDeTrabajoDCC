@@ -238,11 +238,25 @@ def resolveReport(request):
         type_comment = request.POST.get('type')
 
         if type_comment == 'offer':
-            comment = ValoracionOferta.objects.get(pk=id_comment)
+            try:
+                comment = ValoracionOferta.objects.get(pk=id_comment)
+            except:
+                return HttpResponseBadRequest(json.dumps({
+                    'msg': 'Otro moderador eliminó este reporte',
+                    'show': 'true'
+                }), content_type='application/json')
         elif type_comment == 'company':
-            comment = ValoracionEmpresa.objects.get(pk=id_comment)
+            try:
+                comment = ValoracionOferta.objects.get(pk=id_comment)
+            except:
+                return HttpResponseBadRequest(json.dumps({
+                    'msg': 'Otro moderador eliminó este reporte',
+                    'show': 'true'
+                }), content_type='application/json')
         else:
-            return HttpResponseBadRequest('Error al obtener el tipo de comentario')
+            return HttpResponseBadRequest(json.dumps({
+                'msg': 'Error al obtener el tipo de comentario'
+            }), content_type='application/json')
         # eliminar reportes
         comment.reportes.clear()
         return HttpResponse(json.dumps({'msg': 'Reporte resuelto correctamente'}), content_type='application/json')
@@ -262,13 +276,27 @@ def deleteComment(request):
         # recuperar datos
         id_comment = int(request.POST.get('id_comment'))
         type_comment = request.POST.get('type')
-
         if type_comment == 'offer':
-            comment = ValoracionOferta.objects.get(pk=id_comment)
+            try:
+                comment = ValoracionOferta.objects.get(pk=id_comment)
+            except:
+                return HttpResponseBadRequest(json.dumps({
+                    'msg': 'Otro moderador ya eliminó este comentario',
+                    'show': 'true'
+                }), content_type='application/json')
         elif type_comment == 'company':
-            comment = ValoracionEmpresa.objects.get(pk=id_comment)
+            try:
+                comment = ValoracionEmpresa.objects.get(pk=id_comment)
+            except:
+                return HttpResponseBadRequest(json.dumps({
+                    'msg': 'Otro moderador ya eliminó este comentario',
+                    'show': 'true'
+                }), content_type='application/json')
         else:
-            return HttpResponseBadRequest('Error al obtener el tipo de comentario')
+            return HttpResponseBadRequest(json.dumps({
+                'msg': 'Error al obtener el tipo de comentario'
+            }), content_type='application/json')
+
         # eliminar comentario
         comment.delete()
         return HttpResponse(json.dumps({'msg': 'Comentario eliminado correctamente'}), content_type='application/json')
@@ -291,24 +319,43 @@ def sendWarning(request):
         warning = request.POST.get('warning')
 
         if type_comment == 'offer':
-            comment = ValoracionOferta.objects.get(pk=id_comment)
+            try:
+                comment = ValoracionOferta.objects.get(pk=id_comment)
+            except:
+                return HttpResponseBadRequest(json.dumps({
+                    'msg': 'Otro moderador ya eliminó este comentario',
+                    'show': 'true'
+                }), content_type='application/json')
             if comment.hasWarning():
-                return HttpResponse(json.dumps({'msg': 'El comentario ya había sido advertido'}), content_type='application/json')
+                return HttpResponseBadRequest(json.dumps({
+                    'msg': 'Otro moderador ya mandó una advertencia de este reporte',
+                    'show': 'true'
+                }), content_type='application/json')
             comment_warning = AdvertenciaValoracionOferta(
                 valoracion=comment,
                 advertencia=warning
             )
         elif type_comment == 'company':
-            comment = ValoracionEmpresa.objects.get(pk=id_comment)
+            try:
+                comment = ValoracionEmpresa.objects.get(pk=id_comment)
+            except:
+                return HttpResponseBadRequest(json.dumps({
+                    'msg': 'Otro moderador ya eliminó este comentario',
+                    'show': 'true'
+                }), content_type='application/json')
             if comment.hasWarning():
-                return HttpResponse(json.dumps({'msg': 'El comentario ya había sido advertido'}),
-                                    content_type='application/json')
+                return HttpResponseBadRequest(json.dumps({
+                    'msg': 'Otro moderador ya mandó una advertencia de este reporte',
+                    'show': 'true'
+                }), content_type='application/json')
             comment_warning = AdvertenciaValoracionEmpresa(
                 valoracion=comment,
                 advertencia=warning
             )
         else:
-            return HttpResponseBadRequest('Error al obtener el tipo de comentario')
+            return HttpResponseBadRequest(json.dumps({
+                'msg': 'Error al obtener el tipo de comentario'
+            }), content_type = "application/json")
         # guardar advertencia
         comment_warning.save()
         return HttpResponse(json.dumps({'msg': 'Advertencia realizada corectamente'}), content_type='application/json')

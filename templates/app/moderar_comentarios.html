@@ -33,10 +33,10 @@
                 </div>
             </div>
             <div class="panel-footer" style="padding-top: 5px; padding-bottom: 5px">
-                <button id="resolve_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" class="btn btn-success btn-sm resolveButton">Resolver</button>
+                <button id="resolve_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Resolver" class="btn btn-success btn-sm resolveButton">Resolver</button>
                 <div class="pull-right">
-                    <button id="warning_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ModalAdvertencia">Enviar Advertencia</button>
-                    <button id="delete_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" class="btn btn-danger btn-sm deleteButton">Eliminar</button>
+                    <button id="warning_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Enviar Advertencia" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ModalAdvertencia">Enviar Advertencia</button>
+                    <button id="delete_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Eliminar" class="btn btn-danger btn-sm deleteButton">Eliminar</button>
                 </div>
             </div>
         </div>
@@ -92,21 +92,30 @@
 
 {% block javascript %}
     <script type="text/javascript">
-        function sendInfo(url, data, done) {
-            data.csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value
+        function sendInfo(url, data, done, button, idInterval) {
+            var time = 5000;
+            data.csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
             data.type = 'offer';
             $.post(url, data).fail(function(msg) {
                 console.log('Fallo el post a: ' + url);
-                console.log(msg)
+                clearInterval(idInterval);
+                setTimeout(function() {
+                    $(button).text($(button).data('text'));
+                }, 500);
+                if (msg.status === 400) {
+                    msg = JSON.parse(msg.responseText);
+                    if (msg.show) {
+                        noty({text: msg.msg, layout: 'topRight', type: 'warning', timeout: time});
+                        done();
+                    } else {
+                        console.log(msg.msg);
+                        noty({text: 'Ocurrio un error al procesar la solicitud.', layout: 'topRight', type: 'error', timeout: time});
+                    }
+                }
             }).done(function(msg) {
                 console.log(msg);
                 done();
-                noty({
-                    text: msg.msg,
-                    layout: 'topRight',
-                    type: 'success',
-                    timeout: 3000
-                });
+                noty({text: msg.msg, layout: 'topRight', type: 'success', timeout: time});
             })
         }
 
@@ -120,7 +129,7 @@
                 return str;
             }
             $(idTag).text(word);
-            setInterval(function() {
+            return setInterval(function () {
                 $(idTag).text(word + dots())
             }, 500);
         }
@@ -128,30 +137,30 @@
         // resolver un comentario
         $('.resolveButton').on('click', function (event) {
             var id = $(this).data('idcomment');
-            wordLoading('Resolviendo', '#resolve_button_' + id);
+            var idInterval = wordLoading('Resolviendo', '#resolve_button_' + id);
             sendInfo('/resolver-reporte', {'id_comment': id}, function() {
                 $('#comment_' + id).hide('drop', {'direction': 'left'}, 500)
-            })
+            }, this, idInterval)
         });
         //eliminar un comentario
         $('.deleteButton').on('click', function (event) {
             var id = $(this).data('idcomment');
-            wordLoading('Eliminando', '#delete_button_' + id);
+            var idInterval = wordLoading('Eliminando', '#delete_button_' + id);
             sendInfo('/eliminar-comentario', {'id_comment': id}, function() {
                 $('#comment_' + id).hide('drop', {'direction': 'rigth'}, 500)
-            })
+            }, this, idInterval)
         });
         //advertir un comentario
         $('.warningButton').on('click', function (event) {
             var id = $('#hidden_comment_id').val();
             var warning = $('#razonAdvertencia').val();
             $('#ModalAdvertencia').modal('hide');
-            wordLoading('Enviando', '#warning_button_' + id);
+            var idInterval = wordLoading('Enviando', '#warning_button_' + id);
             sendInfo('/enviar-advertencia', {'id_comment': id, 'warning': warning}, function() {
                 setTimeout(function() {
                     $('#comment_' + id).hide('highlight', 1000);
                 }, 500)
-            })
+            }, $('#warning_button_' + id), idInterval)
         });
 
         $('#ModalAdvertencia').on('show.bs.modal', function (e) {
