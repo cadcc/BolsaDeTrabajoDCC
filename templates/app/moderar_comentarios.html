@@ -33,10 +33,10 @@
                 </div>
             </div>
             <div class="panel-footer" style="padding-top: 5px; padding-bottom: 5px">
-                <button data-idcomment="{{ comment.id }}" type="button" class="btn btn-success btn-sm resolveButton">Resolver</button>
+                <button id="resolve_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" class="btn btn-success btn-sm resolveButton">Resolver</button>
                 <div class="pull-right">
-                    <button data-idcomment="{{ comment.id }}" type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ModalAdvertencia">Enviar Advertencia</button>
-                    <button data-idcomment="{{ comment.id }}" type="button" class="btn btn-danger btn-sm deleteButton">Eliminar</button>
+                    <button id="warning_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ModalAdvertencia">Enviar Advertencia</button>
+                    <button id="delete_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" class="btn btn-danger btn-sm deleteButton">Eliminar</button>
                 </div>
             </div>
         </div>
@@ -46,6 +46,7 @@
         </p>
     {% endfor %}
     </div>
+    <span id="asdasdasd"></span>
 
 
     <div class="modal fade" id="ModalAdvertencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -99,13 +100,35 @@
                 console.log(msg)
             }).done(function(msg) {
                 console.log(msg);
-                done()
+                done();
+                noty({
+                    text: msg.msg,
+                    layout: 'topRight',
+                    type: 'success',
+                    timeout: 3000
+                });
             })
+        }
+
+        function wordLoading(word, idTag) {
+            var i = 0;
+            function dots() {
+                var str = '';
+                var j;
+                for (j = 0; j <= i; j++) str += '.';
+                i = (i + 1)%3;
+                return str;
+            }
+            $(idTag).text(word);
+            setInterval(function() {
+                $(idTag).text(word + dots())
+            }, 500);
         }
 
         // resolver un comentario
         $('.resolveButton').on('click', function (event) {
             var id = $(this).data('idcomment');
+            wordLoading('Resolviendo', '#resolve_button_' + id);
             sendInfo('/resolver-reporte', {'id_comment': id}, function() {
                 $('#comment_' + id).hide('drop', {'direction': 'left'}, 500)
             })
@@ -113,6 +136,7 @@
         //eliminar un comentario
         $('.deleteButton').on('click', function (event) {
             var id = $(this).data('idcomment');
+            wordLoading('Eliminando', '#delete_button_' + id);
             sendInfo('/eliminar-comentario', {'id_comment': id}, function() {
                 $('#comment_' + id).hide('drop', {'direction': 'rigth'}, 500)
             })
@@ -122,6 +146,7 @@
             var id = $('#hidden_comment_id').val();
             var warning = $('#razonAdvertencia').val();
             $('#ModalAdvertencia').modal('hide');
+            wordLoading('Enviando', '#warning_button_' + id);
             sendInfo('/enviar-advertencia', {'id_comment': id, 'warning': warning}, function() {
                 setTimeout(function() {
                     $('#comment_' + id).hide('highlight', 1000);

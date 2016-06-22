@@ -245,7 +245,7 @@ def resolveReport(request):
             return HttpResponseBadRequest('Error al obtener el tipo de comentario')
         # eliminar reportes
         comment.reportes.clear()
-        return HttpResponse(json.dumps({'msg': 'ok'}), content_type='application/json')
+        return HttpResponse(json.dumps({'msg': 'Reporte resuelto correctamente'}), content_type='application/json')
     else:
         return HttpResponseNotAllowed('POST')
 
@@ -271,7 +271,7 @@ def deleteComment(request):
             return HttpResponseBadRequest('Error al obtener el tipo de comentario')
         # eliminar comentario
         comment.delete()
-        return HttpResponse(json.dumps({'msg': 'ok'}), content_type='application/json')
+        return HttpResponse(json.dumps({'msg': 'Comentario eliminado correctamente'}), content_type='application/json')
     else:
         return HttpResponseNotAllowed('POST')
 
