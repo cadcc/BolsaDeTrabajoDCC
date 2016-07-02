@@ -39,7 +39,7 @@
             {% for enc in encargados %}
                 <tr>
                 {% if encargado == enc or encargado.administrador %}
-                    <td><input type="text" class="name" value="{{ enc.first_name }}"></td>
+                    <td>{{ enc.first_name }}</td>
                     <td><input type="email" class="email" value="{{ enc.email }}"/></td>
                     <td><input type="text" class="phone" value="{{ enc.telefono }}"/></td>
                     <td>
@@ -73,6 +73,91 @@
         </table>
     </div>
     <hr>
+    <div class="frame frame-light">
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <div class="title text-center">Nuevo encargado</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1 col-xs-12">
+                <form role="form" action = "{% url 'nuevo_encargado' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="sr-only" for="id_nombre">
+                            Nombre encargado
+                        </label>
+                        {% if form.nombre.errors %}
+                            <ul>
+                            {% for error in form.nombre.errors %}
+                              <label for="id_nombre" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_nombre" name="nombre" placeholder="Encargado"
+                         value="{{ form.nombre.value|default_if_none:"" }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="id_email">
+                            Correo electrónico
+                        </label>
+                        {% if form.email.errors %}
+                            <ul>
+                            {% for error in form.email.errors %}
+                              <label for="id_email" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_email" name="email" type="email" placeholder="Correo electrónico"
+                         value="{{ form.email.value|default_if_none:"" }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="id_telefono">
+                            Teléfono
+                        </label>
+                        {% if form.email.errors %}
+                            <ul>
+                            {% for error in form.telefono.errors %}
+                              <label for="id_telefono" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_telefono" name="telefono" type="text" placeholder="Teléfono"
+                         value="{{ form.telefono.value|default_if_none:"" }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="id_password">
+                            Contraseña
+                        </label>
+                        {% if form.password.errors %}
+                            <ul>
+                            {% for error in form.password.errors %}
+                              <label for="id_password" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_password" name="password" type="password" placeholder="Contraseña"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="id_repassword">
+                            Repetir contraseña
+                        </label>
+                        {% if form.repassword.errors %}
+                            <ul>
+                            {% for error in form.repassword.errors %}
+                              <label for="id_repassword" class="error">{{ error|escape }}</label>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <input class="form-control" id="id_repassword" name="repassword" type="password" placeholder="Repetir contraseña"/>
+                    </div>
+                    <button type="submit" class="m-btn m-btn-darkcyan">
+                        Registrar encargado
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascript %}

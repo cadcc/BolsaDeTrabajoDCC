@@ -87,6 +87,39 @@ class CommentForm(forms.Form):
 class CompanyDescriptionForm(forms.Form):
     description = forms.CharField(required=True)
 
+class NuevoEncargadoForm(forms.Form):
+    nombre = forms.CharField(required=True)
+    email = forms.EmailField(required=True)
+    telefono = forms.CharField(required=True)
+    password = forms.CharField(required=True)
+    repassword = forms.CharField(required=True)
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if Usuario.objects.filter(email=email) or Encargado.objects.filter(email=email):
+            raise forms.ValidationError('El correo electrónico ingresado ya se '
+                                        'encuentra registrado en el sistema.')
+        return email
+
+    def clean_repassword(self):
+        password = self.cleaned_data['password']
+        repassword = self.cleaned_data['repassword']
+        if password != repassword:
+            raise forms.ValidationError('Las contraseñas no coinciden.')
+        return repassword
+
+    def clean_telefono(self):
+        phone = self.cleaned_data['telefono']
+        phone = phone.replace(' ', '')
+        if len(phone) < 7 or len(phone) > 20:
+            raise forms.ValidationError('El número de teléfono no es correcto')
+        if (phone[0] == '+' and not phone[1:].isnumeric()) and not phone.isnumeric():
+            raise forms.ValidationError('El número de teléfono no es correcto')
+        return phone
+
+class EncargadoForm(forms.Form):
+    nombre = forms.CharField(required=True)
+    telefono = forms.CharField(required=True)
 
 class AddPublicadorForm(forms.Form):
     publicador = forms.ModelChoiceField(

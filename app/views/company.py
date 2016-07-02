@@ -5,7 +5,7 @@ from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResp
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
-from app.forms import CompanyForm, CompanyDescriptionForm
+from app.forms import CompanyForm, CompanyDescriptionForm, EncargadoForm, NuevoEncargadoForm
 from app.models import Empresa, Encargado, ValoracionEmpresa, Usuario
 from app.views.common import home, getUser
 
@@ -35,6 +35,64 @@ def registrar_empresa(request):
             return render(request, 'app/registro_empresa.html', context)
     else:
         return HttpResponseNotAllowed('POST')
+
+@csrf_exempt
+def crear_encargado(request):
+    if (request.method == 'POST'):
+        user = getUser(request.user)
+        if not user.isEncargado or not user.administrador:
+            return redirect(reverse(home))
+        form = NuevoEncargadoForm(request.POST)
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            email = form.cleaned_data['email']
+            telefono = form.cleaned_data['telefono']
+            password = form.cleaned_data['password']
+            Encargado.objects.create_user(first_name=nombre, email=email,
+                                                                    password=password,
+                                                                    empresa=user.empresa, username=email, administrador=False, telefono=telefono)
+        empresa = user.empresa
+        encargados = empresa.encargado_set.all()
+        context = {
+            'empresa': empresa,
+            'encargado': user,
+            'user': user,
+            'encargados': encargados,
+            'form': form
+        }
+        return render(request, 'app/encargados_empresa.html', context)
+    else:
+        return redirect(reverse(home))
+@csrf_exempt
+def modificar_encargado(request):
+    if(request.method == 'POST'):
+        user = getUser(request.user)
+        user_id = 0;
+        if 'user_id' in request.POST:
+            user_id = request.POST.get('user_id')
+        if not user.isEncargado:
+            return redirect(reverse(home))
+        if not user.administrador and user_id != user.pk:
+            return redirect(reverse(home))
+        form = EncargadoForm(request.POST)
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            email = form.cleaned_data['email']
+            telefono = form.cleaned_data['telefono']
+            if 'user_id' in request.POST:
+                encargado_to_update = Encargado.objects.get(pk=user_id)
+                if encargado_to_update is None:
+                    return redirect(reverse(home))
+                if encargado_to_update.empresa != user.empresa:
+                    return redirect(reverse(home))
+                encargado_to_update.first_name = nombre
+                encargado_to_update.telefono = telefono
+            else:
+                encargado_to_update = Encargado.objects.create_user(first_name=attendant_name, email=email,
+                                                                    password=password,
+                                                                    empresa=empresa, username=email, administrador=True)
+    else:
+        return redirect(reverse(home))
 
 def load_info_company(user, empresa):
     context = {}
