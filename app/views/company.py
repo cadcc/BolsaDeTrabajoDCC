@@ -67,30 +67,34 @@ def crear_encargado(request):
 def modificar_encargado(request):
     if(request.method == 'POST'):
         user = getUser(request.user)
-        user_id = 0;
-        if 'user_id' in request.POST:
-            user_id = request.POST.get('user_id')
+        user_id = 0
+        if 'user_id' not in request.POST:
+            return redirect(reverse(home))
+        user_id = request.POST.get('user_id')
         if not user.isEncargado:
             return redirect(reverse(home))
         if not user.administrador and user_id != user.pk:
             return redirect(reverse(home))
+        encargado_to_update = Encargado.objects.get(pk=user_id)
+        if encargado_to_update is None:
+            return redirect(reverse(home))
+        if encargado_to_update.empresa != user.empresa:
+            return redirect(reverse(home))
         form = EncargadoForm(request.POST)
         if form.is_valid():
             nombre = form.cleaned_data['nombre']
-            email = form.cleaned_data['email']
             telefono = form.cleaned_data['telefono']
-            if 'user_id' in request.POST:
-                encargado_to_update = Encargado.objects.get(pk=user_id)
-                if encargado_to_update is None:
-                    return redirect(reverse(home))
-                if encargado_to_update.empresa != user.empresa:
-                    return redirect(reverse(home))
-                encargado_to_update.first_name = nombre
-                encargado_to_update.telefono = telefono
-            else:
-                encargado_to_update = Encargado.objects.create_user(first_name=attendant_name, email=email,
-                                                                    password=password,
-                                                                    empresa=empresa, username=email, administrador=True)
+
+            encargado_to_update.first_name = nombre
+            encargado_to_update.telefono = telefono
+            encargado_to_update.save()
+        context = {
+            'empresa': user.empresa,
+            'encargado': user,
+            'user': user,
+            'encargados': encargados,
+        }
+        return render(request, 'app/encargados_empresa.html', context)
     else:
         return redirect(reverse(home))
 
