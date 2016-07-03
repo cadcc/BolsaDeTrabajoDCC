@@ -121,6 +121,15 @@ class EncargadoForm(forms.Form):
     nombre = forms.CharField(required=True)
     telefono = forms.CharField(required=True)
 
+    def clean_telefono(self):
+        phone = self.cleaned_data['telefono']
+        phone = phone.replace(' ', '')
+        if len(phone) < 7 or len(phone) > 20:
+            raise forms.ValidationError('El número de teléfono no es correcto')
+        if (phone[0] == '+' and not phone[1:].isnumeric()) and not phone.isnumeric():
+            raise forms.ValidationError('El número de teléfono no es correcto')
+        return phone
+
 class AddPublicadorForm(forms.Form):
     publicador = forms.ModelChoiceField(
         queryset=Usuario.objects.filter(roles__nombre__in=['normal'])

@@ -1,6 +1,6 @@
 {% extends "sub/main_column.html" %}
 {% load staticfiles %}
-{% block title %} Perfil de {{ empresa.nombre }} {% endblock %}
+{% block title %} Encargados de {{ empresa.nombre }} {% endblock %}
 {% block left_column_content %}
     {% include "sub/left-panel-company-menu.html" %}
 {% endblock %}
@@ -19,46 +19,25 @@
                     <th>Opciones</th>
                 </tr>
             </thead>
-            {% if encargado.administrador %}
-            <tfoot>
-                <tr>
-                    <td><input type="text" placeholder="Nuevo encargado"></td>
-                    <td><input type="text" placeholder="Email encargado"></td>
-                    <td><input type="text" placeholder="Teléfono encargado"></td>
-                    <td>
-                        <a href="#">
-                            <div class="badge">
-                                <span class="glyphicon glyphicon-plus text-big" aria-hidden="true"></span>
-                            </div>
-                        </a>
-                    </td>
-                </tr>
-            </tfoot>
-            {% endif %}
             <tbody>
             {% for enc in encargados %}
                 <tr>
                 {% if encargado == enc or encargado.administrador %}
-                    <td>{{ enc.first_name }}</td>
-                    <td><input type="email" class="email" value="{{ enc.email }}"/></td>
-                    <td><input type="text" class="phone" value="{{ enc.telefono }}"/></td>
                     <td>
-                        <a href="#">
-                            <div class="badge">
-                                <span class="glyphicon glyphicon-floppy-disk text-big" aria-hidden="true"></span>
-                            </div>
-                        </a>
+                        <input type="text" name="nombre" value="{{ enc.first_name }}"/>
+                        <input type="hidden" name="user_id" value="{{ enc.pk }}" />
+                        {% csrf_token %}
+                    </td>
+                    <td>{{ enc.email }}</td>
+                    <td><input type="text" name="telefono" value="{{ enc.telefono }}"/></td>
+                    <td>
+                        <div class="badge save-btn pointer">
+                            <span class="glyphicon glyphicon-floppy-disk text-big" aria-hidden="true"></span>
+                        </div>
                         {% if encargado.administrador %}
-                        <a href="#">
-                            <div class="badge badge-lightgreen">
-                                <span class="glyphicon glyphicon-certificate text-big" aria-hidden="true"></span>
-                            </div>
-                        </a>
-                        <a href="#">
-                            <div class="badge badge-red">
-                                <span class="glyphicon glyphicon-remove text-big" aria-hidden="true"></span>
-                            </div>
-                        </a>
+                        <div class="badge badge-red delete-btn pointer">
+                            <span class="glyphicon glyphicon-remove text-big" aria-hidden="true"></span>
+                        </div>
                             {% endif %}
                     </td>
                 {% else %}
@@ -162,10 +141,24 @@
 
 {% block javascript %}
     <script>
+        function saveCallback(response, status){
+            var data = response;
+            if(data.status != 'ok'){
+                alert(data.message);
+            }else{
+                alert('La información de encargado ha sido actualizada');
+                location.reload();
+            }
+        }
+
         $(document).ready(function () {
-            $('#cancel-description').click(function(){
-                $('#description').toggleClass('hidden');
-                $('#description-form').toggleClass('hidden');
+            $('.save-btn').click(function(){
+                var data = $(this).parent().parent().find('input').serialize();
+                $.ajax({
+                    'method': 'POST',
+                    'data': data,
+                    'url': "{% url 'modificar_encargado' %}"
+                }).done(saveCallback);
             });
         });
     </script>

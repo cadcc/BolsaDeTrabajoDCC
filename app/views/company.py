@@ -1,14 +1,14 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from app.forms import CompanyForm, CompanyDescriptionForm, EncargadoForm, NuevoEncargadoForm
 from app.models import Empresa, Encargado, ValoracionEmpresa, Usuario
 from app.views.common import home, getUser
-
+import json
 
 @csrf_exempt
 def registro_empresa(request):
@@ -88,13 +88,8 @@ def modificar_encargado(request):
             encargado_to_update.first_name = nombre
             encargado_to_update.telefono = telefono
             encargado_to_update.save()
-        context = {
-            'empresa': user.empresa,
-            'encargado': user,
-            'user': user,
-            'encargados': encargados,
-        }
-        return render(request, 'app/encargados_empresa.html', context)
+            return JsonResponse({'status': 'ok'})
+        return JsonResponse({'status': 'failed', 'message': 'Teléfono o nombre no válido'})
     else:
         return redirect(reverse(home))
 

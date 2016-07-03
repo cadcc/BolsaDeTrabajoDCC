@@ -278,3 +278,8 @@ body{
 .filter-panel{
     margin-left: 30px;
 }
+
+
+.pointer{
+    cursor: pointer;
+}
