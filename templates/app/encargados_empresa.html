@@ -141,12 +141,21 @@
 
 {% block javascript %}
     <script>
-        function saveCallback(response, status){
+        function saveCallback(response){
             var data = response;
             if(data.status != 'ok'){
                 alert(data.message);
             }else{
                 alert('La información de encargado ha sido actualizada');
+                location.reload();
+            }
+        }
+        function deleteCallback(response) {
+            var data = response;
+            if(data.status != 'ok'){
+                alert(data.message);
+            }else{
+                alert('El encargado ha sido eliminado');
                 location.reload();
             }
         }
@@ -159,6 +168,16 @@
                     'data': data,
                     'url': "{% url 'modificar_encargado' %}"
                 }).done(saveCallback);
+            });
+            $('.delete-btn').click(function () {
+                if(!confirm('Estás seguro que deseas eliminar a este encargado?'))
+                    return;
+                var data = $(this).parent().parent().find('input').serialize();
+                $.ajax({
+                    'method': 'POST',
+                    'data': data,
+                    'url': "{% url 'eliminar_encargado' %}"
+                }).done(deleteCallback);
             });
         });
     </script>

@@ -93,6 +93,27 @@ def modificar_encargado(request):
     else:
         return redirect(reverse(home))
 
+@csrf_exempt
+def eliminar_encargado(request):
+    if (request.method == 'POST'):
+        user = getUser(request.user)
+        if 'user_id' not in request.POST:
+            return redirect(reverse(home))
+        user_id = request.POST.get('user_id')
+        if not user.isEncargado or not user.administrador:
+            return redirect(reverse(home))
+        encargado_to_delete = Encargado.objects.get(pk=user_id)
+        if encargado_to_delete is None:
+            return redirect(reverse(home))
+        if encargado_to_delete.empresa != user.empresa:
+            return redirect(reverse(home))
+        if encargado_to_delete.administrador:
+            return JsonResponse({'status': 'fail', 'message': 'El encargado administrador no puede ser eliminado.'})
+        encargado_to_delete.delete()
+        return JsonResponse({'status': 'ok'})
+    else:
+        return redirect(reverse(home))
+
 def load_info_company(user, empresa):
     context = {}
     if empresa is None:

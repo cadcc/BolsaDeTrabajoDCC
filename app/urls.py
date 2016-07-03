@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^encargados$', view=company.encargados, name='encargados'),
     url(r'^nuevo-encargado$', view=company.crear_encargado, name='nuevo_encargado'),
     url(r'^modificar-encargado$', view=company.modificar_encargado, name='modificar_encargado'),
+    url(r'^eliminar-encargado$', view=company.eliminar_encargado, name='eliminar_encargado'),
     url(r'^evaluar-oferta$', view=offer.evaluate_offer, name='evaluar_oferta'),
     url(r'^evaluar-practica$', view=offer.evaluate_practice, name='evaluar_practica'),
     url(r'^comentar-oferta$', view=valoration.comment_offer, name="comentar_oferta"),
