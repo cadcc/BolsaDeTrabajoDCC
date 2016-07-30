@@ -124,7 +124,9 @@
             <div class="modal-body">
                 <div class="top-align">
                     <span class="text-highlight text-uppercase">Recortar imagen</span>
-                    <img id="image" src="{% static "resources/company/default-logo-company.png" %}">
+                    <div id="cropper-container">
+                        <img id="image" src="{% static "resources/company/default-logo-company.png" %}">
+                    </div>
                 </div>
                 <div class="top-align">
                     <span class="text-highlight text-uppercase">Vista previa</span>
@@ -246,6 +248,8 @@
             var options = {
               aspectRatio: 1 / 1,
               preview: '.img-preview',
+              movable: false,
+              zoomable: false,
               crop: function(e) {
                 console.log(e.x);
                 console.log(e.y);
@@ -308,10 +312,11 @@
                 $image.cropper('getCroppedCanvas').toBlob(function (blob) {
                     var formData = new FormData();
 
-                    formData.append('croppedImage', blob);
+                    formData.append('image', blob);
+                    formData.append('csrfmiddlewaretoken', $('input[name="csrfmiddlewaretoken"]').val());
 
                     // Use `jQuery.ajax` method
-                    $.ajax('/path/to/upload', {
+                    $.ajax('{% url "imagen_empresa" %}', {
                         method: "POST",
                         data: formData,
                         processData: false,

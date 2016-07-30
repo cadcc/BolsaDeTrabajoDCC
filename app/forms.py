@@ -247,3 +247,11 @@ class OfferForm(ModelForm):
         if not re.match(r'^(\+56 ?)?((9|2) [0-9]{4} [0-9]{4}|(9|2) [0-9]{8}|[0-9]{2} [0-9]{3} [0-9]{4}|[0-9]{9})$', telefono):
             raise forms.ValidationError("El teléfono debe tener 9 dígitos ('+56' opcional)")
         return telefono
+
+class ProfileImageForm(forms.Form):
+    image = forms.ImageField()
+
+    def clean_image(self):
+        image = self.cleaned_data['image']
+        #check for 1:1 ratio and resize to 100px
+        return image

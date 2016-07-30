@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^usuario-pendiente$', view=user.wait_for_check_user, name='usuario_pendiente'),
     url(r'^empresa-pendiente$', view=company.wait_for_check_company, name='empresa_pendiente'),
     url(r'^descripcion-empresa$', view=company.change_description, name='descripcion_empresa'),
+    url(r'^imagen-empresa$', view=company.change_picture, name='imagen_empresa'),
     url(r'^encargados$', view=company.encargados, name='encargados'),
     url(r'^nuevo-encargado$', view=company.crear_encargado, name='nuevo_encargado'),
     url(r'^modificar-encargado$', view=company.modificar_encargado, name='modificar_encargado'),

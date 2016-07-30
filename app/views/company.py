@@ -5,7 +5,7 @@ from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResp
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
-from app.forms import CompanyForm, CompanyDescriptionForm, EncargadoForm, NuevoEncargadoForm
+from app.forms import CompanyForm, CompanyDescriptionForm, EncargadoForm, NuevoEncargadoForm, ProfileImageForm
 from app.models import Empresa, Encargado, ValoracionEmpresa, Usuario
 from app.views.common import home, getUser
 import json
@@ -181,6 +181,23 @@ def change_description(request):
             user.empresa.descripcion = description
             user.empresa.save()
         return redirect('/empresa/' + user.empresa.url_encoded_name())
+    else:
+        return redirect(reverse(home))
+
+@login_required
+def change_picture(request):
+    if request.method == 'POST':
+        user = getUser(request.user)
+        if not user.isEncargado() or not user.empresa.validada or not user.administrador:
+            return HttpResponseBadRequest('No tienes permisos.')
+
+        form = ProfileImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.cleaned_data['image']
+            user.empresa.logo = image
+            user.empresa.save()
+            return JsonResponse({'status': 'ok', 'url': user.empresa.logo.url})
+        return JsonResponse({'status': 'failed', 'message': 'La imagen debe tener proporción 1:1 y ser de un tamaño menor a 1MB.'})
     else:
         return redirect(reverse(home))
 

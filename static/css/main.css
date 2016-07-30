@@ -303,5 +303,10 @@ img {
     margin-right: 10px;
     margin-bottom: 10px;
     overflow: hidden;
-    border: 2px solid #cccccc;
+    outline: 2px solid #cccccc;
+}
+
+#cropper-container{
+    width: 450px;
+    height: 270px;
 }
