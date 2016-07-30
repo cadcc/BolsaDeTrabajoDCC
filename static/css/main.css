@@ -8,6 +8,10 @@ body{
     color: #FFFFFF;
 }
 
+img {
+  max-width: 100%;
+}
+
 .column-left{
     min-height: 100vh;
     color: #FFFFFF;
@@ -243,6 +247,11 @@ body{
     float: none;
 }
 
+.top-align{
+    vertical-align: top;
+    display: inline-block;
+}
+
 .nav-tabs > li > a {
     font-size: 20px;
 }
@@ -282,4 +291,17 @@ body{
 
 .pointer{
     cursor: pointer;
+}
+
+.pointer.underline:hover{
+    text-decoration: underline;
+}
+
+.img-preview{
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    border: 2px solid #cccccc;
 }

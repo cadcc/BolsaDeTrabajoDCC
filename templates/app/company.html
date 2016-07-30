@@ -12,9 +12,8 @@
 {% block right_column_content %}
     <div class="row">
         <div class="col-xs-12 col-md-12 text-center">
-            <h2>Perfil de Empresa</h2>
+            <h2>Perfil de {{ empresa.nombre }}</h2>
             <div class="col-md-4 col-xs-12 text-center">
-                <div class="text-big text-highlight">{{ empresa.nombre }}</div>
                 <div>
                     <img class="company-logo"
                          src="{% if empresa.logo %}
@@ -23,6 +22,9 @@
                             {% static "resources/company/default-logo-company.png" %}
                          {% endif %}">
                 </div>
+                {% if user.isEncargado and user.administrador %}
+                    <div class="text-big text-highlight pointer underline" data-toggle="modal" data-target="#pictureModal">Cambiar imagen</div>
+                {% endif %}
             </div>
             <div class="col-md-8 col-xs-12">
                 <div class="badge badge-lightred">
@@ -106,9 +108,54 @@
         <h3>Comentarios y valoraciones</h3>
         {% include "sub/company-comments.html" %}
     {% endif %}
+
+
+    <!-- Modal -->
+    <div class="bd-example">
+      <div class="modal fade" id="pictureModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" id="exampleModalLabel">Imagen de empresa</h4>
+            </div>
+            <div class="modal-body">
+                <div class="top-align">
+                    <span class="text-highlight text-uppercase">Recortar imagen</span>
+                    <img id="image" src="{% static "resources/company/default-logo-company.png" %}">
+                </div>
+                <div class="top-align">
+                    <span class="text-highlight text-uppercase">Vista previa</span>
+                    <div class="img-preview" title="Vista previa">
+                        <img />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <label class="btn btn-primary btn-upload" for="inputImage" title="Subir una imagen">
+                    <input type="file" class="sr-only" id="inputImage" name="file" accept="image/*">
+                    <span>
+                        Seleccionar imagen
+                        <span class="glyphicon glyphicon-upload"></span>
+                    </span>
+                </label>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <button id="saveImage" type="button" class="btn btn-primary">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static "cropper/cropper.min.css" %}">
 {% endblock %}
 
 {% block javascript %}
+    <script src="{% static "cropper/cropper.min.js" %}"></script>
     <script type="text/javascript">
         //colores e iconos en la parte de validar para practica
         var valid_icons = $('.valid-class');
@@ -193,6 +240,90 @@
             $('#cancel-description').click(function(){
                 $('#description').toggleClass('hidden');
                 $('#description-form').toggleClass('hidden');
+            });
+
+            var $image = $('#image');
+            var options = {
+              aspectRatio: 1 / 1,
+              preview: '.img-preview',
+              crop: function(e) {
+                console.log(e.x);
+                console.log(e.y);
+                console.log(e.width);
+                console.log(e.height);
+                console.log(e.rotate);
+                console.log(e.scaleX);
+                console.log(e.scaleY);
+              }
+            };
+            // Cropper
+              $image.cropper(options);
+            /*var cropper = new Cropper($image, {
+              aspectRatio: 1 / 1,
+              crop: function(e) {
+                console.log(e.detail.x);
+                console.log(e.detail.y);
+                console.log(e.detail.width);
+                console.log(e.detail.height);
+                console.log(e.detail.rotate);
+                console.log(e.detail.scaleX);
+                console.log(e.detail.scaleY);
+              }
+            });*/
+            // Import image
+            var $inputImage = $('#inputImage');
+            var URL = window.URL || window.webkitURL;
+            var blobURL;
+
+            if (URL) {
+            $inputImage.change(function () {
+              var files = this.files;
+              var file;
+
+              if (!$image.data('cropper')) {
+                return;
+              }
+
+              if (files && files.length) {
+                file = files[0];
+
+                if (/^image\/\w+$/.test(file.type)) {
+                  blobURL = URL.createObjectURL(file);
+                  $image.one('built.cropper', function () {
+
+                    // Revoke when load complete
+                    URL.revokeObjectURL(blobURL);
+                  }).cropper('reset').cropper('replace', blobURL);
+                  $inputImage.val('');
+                } else {
+                  window.alert('Escoge un archivo de imagen.');
+                }
+              }
+            });
+            } else {
+                $inputImage.prop('disabled', true).parent().addClass('disabled');
+            }
+
+            $('#saveImage').click(function(){
+                $image.cropper('getCroppedCanvas').toBlob(function (blob) {
+                    var formData = new FormData();
+
+                    formData.append('croppedImage', blob);
+
+                    // Use `jQuery.ajax` method
+                    $.ajax('/path/to/upload', {
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function () {
+                            console.log('Upload success');
+                        },
+                        error: function () {
+                            console.log('Upload error');
+                        }
+                    });
+                });
             });
         });
     </script>
