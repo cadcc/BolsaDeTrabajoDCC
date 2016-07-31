@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-
+import os
 class UsuarioBase(AbstractUser):
     pass
 
@@ -22,11 +22,16 @@ class Rol(models.Model):
     def __str__(self):
         return self.nombre
 
+def logo_directory(instance, filename):
+    path = 'logo/{0}.jpeg'.format(instance.url_encoded_name())
+    if instance.logo:
+        os.remove(os.path.join(settings.MEDIA_ROOT, path))
+    return path
 
 class Empresa(models.Model):
     nombre = models.CharField(max_length=64, unique=True)
     sitio_web = models.CharField(max_length=64, null=True)
-    logo = models.FileField(upload_to='logos', null=True)
+    logo = models.FileField(upload_to=logo_directory, null=True)
     direccion = models.CharField(max_length=64, null=True)
     descripcion = models.TextField(null=True)
     puntaje = models.IntegerField(default=0)

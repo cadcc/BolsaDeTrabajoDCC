@@ -15,12 +15,11 @@
             <h2>Perfil de {{ empresa.nombre }}</h2>
             <div class="col-md-4 col-xs-12 text-center">
                 <div>
-                    <img class="company-logo"
-                         src="{% if empresa.logo %}
-                            {{ empresa.logo }}
-                         {% else %}
-                            {% static "resources/company/default-logo-company.png" %}
-                         {% endif %}">
+                    {% if empresa.logo %}
+                    <img class="company-logo" src="{% static empresa.logo.url %}">
+                    {% else %}
+                    <img class="company-logo" src="{% static "resources/company/default-logo-company.png" %}">
+                    {% endif %}
                 </div>
                 {% if user.isEncargado and user.administrador %}
                     <div class="text-big text-highlight pointer underline" data-toggle="modal" data-target="#pictureModal">Cambiar imagen</div>
@@ -125,7 +124,11 @@
                 <div class="top-align">
                     <span class="text-highlight text-uppercase">Recortar imagen</span>
                     <div id="cropper-container">
+                        {% if empresa.logo %}
+                        <img id="image" src="{% static empresa.logo.url %}">
+                        {% else %}
                         <img id="image" src="{% static "resources/company/default-logo-company.png" %}">
+                        {% endif %}
                     </div>
                 </div>
                 <div class="top-align">
@@ -321,11 +324,11 @@
                         data: formData,
                         processData: false,
                         contentType: false,
-                        success: function () {
-                            console.log('Upload success');
-                        },
-                        error: function () {
-                            console.log('Upload error');
+                        success: function (data) {
+                            if(data.status!='ok')
+                                    alert('La imagen no pudo ser modificada. Inténtelo más tarde.');
+                            else
+                                location.reload();
                         }
                     });
                 });
