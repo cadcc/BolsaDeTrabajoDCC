@@ -12,11 +12,45 @@ img {
   max-width: 100%;
 }
 
+/*Bootstrap*/
+a{
+    color: #0789D8;
+}
+
+a:hover, a:focus{
+    color: #0671B2;
+}
+
+a.text-highlight{
+    color: #18B299;
+}
+
+a.text-highlight:hover, a.text-highlight:focus{
+    color: #138B78;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover{
+    color: #18B299;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+    text-decoration: none;
+    background-color: #f9f9f9;
+}
+
+.label-info {
+    background-color: #BCBD31;
+}
+
+/*End Bootstrap*/
+
+
+
 .column-left{
     min-height: 100vh;
     color: #FFFFFF;
-    background-color: rgba(85,179,174,0.9);
-    border-right: 5px solid #1b6d85;
+    background-color: rgba(24,178,153,0.9);
+    border-right: 5px solid rgba(13,101,87,0.9);
 }
 
 .column-left a{
@@ -29,7 +63,7 @@ img {
 
 .column-right{
     height: 100vh;
-    color: #267AAD;
+    color: #16a58e;
     background-color: rgba(255,255,255,0.9);
     overflow-y: scroll;
 }
@@ -131,31 +165,31 @@ img {
 
 .m-btn-blue{
     color: #FFF;
-    background-color: #337ab7;
-    border-color: #286090;
+    background-color: #0789d8;
+    border-color: #003d63;
 }
 
 .m-btn-cyan {
     color: #FFF;
-    background-color: #31BD7F;
-    border-color: #28907F;
+    background-color: #10bc6f;
+    border-color: #084c2d;
 }
 
 .m-btn-darkcyan {
     color: #FFF;
-    background-color: hsla(179,56%,30%,1);
+    background-color: hsl(170, 75%, 30%);
     border-color: hsla(170,57%,20%,1);
 }
 
 .m-btn-darkgreen{
     color: #FFF;
-    background-color: hsla(130,56%,30%,1);
+    background-color: hsl(136, 84%, 37%);
     border-color: hsla(130,56%,20%,1);
 }
 
 .m-btn-darkred{
     color: #FFF;
-    background-color: hsl(2, 65%, 28%);
+    background-color: hsl(17, 76%, 36%);
     border-color: hsla(2,65%,20%,1);
 }
 
@@ -201,9 +235,14 @@ img {
     height: 50%;
 }
 
-.text-highlight{
+.column-right .text-highlight{
     font-weight: bold;
-    color: #31BD7F;
+    color: #18b299;
+}
+
+.column-left .text-highlight{
+    font-weight: bold;
+    color: #20F1D0;
 }
 
 .text-big{
@@ -217,12 +256,12 @@ img {
 .badge{
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 14px;
-    background-color: #31BD7F;
+    background-color: #18b299;
     cursor: default;
 }
 
 .badge.badge-red{
-    background-color: #761c19;
+    background-color: #a23d16;
 }
 
 .badge.badge-lightred{
@@ -234,7 +273,7 @@ img {
 }
 
 .badge.badge-orange{
-    background-color: #985f0d;
+    background-color: #b28818;
 }
 
 .badge.badge-yellow{
