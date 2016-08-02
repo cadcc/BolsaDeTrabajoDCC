@@ -202,16 +202,23 @@ def load_info_offer(offer_id):
 
 @login_required(login_url='home')
 def offer(request, offer_id):
-    user = getUser(request.user)
-    context = load_info_offer(offer_id)
-    if user.isUsuario():
+    if request.method == 'GET':
+        user = getUser(request.user)
+        context = load_info_offer(offer_id)
         context['user'] = user
-        context['isFollowed'] = user.marcadores.all().filter(id=offer_id).last() is not None
-        context['user_already_comment'] = len(
-            ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
-        context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
-        context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=request.user.id).roles.all()))
-    return render(request, 'app/offer.html', context)
+        if user.isUsuario():
+            context['isFollowed'] = user.marcadores.all().filter(id=offer_id).last() is not None
+            context['user_already_comment'] = len(
+                ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
+            context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
+            context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=request.user.id).roles.all()))
+            return render(request, 'app/offer.html', context)
+        elif user.isEncargado() and context['oferta'].empresa.id == user.empresa.id:
+            return render(request, 'app/offer.html', context)
+        else:
+            return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
+    else:
+        return HttpResponseNotAllowed('GET')
 
 def classify_offers(offers_to_filter):
     publicadas = offers_to_filter.filter(publicada=True)
