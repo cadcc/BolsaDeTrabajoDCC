@@ -46,7 +46,7 @@ def login_user(request):
             except ValueError:
                 if response.status_code == 200 and soup.find(id="merror") is not None:
                     #No hay registros de existencia del usuario
-                    context['error_login'] = 'U-Pasaporte: '+soup.find(id="merror").li.text
+                    context['error_login'] = ''+soup.find(id="merror").li.text
                     return render(request, 'app/home.html', context)
                 else: 
                     context['error_login'] = 'Error interno del servidor U-Pasaporte'
