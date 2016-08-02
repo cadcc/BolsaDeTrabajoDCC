@@ -55,7 +55,7 @@ def home(request):
             return redirect(reverse('empresa', args=[user.empresa.url_encoded_name()]))
     return render(request, 'app/home.html', context)
 
-@login_required
+@login_required(login_url='home')
 @csrf_exempt
 def logout_user(request):
     logout(request)

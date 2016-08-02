@@ -9,7 +9,7 @@ from app.forms import AddPublicadorForm, AddAdministradorForm, AddValidadorForm,
 from app.models import Usuario, Rol, Encargado
 from app.views.common import getUser
 
-@login_required
+@login_required(login_url='home')
 def manage_permissions(request):
     user = getUser(request.user)
     context = {'user': user}
@@ -61,7 +61,7 @@ def manage_permissions(request):
     context['admin_form'] = AddAdministradorForm()
     return render(request, 'app/permisos.html', context)
 
-@login_required
+@login_required(login_url='home')
 def add_role(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -99,7 +99,7 @@ def add_role(request):
                 Usuario.objects.get(pk=request.POST['administrador']).roles.add(Rol.objects.get(nombre='administrador'))
     return redirect(reverse(manage_permissions))
 
-@login_required
+@login_required(login_url='home')
 def remove_role(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -126,7 +126,7 @@ def remove_role(request):
 
 # Aceptar/Rechazar Usuarios Pendientes -------------------------------------------------------------
 
-@login_required
+@login_required(login_url='home')
 def review_users(request):
     user = getUser(request.user)
     context = {'user': user}
@@ -140,7 +140,7 @@ def review_users(request):
     context['usuarios_pendientes'] = Usuario.objects.filter(roles__nombre__in=['pendiente']).order_by('last_name')
     return render(request, 'app/aprobar_usuarios.html', context)
 
-@login_required
+@login_required(login_url='home')
 def accept_user(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -164,7 +164,7 @@ def accept_user(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def reject_user(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -184,7 +184,7 @@ def reject_user(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def download_file(request, user_id):
     if request.method == 'GET':
         user = getUser(request.user)
@@ -209,7 +209,7 @@ def download_file(request, user_id):
 
 # Aceptar/Rechazar Empresas ------------------------------------------------------------------------
 
-@login_required
+@login_required(login_url='home')
 def review_companies(request):
     user = getUser(request.user)
     context = {'user': user}
@@ -224,7 +224,7 @@ def review_companies(request):
     context['empresas_pendientes'] = encargados.filter(empresa__validada=False)
     return render(request, 'app/aprobar_empresas.html', context)
 
-@login_required
+@login_required(login_url='home')
 def accept_company(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -249,7 +249,7 @@ def accept_company(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def reject_company(request):
     if request.method == 'POST':
         user = getUser(request.user)

@@ -102,7 +102,7 @@ def notify_rejected(email, user, title):
     msg.attach_alternative(msg_html, "text/html")
     msg.send(fail_silently=False)
 
-@login_required
+@login_required(login_url='home')
 def evaluate_practice(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -156,7 +156,7 @@ def evaluate_practice(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def evaluate_offer(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -200,7 +200,7 @@ def load_info_offer(offer_id):
         'validez': str(valid) if valid is not None else 'Sin Validar'
     }
 
-@login_required
+@login_required(login_url='home')
 def offer(request, offer_id):
     user = getUser(request.user)
     context = load_info_offer(offer_id)
@@ -243,7 +243,7 @@ def get_tags():
 
     return tipos_etiqueta
 
-@login_required
+@login_required(login_url='home')
 def offer_list(request):
     user = getUser(request.user)
     if not user.isUsuario():
@@ -297,7 +297,7 @@ def get_query(query_string, search_fields):
             query = query & or_query
     return query
 
-@login_required
+@login_required(login_url='home')
 def search_offer(request):
     busqueda = ''
     if ('q' in request.GET) and request.GET['q'].strip():
@@ -344,7 +344,7 @@ def suscription(request):
     context = {}
     return render(request, 'app/suscription.html', context)
 
-@login_required
+@login_required(login_url='home')
 def followOffer(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -364,7 +364,7 @@ def followOffer(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def markers(request):
     user = getUser(request.user)
     if not user.isUsuario():
@@ -383,7 +383,7 @@ def markers(request):
     context['marcadores'] = True
     return render(request, 'app/offer_list.html', context)
 
-@login_required
+@login_required(login_url='home')
 def filter(request):
     if request.method == 'GET':
         user = getUser(request.user)

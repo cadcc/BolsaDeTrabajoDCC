@@ -129,7 +129,7 @@ def load_info_company(user, empresa):
             ValoracionEmpresa.objects.filter(empresa=empresa, usuario=user)) > 0
     return context
 
-@login_required
+@login_required(login_url='home')
 def empresa(request, nombre_empresa):
     nombre_empresa = nombre_empresa.replace('-', ' ')
     empresa = Empresa.objects.filter(nombre=nombre_empresa).first()
@@ -168,7 +168,7 @@ def wait_for_check_company(request):
     else:
         return HttpResponseNotAllowed('GET')
 
-@login_required
+@login_required(login_url='home')
 def change_description(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -184,7 +184,7 @@ def change_description(request):
     else:
         return redirect(reverse(home))
 
-@login_required
+@login_required(login_url='home')
 def change_picture(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -201,7 +201,7 @@ def change_picture(request):
     else:
         return redirect(reverse(home))
 
-@login_required
+@login_required(login_url='home')
 def encargados(request):
     if request.method == 'GET':
         user = getUser(request.user)

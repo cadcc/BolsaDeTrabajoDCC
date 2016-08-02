@@ -28,7 +28,7 @@ def new_score_company(company):
     valorations = list(map(lambda o: o.valor, ValoracionEmpresa.objects.filter(empresa=company)))
     return new_score(valorations)
 
-@login_required
+@login_required(login_url='home')
 def comment_offer(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -65,7 +65,7 @@ def comment_offer(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def edit_comment_offer(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -176,7 +176,7 @@ def edit_comment_company(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def reportComment(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -200,7 +200,7 @@ def reportComment(request):
                             content_type='application/json')
     return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def moderateComments(request):
     if request.method == 'GET':
         user = getUser(request.user)
@@ -223,7 +223,7 @@ def moderateComments(request):
     else:
         return HttpResponseNotAllowed('GET')
 
-@login_required
+@login_required(login_url='home')
 def resolveReport(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -263,7 +263,7 @@ def resolveReport(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def deleteComment(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -303,7 +303,7 @@ def deleteComment(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def sendWarning(request):
     if request.method == 'POST':
         user = getUser(request.user)
@@ -362,7 +362,7 @@ def sendWarning(request):
     else:
         return HttpResponseNotAllowed('POST')
 
-@login_required
+@login_required(login_url='home')
 def myWarnings(request):
     if request.method == 'GET':
         user = getUser(request.user)
