@@ -341,8 +341,19 @@ def search_offer(request):
 
 @csrf_exempt
 def suscription(request):
-    context = {}
-    return render(request, 'app/suscription.html', context)
+    if request.method == 'GET':
+        user = getUser(request.user)
+        if not user.isUsuario():
+            return HttpResponseBadRequest('No tienes permisos necesarios!!!')
+
+        # datos de usuario
+        context = {
+            'user': user,
+            'roles': list(map(lambda rol: str(rol), user.roles.all()))
+        }
+        return render(request, 'app/suscription.html', context)
+    else:
+        return HttpResponseNotAllowed('GET')
 
 @login_required(login_url='home')
 def followOffer(request):
