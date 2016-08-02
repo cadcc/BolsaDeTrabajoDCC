@@ -155,7 +155,7 @@ PATH_DOCUMENTS = os.getenv('PATH_DOCUMENTS', default='static/document_user/')
 AUTH_USER_MODEL = 'app.UsuarioBase'
 
 #para los archivos a subir
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') + '/'
 MEDIA_URL = '/media/'
 
 #tiempos de sesion en minutos

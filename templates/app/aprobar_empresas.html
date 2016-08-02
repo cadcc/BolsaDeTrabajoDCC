@@ -1,0 +1,136 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+{% load filtros %}
+
+{% block title %} Aprobar Empresas {% endblock %}
+{% block css %}
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        function updateUserList(user_id){
+            var row_id = '#' + user_id;
+            //$( row_id ).remove();
+            $( row_id ).css("display", "none");
+        }
+
+        function acceptCompany(enc_id) {
+            $.post('{% url 'aceptar_empresa' %}',{
+                'enc_id': enc_id,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err);
+            }).done(function(msg) {
+                updateUserList(enc_id);
+                console.log(msg);
+            });
+            $('#confirmation_modal').modal('hide');
+        }
+
+        function rejectCompany(enc_id) {
+            $.post('{% url 'rechazar_empresa' %}',{
+                'enc_id': enc_id,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                updateUserList(enc_id);
+                console.log(msg);
+            });
+            $('#confirmation_modal').modal('hide');
+        }
+    </script>
+
+    <script type="text/javascript">
+        $('#confirmation_modal').on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var company = button.data('company');
+            var user_name = button.data('username');
+            var user_id = button.data('userid');
+            var action = button.data('action');
+
+            var msg = '¿Está seguro que desea ' + action + ' la solicitud de validación de la empresa \"' + company + '\"?';
+            $('#modal_confirmation_text').text(msg);
+
+            if (action === "aceptar"){
+              $('#modal_btn_aceptar').show();
+              $('#modal_btn_rechazar').hide();
+              $('#modal_btn_aceptar').attr('onclick', "acceptCompany('" + user_id + "')");
+            }
+            else {
+              $('#modal_btn_aceptar').hide();
+              $('#modal_btn_rechazar').show();
+              $('#modal_btn_rechazar').attr('onclick', "rejectCompany('" + user_id + "')");
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block left_column_content %}
+    {% include "sub/left-panel-user-profile.html" %}
+    <hr>
+{% endblock %}
+
+{% block right_column_content %}
+    <h2 class="text-center"> Aprobar Empresas </h2>
+    <hr><br>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Encargado</th>
+              <th>Correo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in empresas_pendientes %}
+                <tr id="{{ e.id }}">
+                  <td>{{ e.empresa.nombre }}</td>
+                  <td>{{ e.first_name }} {{ e.last_name }}</td>
+                  <td>{{ e.email }}</td>
+                  <td class="text-center">
+                    <button type="button" class="btn btn-success btn_accept''"
+                            data-toggle="modal" data-target="#confirmation_modal"
+                            data-company="{{ e.empresa.nombre }}"
+                            data-username="{{ e.first_name }} {{ e.last_name }}"
+                            data-action="aceptar" data-userid="{{ e.id }}">
+                        <i class="glyphicon glyphicon-ok" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn_reject"
+                            data-toggle="modal" data-target="#confirmation_modal"
+                            data-company="{{ e.empresa.nombre }}"
+                            data-username="{{ e.first_name }} {{ e.last_name }}"
+                            data-action="rechazar" data-userid="{{ e.id }}">
+                        <i class="glyphicon glyphicon-ban-circle" aria-hidden="true"></i>
+                    </button>
+                  </td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% csrf_token %}
+    <div class="modal fade" tabindex="-1" role="dialog" id="confirmation_modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Confirmación</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-justify" id="modal_confirmation_text"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="modal_btn_aceptar">Aceptar</button>
+                    <button type="button" class="btn btn-danger" id="modal_btn_rechazar">Rechazar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+{% endblock %}
