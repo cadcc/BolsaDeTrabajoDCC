@@ -2,7 +2,11 @@
 {% load staticfiles %}
 {% block title %} Oferta {% endblock %}
 {% block left_column_content %}
-    {% include "sub/left-panel-user-profile.html" %}
+    {% if not user.empresa %}
+            {% include "sub/left-panel-user-profile.html" %}
+        {% else %}
+            {% include "sub/left-panel-company-menu.html" %}
+    {% endif %}
 {% endblock %}
 
 {% block right_column_content %}
