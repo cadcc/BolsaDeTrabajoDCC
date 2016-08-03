@@ -72,15 +72,9 @@ def add_role(request):
         if 'administrador' not in context['roles']:
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
-        print("--> Revisando formularios")
         if 'add_pub' in request.POST:
-            print("---> Agregar Publicador")
             form = AddPublicadorForm(request.POST)
-            print("---> isBound: " + str(form.is_bound))
-            print("---> errors: " + str(form.errors))
-            print("---> valor publicador: " + str(request.POST.get('publicador')))
             if form.is_valid():
-                print("----> Publicador valido")
                 usuario = Usuario.objects.get(pk=form.cleaned_data['publicador'])
                 rol = Rol.objects.get(nombre='publicador')
                 usuario.roles.add(rol)

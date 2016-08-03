@@ -26,10 +26,6 @@
             }
         });
 
-        $('.link-empresa').click(function(){
-            $('#div_nueva_empresa').fadeToggle('fast');
-        });
-
         $('#select-empresa').on('change', function(event){
             event.preventDefault();
             var value = $('#select-empresa option:selected').text();
@@ -42,6 +38,14 @@
             }
         });
 
+        $('#tos_checkbox').change(function(){
+            if (this.checked){
+              $('#submit_btn').prop('disabled', false);
+            }
+            else {
+              $('#submit_btn').prop('disabled', true);
+            }
+        });
 
         // Display HelpText
         $('.help-icon').on('click', function(){
@@ -122,10 +126,6 @@
     <form action="{{ action }}" method ="post" class="form-horizontal" id="form_oferta">
         {% csrf_token %}
 
-        <!-- Tooltip
-            <span style="color:#FF841F; font-size:14pt" class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ info.empresa.help_text }}"></span>
-        -->
-
         <!-- Título -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="{{ form.titulo.id_for_label }}">
@@ -166,16 +166,16 @@
             </label>
             <div class="col-sm-9">
                     {% if user.is_authenticated and user.empresa %}
-                        <select id="select-empresa" class="form-control show-tick show-menu-arrow" name="{{ form.empresa.html_name }}" value="{{ user.empresa.id }}" data-live-search="false" data-hide-disabled="true" data-header="" title="{{ info.empresa.placeholder }}">
-                        <option value="{{ user.empresa.id }}">{{ user.empresa.nombre }}</option>
+                        <select id="select-empresa" readonly class="form-control show-tick show-menu-arrow" name="{{ form.empresa.html_name }}" value="{{ user.empresa.id }}" data-live-search="false" data-hide-disabled="true" data-header="" title="{{ info.empresa.placeholder }}">
+                            <option value="{{ user.empresa.id }}" selected>{{ user.empresa.nombre }}</option>
                         </select>
                     {% else %}
-                        <select id="select-empresa" class="form-control selectpicker show-tick show-menu-arrow" name="{{ form.empresa.html_name }}" value="{{ form.empresa.value|default_if_none:'' }}" data-live-search="true" data-hide-disabled="true" data-header="{{ info.empresa.placeholder }}" title="{{ info.empresa.placeholder }}">
-                        <option value="" selected="selected" disabled>{{ info.empresa.placeholder }}</option>
+                        <select id="select-empresa" class="form-control selectpicker show-tick show-menu-arrow" name="{{ form.empresa.html_name }}" data-live-search="true" data-hide-disabled="true" data-header="{{ info.empresa.placeholder }}" title="{{ info.empresa.placeholder }}">
+                        <option value="" disabled>{{ info.empresa.placeholder }}</option>
                         <option value="">Otra</option>
                         <option data-divider="true"></option>
                         {% for empresa in empresas %}
-                            <option value="{{ empresa.id }}">{{ empresa.nombre }}</option>
+                            <option value="{{ empresa.id }}" {% if empresa.id == form.empresa.value|add:0 %} selected {% endif %}>{{ empresa.nombre }}</option>
                         {% endfor %}
                         </select>
                     {% endif %}
@@ -202,7 +202,7 @@
         <!-- Nueva Empresa -->
         <div class="form-group" id="div_nueva_empresa" style="display:none">
             <label class="col-sm-3 control-label" for="{{ form.nombre_empresa.id_for_label }}">
-                <a class="link-empresa">{{ info.nueva_empresa.label }}</a>
+                {{ info.nueva_empresa.label }}
                 {% if info.nueva_empresa.help_text %}
                     <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#nueva_empresa_helptext"></span>
                 {% endif %}
@@ -242,7 +242,7 @@
             <div class="col-sm-9">
                 {% for key, value in tipos %}
                     <label class="radio-inline">
-                        <input type="radio" name="{{ form.tipo.html_name }}" value="{{ value }}"> {{ key }}
+                        <input type="radio" name="{{ form.tipo.html_name }}" value="{{ value }}" {% if form.tipo.value == value %} checked {% endif %}> {{ key }}
                     </label>
                 {% endfor %}
                 {% if info.tipo.help_text %}
@@ -470,16 +470,16 @@
                 {% endif %}
             </label>
             <div class="col-sm-9">
-                {% for jornada in jornadas %}
+                {% for j in jornadas %}
                     <label class="radio-inline">
-                        <input type="radio" name="{{ form.jornada.html_name }}" value="{{ jornada.id }}"> {{ jornada.nombre }}
+                        <input type="radio" name="{{ form.jornada.html_name }}" value="{{ j.id }}" {% if form.jornada.value|add:0 == j.id %} checked {% endif %}> {{ j.nombre }}
                     </label>
                 {% endfor %}
                 {% if info.jornada.help_text %}
                     <div id="jornada_helptext" class="helptext" style="display:none">
                         <div class="alert alert-info" role="alert">
                             <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                            {{info.jornada.help_text}}
+                            {{ info.jornada.help_text }}
                         </div>
                     </div>
                 {% endif %}
@@ -579,7 +579,7 @@
                 <select id="select-remuneracion" class="form-control selectpicker" name="{{ form.remunerado.html_name }}">
                     <option value="" selected="selected" disabled>-----</option>
                     {% for key, value in remuneraciones %}
-                        <option value="{{ key }}">{{ value }}</option>
+                        <option value="{{ key }}" {% ifequal form.remunerado.value key %} selected {% endifequal %}>{{ value }}</option>
                     {% endfor %}
                 </select>
                 {% if info.remuneracion.help_text %}
@@ -750,7 +750,10 @@
                 {% endif %}
             </label>
             <div class="col-sm-9">
-                <input class="form-control" name="{{ form.duracion_minima.html_name }}" type="number" min="0" placeholder="{{ info.duracion.placeholder }}" value="{{ form.duracion_minima.value|default_if_none:'' }}"/>
+                <div class="input-group">
+                  <input class="form-control" name="{{ form.duracion_minima.html_name }}" type="number" min="0" placeholder="{{ info.duracion.placeholder }}" value="{{ form.duracion_minima.value|default_if_none:0 }}"/>
+                  <span class="input-group-addon">Meses</span>
+                </div>
                 {% if info.duracion.help_text %}
                     <div id="duracion_helptext" class="helptext" style="display:none">
                         <div class="alert alert-info" role="alert">
@@ -833,31 +836,6 @@
                 {% endif %}
             </div>
         </div>
-        <!-- Región -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="region">
-                {{ info.region.label }}
-                {% if info.region.help_text %}
-                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#region_helptext"></span>
-                {% endif %}
-            </label>
-            <!-- Errores -->
-            <div class="col-sm-9">
-                <select id="select-region" class="form-control selectpicker show-tick show-menu-arrow" name="region" data-live-search="true" data-header="{{ info.region.placeholder }}" title="{{ info.region.placeholder }}">
-                    {% for region in regiones %}
-                        <option value="#opt_{{ region.id }}">{{ region.nombre }}</option>
-                    {% endfor %}
-                </select>
-                {% if info.region.help_text %}
-                    <div id="region_helptext" class="helptext" style="display:none">
-                        <div class="alert alert-info" role="alert">
-                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                            {{info.region.help_text}}
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
         <!-- Comuna -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="{{ form.comuna.id_for_label }}">
@@ -867,11 +845,11 @@
                 {% endif %}
             </label>
             <div class="col-sm-9">
-                <select class="form-control selectpicker" name="{{ form.comuna.html_name }}" value="{{ form.comuna.value|default_if_none:'' }}" data-live-search="true" data-hide-disabled="true" title="{{ info.comuna.placeholder }}">
+                <select class="form-control selectpicker" name="{{ form.comuna.html_name }}" data-live-search="true" data-hide-disabled="true" title="{{ info.comuna.placeholder }}">
                     {% for reg, com in comunas.items %}
                         <optgroup label="{{ reg }}" class="opt_region" id="opt_{% with c=com|first %}{{ c.region_id }}{% endwith %}">
                             {% for c in com %}
-                                <option value="{{ c.id }}">{{ c.nombre }}</option>
+                                <option value="{{ c.id }}" {% if form.comuna.value|add:0 == c.id %} selected {% endif %}>{{ c.nombre }}</option>
                             {% endfor %}
                         </optgroup>
                     {% endfor %}
@@ -912,9 +890,16 @@
                         <span class="glyphicon glyphicon-user"></span>
                     </span>
                     {% if user.is_authenticated and user.empresa %}
-                        <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text" placeholder="{{ info.encargado.placeholder }}" value="{{ form.nombre_encargado.value|default_if_none:user.first_name }}"/>
+                        {% if form.nombre_encargado.value %}
+                          <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text" placeholder="{{ info.encargado.placeholder }}"
+                                 value="{{ form.nombre_encargado.value }}"/>
+                        {% else %}
+                          <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text" placeholder="{{ info.encargado.placeholder }}"
+                                 value="{{ user.first_name }} {{ user.last_name }}"/>
+                        {% endif %}
                     {% else %}
-                        <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text" placeholder="{{ info.encargado.placeholder }}" value="{{ form.nombre_encargado.value|default_if_none:'' }}"/>
+                        <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text"
+                               placeholder="{{ info.encargado.placeholder }}" value="{{ form.nombre_encargado.value|default_if_none:'' }}"/>
                     {% endif %}
                 </div>
                 {% if info.encargado.help_text %}
@@ -951,9 +936,16 @@
                         <span class="glyphicon glyphicon-envelope"></span>
                     </span>
                     {% if user.is_authenticated and user.empresa %}
-                        <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}" value="{{ form.email_encargado.value|default_if_none:user.email }}"/>
+                        {% if form.email_encargado.value %}
+                          <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}"
+                                 value="{{ form.email_encargado.value }}"/>
+                        {% else %}
+                          <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}"
+                                 value="{{ user.email }}"/>
+                        {% endif %}
                     {% else %}
-                        <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}" value="{{ form.email_encargado.value|default_if_none:'' }}"/>
+                        <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}"
+                               value="{{ form.email_encargado.value|default_if_none:'' }}"/>
                     {% endif %}
                 </div>
                 {% if info.email.help_text %}
@@ -989,7 +981,18 @@
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-earphone"></span>
                     </span>
-                    <input class="form-control" name="{{ form.telefono_encargado.html_name }}" type="text" placeholder="{{ info.telefono.placeholder }}" value="{{ form.telefono_encargado.value|default_if_none:'' }}"/>
+                    {% if user.is_authenticated and user.empresa %}
+                        {% if form.telefono_encargado.value %}
+                          <input class="form-control" name="{{ form.telefono_encargado.html_name }}" type="text" placeholder="{{ info.telefono.placeholder }}"
+                                 value="{{ form.telefono_encargado.value }}"/>
+                        {% else %}
+                          <input class="form-control" name="{{ form.telefono_encargado.html_name }}" type="text" placeholder="{{ info.telefono.placeholder }}"
+                                 value="{{ user.telefono }}"/>
+                        {% endif %}
+                    {% else %}
+                        <input class="form-control" name="{{ form.telefono_encargado.html_name }}" type="text" placeholder="{{ info.telefono.placeholder }}"
+                               value="{{ form.telefono_encargado.value|default_if_none:'' }}"/>
+                    {% endif %}
                 </div>
                 {% if info.telefono.help_text %}
                     <div id="telefono_helptext" class="helptext" style="display:none">
@@ -1011,38 +1014,32 @@
                 {% endif %}
             </div>
         </div>
-        <!-- Feedback -->
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9 checkbox">
-                <label class="control-label" for="{{ form.notificar.id_for_label }}">
-                    {{ form.notificar }}
-                    <!--<input name="{{ form.notificar.html_name }}" type="checkbox" value="{{ form.notificar.value }}" />-->
-                    {{ info.notificar.label }}
-                    {% if info.notificar.help_text %}
-                        <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#notificar_helptext"></span>
-                    {% endif %}
-                </label>
-                {% if info.notificar.help_text %}
-                    <div id="notificar_helptext" class="helptext" style="display:none">
-                        <div class="alert alert-info" role="alert">
-                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                            {{info.notificar.help_text}}
-                        </div>
-                    </div>
-                {% endif %}
-                <!-- Errores -->
-                {% if form.notificar.errors %}
-                    <div class="alert alert-danger" role="alert">
-                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                        <span class="sr-only">Error:</span>
-                        {% for error in form.notificar.errors %}
-                            {{ error|escape }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-        </div>
 
-        <input class="btn btn-primary btn-block" type="submit" value="Enviar"/><br>
+
+        <!-- Feedback -->
+        <div class="col-sm-offset-1 checkbox">
+          <label>
+            {{ form.notificar }} {{ info.notificar.label }}
+          </label>
+          {% if info.notificar.help_text %}
+              <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#notificar_helptext"></span>
+          {% endif %}
+          {% if info.notificar.help_text %}
+              <div id="notificar_helptext" class="helptext" style="display:none">
+                  <div class="alert alert-info" role="alert">
+                      <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                      {{ info.notificar.help_text }}
+                  </div>
+              </div>
+          {% endif %}
+        </div>
+        <!-- ToS -->
+        <div class="col-sm-offset-1 checkbox">
+          <label>
+            <input type="checkbox" id="tos_checkbox" value="">He leído y acepto los <a href="#">Términos y Condiciones</a>.
+          </label>
+        </div>
+        <br>
+        <input class="btn btn-primary btn-block" id="submit_btn" type="submit" disabled="disabled" value="Enviar"/><br>
     </form>
 {% endblock %}
