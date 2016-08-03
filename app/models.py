@@ -24,7 +24,7 @@ class Rol(models.Model):
 
 def logo_directory(instance, filename):
     path = 'logo/{0}.jpeg'.format(instance.url_encoded_name())
-    if instance.logo:
+    if os.path.exists(os.path.join(settings.MEDIA_ROOT, path)):
         os.remove(os.path.join(settings.MEDIA_ROOT, path))
     return path
 

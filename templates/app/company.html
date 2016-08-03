@@ -15,11 +15,11 @@
             <h2>Perfil de {{ empresa.nombre }}</h2>
             <div class="col-md-4 col-xs-12 text-center">
                 <div>
-                    {% if empresa.logo %}
+                    {% ifnotequal empresa.logo "" %}
                     <img class="company-logo" src="{% static empresa.logo.url %}">
                     {% else %}
                     <img class="company-logo" src="{% static "resources/company/default-logo-company.png" %}">
-                    {% endif %}
+                    {% endifnotequal%}
                 </div>
                 {% if user.isEncargado and user.administrador %}
                     <div class="text-big text-highlight pointer underline" data-toggle="modal" data-target="#pictureModal">Cambiar imagen</div>
