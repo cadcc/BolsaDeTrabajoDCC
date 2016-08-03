@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from app.forms import CompanyForm, CompanyDescriptionForm, EncargadoForm, NuevoEncargadoForm, ProfileImageForm
-from app.models import Empresa, Encargado, ValoracionEmpresa, Usuario
+from app.models import Empresa, Encargado, ValoracionEmpresa, Usuario, Oferta
 from app.views.common import home, getUser
 import json
 
@@ -123,6 +123,7 @@ def load_info_company(user, empresa):
     context['user'] = user
     context['roles'] = []
     context['comments'] = ValoracionEmpresa.objects.filter(empresa=empresa).order_by('fecha_creacion')
+    context['company_offers'] = Oferta.objects.filter(empresa=empresa, publicada=True).order_by('titulo')
     if user.isUsuario():
         context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=context['user'].id).roles.all()))
         context['user_already_comment'] = len(
