@@ -7,6 +7,8 @@
         <a href="{% url 'mis_advertencias' %}"><button type="button" class="m-btn-full m-btn-darkcyan">Advertencias <span class="badge">{{ user.getCommentsWithWarning|length }}</span></button></a>
         {% if 'administrador' in roles %}
             <a href="{% url 'permisos' %}"><button type="button" class="m-btn-full m-btn-cyan">Permisos</button></a>
+            <a href="{% url 'aprobar_usuarios' %}"><button type="button" class="m-btn-full m-btn-cyan">Aprobación Usuarios</button></a>
+            <a href="{% url 'aprobar_empresas' %}"><button type="button" class="m-btn-full m-btn-cyan">Aprobación Empresas</button></a>
         {% endif %}
         {% if 'moderador' in roles %}
             <a href="{% url 'moderar-cometarios' %}"><button type="button" class="m-btn-full m-btn-blue">Moderación</button></a>
