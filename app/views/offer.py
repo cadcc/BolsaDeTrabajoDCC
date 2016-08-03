@@ -215,7 +215,7 @@ def offer(request, offer_id):
             context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
             context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=request.user.id).roles.all()))
             return render(request, 'app/offer.html', context)
-        elif user.isEncargado() and context['oferta'].empresa.id == user.empresa.id:
+        elif user.isEncargado() and context['oferta'].empresa.id == user.empresa.id and context['oferta'].publicada:
             return render(request, 'app/offer.html', context)
         else:
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
