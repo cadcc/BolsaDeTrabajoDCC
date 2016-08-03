@@ -134,8 +134,8 @@
         "placeholder": "+56 9 XXXX XXXX"
     },
     "notificar": {
-        "label": "Deseo recibir feedback",
-        "help_text": "",
-        "placeholder": "+56 9 XXXX XXXX"
+        "label": "Deseo recibir notificaciones en mi correo sobre el estado de la oferta.",
+        "help_text": "Recibir una notificación si la oferta es publicada o rechazada.",
+        "placeholder": ""
     }
 }

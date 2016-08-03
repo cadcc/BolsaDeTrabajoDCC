@@ -61,14 +61,15 @@ class OfertaCreate(CreateView):
         context['remuneraciones'] = Oferta.OPCIONES_REMUNERACION
         context['tipos'] = Oferta.OPCIONES_TIPO
 
+        # Tags
         etiquetas = Etiqueta.objects.filter(validado=True).order_by('nombre')
         tipos_etiquetas = TipoEtiqueta.objects.exclude(nombre='tipo de oferta').exclude(nombre='jornada')
-        #tipos_etiquetas = TipoEtiqueta.objects.all()
         dict_etiquetas = {}
         for tipo in tipos_etiquetas:
             dict_etiquetas[tipo.nombre] = etiquetas.filter(tipo_id=tipo.id).order_by('nombre')
         context['etiquetas'] = dict_etiquetas
 
+        # Regiones/Comunas
         regiones = Region.objects.all().order_by('id')
         comunas = Comuna.objects.all().order_by('nombre')
         dict_comunas = {}
@@ -76,6 +77,7 @@ class OfertaCreate(CreateView):
             dict_comunas[region.nombre] = comunas.filter(region_id=region.id)
         context['comunas'] = dict_comunas
         context['regiones'] = regiones
+        
         return context
 
 def notify_published(email, user, title):
