@@ -325,6 +325,10 @@ def search_offer(request):
     context = {'user': user}
     roles = map(lambda rol: str(rol), user.roles.all())
     context['roles'] = list(roles)
+    context['ids_marcadores'] = list(map(lambda offer: offer.id, user.marcadores.all()))
+
+    # cargar etiquetas para filtrar
+    context['tipos_etiquetas'] = get_tags()
 
     # Generar Q's
     query = get_query(busqueda, ['titulo', 'empresa__nombre'])
