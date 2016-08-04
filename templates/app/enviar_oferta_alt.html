@@ -16,14 +16,20 @@
                 $('#div_sueldo').show();
             }
 
-            if ($('#select-empresa option:selected').text() === 'Otra'){
-                $('#div_nueva_empresa').show();
-            }
 
             var nueva_empresa = $('#nombre_empresa').val();
-            if (nueva_empresa){
+            var empresa = $('#select-empresa option:selected').text();
+            if (nueva_empresa != ''){
+                console.log(nueva_empresa + " is not ''");
                 $('#div_nueva_empresa').show();
             }
+            /*
+            if (empresa === 'Otra' && nueva_empresa != ''){
+                console.log(empresa + " is 'Otra' and " + nueva_empresa + " is not ''");
+                $('#div_nueva_empresa').show();
+            }
+            */
+
         });
 
         $('#select-empresa').on('change', function(event){
