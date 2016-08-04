@@ -176,6 +176,8 @@ def evaluate_offer(request):
             tipo = offer.tipo.lower()
             if tipo != 'práctica':
                 offer.etiquetas.add(Etiqueta.objects.filter(nombre=tipo).last())
+            # agregar jornada
+            offer.etiquetas.add(Etiqueta.objects.filter(nombre=offer.jornada.nombre.lower()).last())
             offer.save()
 
             # Enviar email
