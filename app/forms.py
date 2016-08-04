@@ -252,6 +252,16 @@ class ProfileImageForm(forms.Form):
     image = forms.ImageField()
 
     def clean_image(self):
+        from PIL import Image
+        from io import BytesIO
         image = self.cleaned_data['image']
-        #check for 1:1 ratio and resize to 100px
+        imageo = Image.open(image)
+        w, h = imageo.size
+        if not w == h:
+            raise forms.ValidationError("La imagen no es cuadrada")
+        imageo = imageo.resize((100, 100), Image.ANTIALIAS)
+        image_file = BytesIO()
+        imageo.save(image_file, 'JPEG', quality=90)
+
+        image.file = image_file
         return image
