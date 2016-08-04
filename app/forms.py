@@ -168,7 +168,7 @@ class OfferForm(ModelForm):
     sueldo_minimo = forms.IntegerField(min_value=0, required=False, label="Sueldo Base")
     duracion_minima = forms.IntegerField(min_value=0, label="Duración Mínima (meses)")
     jornada = forms.ModelChoiceField(queryset=Jornada.objects.all(), widget=forms.RadioSelect(), empty_label=None, label="Tipo de Jornada")
-    empresa = forms.ModelChoiceField(queryset=Empresa.objects.all().order_by('nombre'))
+    empresa = forms.ModelChoiceField(queryset=Empresa.objects.exclude(validada=True).order_by('nombre'))
     comuna = forms.ModelChoiceField(queryset=Comuna.objects.all().order_by('nombre'))
     fecha_comienzo = forms.DateField(input_formats=('%d-%m-%Y', '%d/%m/%Y', '%d-%m-%y', '%d/%m/%y'))
     fecha_termino = forms.DateField(input_formats=('%d-%m-%Y', '%d/%m/%Y', '%d-%m-%y', '%d/%m/%y'))
@@ -221,6 +221,10 @@ class OfferForm(ModelForm):
         nueva_empresa = data.get("nombre_empresa")
         if ((empresa == None or empresa == 'Otra') and nueva_empresa == ''):
             raise forms.ValidationError('Debe elegir una Empresa del listado o agregar una Nueva Empresa')
+        elif ((empresa == None or empresa == 'Otra') and nueva_empresa != ''):
+            nueva_empresa_obj = Empresa.objects.filter(nombre=nueva_empresa).first()
+            if (nueva_empresa_obj and nueva_empresa_obj.validada):
+                raise forms.ValidationError('La empresa seleccionada es una Empresa Verificada en el sistema. Por favor, inicie sesión como Encargado de dicha empresa para publicar.')
 
         sueldo = data.get("sueldo_minimo")
         remuneracion = data.get("remunerado")

@@ -56,7 +56,7 @@ class OfertaCreate(CreateView):
         json_data = json_file.read()
         context['info'] = json.loads(json_data)
         json_file.close()
-        context['empresas'] = Empresa.objects.all().order_by('nombre')
+        context['empresas'] = Empresa.objects.exclude(validada=True).order_by('nombre')
         context['jornadas'] = Jornada.objects.all().order_by('nombre')
         context['remuneraciones'] = Oferta.OPCIONES_REMUNERACION
         context['tipos'] = Oferta.OPCIONES_TIPO
@@ -77,7 +77,7 @@ class OfertaCreate(CreateView):
             dict_comunas[region.nombre] = comunas.filter(region_id=region.id)
         context['comunas'] = dict_comunas
         context['regiones'] = regiones
-        
+
         return context
 
 def notify_published(email, user, title):
