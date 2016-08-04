@@ -12,6 +12,12 @@ img {
   max-width: 100%;
 }
 
+img.loading{
+    background-image: url('http://www.llantas.com.mx/front/img/carrito/loading.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 /*Bootstrap*/
 a{
     color: #0789D8;

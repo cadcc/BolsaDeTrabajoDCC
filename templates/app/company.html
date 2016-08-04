@@ -147,7 +147,7 @@
                     </span>
                 </label>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-              <button id="saveImage" type="button" class="btn btn-primary">Guardar</button>
+              <button id="saveImage" type="button" class="btn btn-primary" data-dismiss="modal">Guardar</button>
             </div>
           </div>
         </div>
@@ -317,18 +317,23 @@
 
                     formData.append('image', blob);
                     formData.append('csrfmiddlewaretoken', $('input[name="csrfmiddlewaretoken"]').val());
-
-                    // Use `jQuery.ajax` method
+                    var logo = $('.company-logo');
+                    var src = logo.attr('src');
+                    var src = logo.attr('src', '');
+                    logo.toggleClass('loading');
                     $.ajax('{% url "imagen_empresa" %}', {
                         method: "POST",
                         data: formData,
                         processData: false,
                         contentType: false,
                         success: function (data) {
-                            if(data.status!='ok')
-                                    alert('La imagen no pudo ser modificada. Inténtelo más tarde.');
+                            logo.toggleClass('loading');
+                            if(data.status!='ok') {
+                                alert('La imagen no pudo ser modificada. Inténtelo más tarde.');
+                                logo.attr('src', src);
+                            }
                             else
-                                location.reload();
+                                logo.attr('src', data.url);
                         }
                     });
                 });
