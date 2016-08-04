@@ -13,7 +13,8 @@ from django.views.generic.edit import CreateView
 from django.db.models import Q, Case, When, BooleanField
 
 from app.forms import OfferForm
-from app.models import Oferta, Empresa, Usuario, Encargado, Etiqueta, Validacion, ValoracionOferta, TipoEtiqueta, Region, Comuna, Jornada
+from app.models import Oferta, Empresa, Usuario, Encargado, Etiqueta, Validacion, ValoracionOferta, TipoEtiqueta, Region, Comuna, Jornada, \
+    AdvertenciaValoracionOferta
 from app.views.common import getUser
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -214,7 +215,15 @@ def offer(request, offer_id):
             context['isFollowed'] = user.marcadores.all().filter(id=offer_id).last() is not None
             context['user_already_comment'] = len(
                 ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
-            context['comments'] = ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
+
+            all_comments =ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
+            comments_without_warning = []
+            for comment in all_comments:
+                warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=comment, resuelto=False)
+                if len(warnings) == 0:
+                    comments_without_warning.append(comment)
+
+            context['comments'] = comments_without_warning
             context['roles'] = list(map(lambda x: str(x), Usuario.objects.get(pk=request.user.id).roles.all()))
             return render(request, 'app/offer.html', context)
         elif user.isEncargado() and context['oferta'].empresa.id == user.empresa.id and context['oferta'].publicada:
