@@ -4,6 +4,8 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 import os
+from urllib.parse import quote_plus
+
 class UsuarioBase(AbstractUser):
     pass
 
@@ -41,6 +43,7 @@ class Empresa(models.Model):
         return self.nombre
 
     def url_encoded_name(self):
+        #return quote_plus(self.nombre)
         return self.nombre.replace(' ', '-')
 
 class Encargado(UsuarioBase):

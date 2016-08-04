@@ -219,6 +219,22 @@ a.text-highlight:hover, a.text-highlight:focus{
     margin-top: 10px;
 }
 
+.frame.frame-light.featured{
+    background-color: #18b299;
+}
+
+.frame.frame-light.featured .text-highlight, .frame.frame-light.featured{
+    color: #ffffff;
+}
+
+.frame.frame-light.featured .text-highlight{
+    text-decoration: underline;
+}
+
+.frame.frame-light.featured .badge:not(.badge-orange){
+    background-color: #138673;
+}
+
 .opaque{
     opacity: 1;
 }
