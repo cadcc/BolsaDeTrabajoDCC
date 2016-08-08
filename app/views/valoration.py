@@ -248,7 +248,7 @@ def resolveReport(request):
                 }), content_type='application/json')
         elif type_comment == 'company':
             try:
-                comment = ValoracionOferta.objects.get(pk=id_comment)
+                comment = ValoracionEmpresa.objects.get(pk=id_comment)
             except:
                 return HttpResponseBadRequest(json.dumps({
                     'msg': 'Otro moderador eliminó este reporte',
