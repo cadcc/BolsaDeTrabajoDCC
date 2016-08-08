@@ -33,10 +33,10 @@
                 </div>
             </div>
             <div class="panel-footer" style="padding-top: 5px; padding-bottom: 5px">
-                <button id="resolve_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Resolver" class="btn btn-success btn-sm resolveButton">Resolver</button>
+                <button id="resolve_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" data-type="{% if comment.oferta %}offer{% else %}company{% endif %}" type="button" data-text="Resolver" class="btn btn-success btn-sm resolveButton">Resolver</button>
                 <div class="pull-right">
-                    <button id="warning_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Enviar Advertencia" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ModalAdvertencia">Enviar Advertencia</button>
-                    <button id="delete_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Eliminar" class="btn btn-danger btn-sm deleteButton">Eliminar</button>
+                    <button id="warning_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" data-type="{% if comment.oferta %}offer{% else %}company{% endif %}" type="button" data-text="Enviar Advertencia" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ModalAdvertencia">Enviar Advertencia</button>
+                    <button id="delete_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" data-type="{% if comment.oferta %}offer{% else %}company{% endif %}" type="button" data-text="Eliminar" class="btn btn-danger btn-sm deleteButton">Eliminar</button>
                 </div>
             </div>
         </div>
@@ -71,6 +71,7 @@
                         <label for="razonAdvertencia">Razón de la advertencia</label>
                           <textarea class="form-control" id="razonAdvertencia" rows="3"></textarea>
                           <input type="hidden" id="hidden_comment_id" value="">
+                          <input type="hidden" id="hidden_type_comment" value="">
                       </div>
                     </form>
                 </div>
@@ -95,7 +96,6 @@
         function sendInfo(url, data, done, button, idInterval) {
             var time = 5000;
             data.csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-            data.type = 'offer';
             $.post(url, data).fail(function(msg) {
                 console.log('Fallo el post a: ' + url);
                 clearInterval(idInterval);
@@ -137,16 +137,18 @@
         // resolver un comentario
         $('.resolveButton').on('click', function (event) {
             var id = $(this).data('idcomment');
+            var type = $(this).data('type');
             var idInterval = wordLoading('Resolviendo', '#resolve_button_' + id);
-            sendInfo('/resolver-reporte', {'id_comment': id}, function() {
+            sendInfo('/resolver-reporte', {'id_comment': id, 'type': type}, function() {
                 $('#comment_' + id).hide('drop', {'direction': 'left'}, 500)
             }, this, idInterval)
         });
         //eliminar un comentario
         $('.deleteButton').on('click', function (event) {
             var id = $(this).data('idcomment');
+            var type = $(this).data('type');
             var idInterval = wordLoading('Eliminando', '#delete_button_' + id);
-            sendInfo('/eliminar-comentario', {'id_comment': id}, function() {
+            sendInfo('/eliminar-comentario', {'id_comment': id, 'type': type}, function() {
                 $('#comment_' + id).hide('drop', {'direction': 'rigth'}, 500)
             }, this, idInterval)
         });
@@ -154,9 +156,10 @@
         $('.warningButton').on('click', function (event) {
             var id = $('#hidden_comment_id').val();
             var warning = $('#razonAdvertencia').val();
+            var type = $('#hidden_type_comment').val();
             $('#ModalAdvertencia').modal('hide');
             var idInterval = wordLoading('Enviando', '#warning_button_' + id);
-            sendInfo('/enviar-advertencia', {'id_comment': id, 'warning': warning}, function() {
+            sendInfo('/enviar-advertencia', {'id_comment': id, 'type': type, 'warning': warning}, function() {
                 setTimeout(function() {
                     $('#comment_' + id).hide('highlight', 1000);
                 }, 500)
@@ -166,7 +169,9 @@
         $('#ModalAdvertencia').on('show.bs.modal', function (e) {
             var button = $(e.relatedTarget);
             var id = button.data('idcomment');
+            var type = button.data('type');
             $('#hidden_comment_id').val(id);
+            $('#hidden_type_comment').val(type);
         });
     </script>
 {% endblock %}

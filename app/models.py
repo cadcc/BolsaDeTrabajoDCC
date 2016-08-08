@@ -270,9 +270,16 @@ class ValoracionEmpresa(models.Model):
     def __str__(self):
         return str(self.usuario) + ' - ' + str(self.valor) + ' - ' + self.comentario
 
+    def value(self):
+        return int(self.valor/20)
+
     def hasWarning(self):
         warnings = AdvertenciaValoracionEmpresa.objects.filter(valoracion=self, resuelto=False)
         return len(warnings) > 0
+
+    def getLastWarning(self):
+        warnings = AdvertenciaValoracionEmpresa.objects.filter(valoracion=self, resuelto=False)
+        return warnings.last()
 
 
 class AdvertenciaValoracionEmpresa(models.Model):
