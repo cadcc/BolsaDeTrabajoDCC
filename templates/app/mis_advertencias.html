@@ -24,13 +24,28 @@
                 </div>
             </div>
             <div class="panel-body">
-                <div id="user-comment">
+                <div id="actual_comment_{{ comment.id }}">
                     <h4>{{ comment.comentario }}</h4>
                 </div>
+                <textarea id="textarea_{{ comment.id }}" name="edit_warning" class="form-control hidden">{{ comment.comentario }}</textarea>
             </div>
             <div class="panel-footer" style="padding-top: 5px; padding-bottom: 5px">
                 <span class="text-info"><strong>Advertencia:</strong> {{ comment.getLastWarning.advertencia }}</span>
-                <button id="edit_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Editar" class="btn btn-info btn-sm pull-right editButton">Editar</button>
+                <div class="pull-right">
+                    <button id="edit_button_{{ comment.id }}"
+                            data-idcomment="{{ comment.id }}"
+                            type="button"
+                            data-text="Editar"
+                            class="btn btn-info btn-sm edit-button">Editar</button>
+                    <button id="send_button_{{ comment.id }}"
+                            data-idcomment="{{ comment.id }}"
+                            type="button" data-text="Enviar"
+                            data-type="{% if comment.oferta %}offer{% else %}company{% endif %}"
+                            class="btn btn-info btn-sm send-button hidden">Enviar</button>
+                    <button id="cancel_button_{{ comment.id }}"
+                            data-idcomment="{{ comment.id }}"
+                            class="btn btn-danger btn-sm hidden cancel-edit-button" type="button"><b>Cancelar</b></button>
+                </div>
             </div>
         </div>
     {% empty %}
@@ -58,14 +73,40 @@
             }, 500);
         }
 
-        $('.editButton').on('click', function(event) {
+        $('.edit-button').on('click', function(event) {
             var button = $(this);
             var id = button.data('idcomment');
-            var idInterval = wordLoading('Editando', '#edit_button_' + id);
+            // efectos
+            $('#textarea_' + id).removeClass('hidden');
+            $('#actual_comment_' + id).addClass('hidden');
+            $('#send_button_' + id).removeClass('hidden');
+            $('#cancel_button_' + id).removeClass('hidden');
+            $(button).addClass('hidden');
+
+            /*
+            var idInterval = wordLoading('Enviando', '#edit_button_' + id);
             setTimeout(function() {
                 clearInterval(idInterval);
                 button.text(button.data('text'));
-            }, 5000);
-        })
+            }, 5000);*/
+        });
+
+        $('.send-button').on('click', function(event) {
+
+        });
+
+        $('.cancel-edit-button').click(function () {
+            var button = $(this);
+            var id = button.data('idcomment');
+            var textarea = $('#textarea_' + id);
+            var comment = $('#actual_comment_' + id);
+
+            $(textarea).addClass('hidden');
+            $(textarea).val($(comment).text().trim());
+            $(comment).removeClass('hidden');
+            $('#edit_button_' + id).removeClass('hidden');
+            $('#send_button_' + id).addClass('hidden');
+            $(button).addClass('hidden');
+        });
     </script>
 {% endblock %}
