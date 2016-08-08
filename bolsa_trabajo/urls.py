@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': settings.MEDIA_ROOT,
     }),
+    url(r'^recover-password/', include('password_reset.urls')),
 ]
