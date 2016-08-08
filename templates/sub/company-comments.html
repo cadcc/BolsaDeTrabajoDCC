@@ -120,7 +120,21 @@
                     {{ comment.comentario }}
                     </div>
                     <div class="text-danger text-uppercase text-right">
-                        <button type="button"><b>Reportar</b></button>
+                        {% if comment.reportado %}
+                            <button id="comment_button_id_{{ comment.id }}"
+                                    class="btn disabled"
+                                    disabled
+                                    onclick="reportComment({{ comment.id }}, 'company')"
+                                    type="button">
+                                <b>Reportado</b>
+                            </button>
+                        {% else %}
+                            <button id="comment_button_id_{{ comment.id }}"
+                                    onclick="reportComment({{ comment.id }}, 'company')"
+                                    type="button">
+                                <b>Reportar</b>
+                            </button>
+                        {% endif %}
                     </div>
                 {% endifequal %}
             </div>
