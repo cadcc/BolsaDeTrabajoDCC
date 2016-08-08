@@ -19,6 +19,8 @@ from app.views.common import getUser
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
+from itertools import chain
+
 
 class OfertaCreate(CreateView):
     model = Oferta
@@ -216,7 +218,10 @@ def offer(request, offer_id):
             context['user_already_comment'] = len(
                 ValoracionOferta.objects.filter(oferta=context['oferta'], usuario=request.user.usuario)) > 0
 
-            all_comments =ValoracionOferta.objects.filter(oferta=context['oferta']).order_by('fecha_creacion')
+            all_comments_report = ValoracionOferta.objects.filter(oferta=context['oferta'], reportes=user).annotate(reportado=Case(default=True, output_field=BooleanField()))
+            all_comments_no_report =ValoracionOferta.objects.filter(oferta=context['oferta']).exclude(reportes=user).annotate(reportado=Case(default=False, output_field=BooleanField()))
+            all_comments = sorted(chain(all_comments_report, all_comments_no_report), key=lambda valoration: valoration.fecha_creacion)
+
             comments_without_warning = []
             for comment in all_comments:
                 warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=comment, resuelto=False)

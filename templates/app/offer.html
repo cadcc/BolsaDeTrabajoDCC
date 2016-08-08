@@ -174,7 +174,7 @@
         var commentButton = $('#comment_button');
         commentButton.prop('disabled', true);
         $('#valoration').on('rating.change', function() {
-            commentButton.removeClass('disabled')
+            commentButton.removeClass('disabled');
             commentButton.removeAttr('disabled');
         });
         $('#user-valoration').find('input').on('rating.change', function(){
@@ -243,7 +243,7 @@
             var button = $('#comment_button_id_' + comment_id);
             $(button.children()).text('Reportado');
             button.prop('disabled', true);
-            button.addClass('disabled');
+            button.addClass('btn disabled');
         }
         function reportComment(comment_id, type) {
             $.post('/reportar-comentario',{
