@@ -51,4 +51,5 @@ urlpatterns = [
     url(r'^aprobar-empresas/$', view=admin.review_companies, name='aprobar_empresas'),
     url(r'^aprobar-empresas/aceptar$', view=admin.accept_company, name="aceptar_empresa"),
     url(r'^aprobar-empresas/rechazar$', view=admin.reject_company, name="rechazar_empresa"),
+    url(r'^editar-comentario-por-advertencia/$', view=valoration.editCommentForWarning, name="editar_comentario_por_advertencia"),
 ]

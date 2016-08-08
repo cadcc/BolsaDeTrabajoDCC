@@ -73,6 +73,23 @@
             }, 500);
         }
 
+        function sendInfo(url, data, done, button, idInterval) {
+            var time = 5000;
+            data.csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+            $.post(url, data).fail(function(msg) {
+                console.log('Fallo el post a: ' + url);
+                clearInterval(idInterval);
+                setTimeout(function() {
+                    $(button).text($(button).data('text'));
+                }, 500);
+                noty({text: 'Ocurrio un error al procesar la solicitud.', layout: 'topRight', type: 'error', timeout: time});
+            }).done(function(msg) {
+                console.log(msg);
+                done();
+                noty({text: msg.msg, layout: 'topRight', type: 'success', timeout: time});
+            })
+        }
+
         $('.edit-button').on('click', function(event) {
             var button = $(this);
             var id = button.data('idcomment');
@@ -82,17 +99,21 @@
             $('#send_button_' + id).removeClass('hidden');
             $('#cancel_button_' + id).removeClass('hidden');
             $(button).addClass('hidden');
-
-            /*
-            var idInterval = wordLoading('Enviando', '#edit_button_' + id);
-            setTimeout(function() {
-                clearInterval(idInterval);
-                button.text(button.data('text'));
-            }, 5000);*/
         });
 
         $('.send-button').on('click', function(event) {
-
+            var button = $(this);
+            var id = button.data('idcomment');
+            var url = '/editar-comentario-por-advertencia/';
+            var data = {
+                'comment_id': id,
+                'type': $(button).data('type'),
+                'edit_text': $('#textarea_' + id).val()
+            };
+            var idInterval = wordLoading('Enviando', '#send_button_' + id);
+            sendInfo(url, data, function() {
+                $('#comment_' + id).hide('drop', {'direction': 'left'}, 500);
+            }, button, idInterval);
         });
 
         $('.cancel-edit-button').click(function () {

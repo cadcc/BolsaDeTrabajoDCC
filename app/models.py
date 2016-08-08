@@ -190,9 +190,9 @@ class Usuario(UsuarioBase):
 
     def getCommentsWithWarning(self):
         offers_warnings_comments = list(
-            filter(lambda comment: comment.hasWarning(), ValoracionOferta.objects.filter(usuario=self)))
+            filter(lambda comment: comment.hasWarning() and not comment.wasEdited(), ValoracionOferta.objects.filter(usuario=self)))
         company_warnings_comments = list(
-            filter(lambda comment: comment.hasWarning(), ValoracionEmpresa.objects.filter(usuario=self)))
+            filter(lambda comment: comment.hasWarning() and not comment.wasEdited(), ValoracionEmpresa.objects.filter(usuario=self)))
         return offers_warnings_comments + company_warnings_comments
 
 class Validacion(models.Model):
@@ -242,6 +242,13 @@ class ValoracionOferta(models.Model):
         warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=self, resuelto=False)
         return len(warnings)>0
 
+    def wasEdited(self):
+        try:
+            return self.getLastWarning().modificado
+        except:
+            return False
+
+    # solo habra una advertencia del comentario que este en resuelto=False
     def getLastWarning(self):
         warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=self, resuelto=False)
         return warnings.last()
@@ -276,6 +283,12 @@ class ValoracionEmpresa(models.Model):
     def hasWarning(self):
         warnings = AdvertenciaValoracionEmpresa.objects.filter(valoracion=self, resuelto=False)
         return len(warnings) > 0
+
+    def wasEdited(self):
+        try:
+            return self.getLastWarning().modificado
+        except:
+            return False
 
     def getLastWarning(self):
         warnings = AdvertenciaValoracionEmpresa.objects.filter(valoracion=self, resuelto=False)

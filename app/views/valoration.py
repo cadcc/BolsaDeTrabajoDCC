@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.utils.datetime_safe import datetime
 
 from app.forms import CommentForm
 from app.models import ValoracionOferta, Usuario, Oferta, Empresa, ValoracionEmpresa, AdvertenciaValoracionOferta, \
@@ -211,8 +212,8 @@ def moderateComments(request):
             return HttpResponseBadRequest('No tienes los permisos necesarios para esta acción!!!')
 
         # obtencion de comnetarios reportados
-        offers_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER and not comment.hasWarning(), ValoracionOferta.objects.all()))
-        company_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER and not comment.hasWarning(), ValoracionEmpresa.objects.all()))
+        offers_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER and ((not comment.hasWarning()) or (comment.hasWarning() and comment.wasEdited())), ValoracionOferta.objects.all()))
+        company_report_comments = list(filter(lambda comment: len(comment.reportes.all()) > settings.MAX_REPORTS_NUMBER and ((not comment.hasWarning()) or (comment.hasWarning() and comment.wasEdited())), ValoracionEmpresa.objects.all()))
 
         context = {
             'user': user,
@@ -259,6 +260,13 @@ def resolveReport(request):
             }), content_type='application/json')
         # eliminar reportes
         comment.reportes.clear()
+        comment.save()
+
+        # actualizar advertencia
+        warning = comment.getLastWarning()
+        if warning:
+            warning.resuelto = True
+            warning.save()
         return HttpResponse(json.dumps({'msg': 'Reporte resuelto correctamente'}), content_type='application/json')
     else:
         return HttpResponseNotAllowed('POST')
@@ -377,3 +385,34 @@ def myWarnings(request):
         return render(request, 'app/mis_advertencias.html', context)
     else:
         return HttpResponseNotAllowed('GET')
+
+@login_required(login_url='home')
+def editCommentForWarning(request):
+    if request.method == 'POST':
+        user = getUser(request.user)
+        if not user.isUsuario():
+            return HttpResponseBadRequest('No tienes permisos!!!')
+        comment_id = request.POST.get('comment_id')
+        type = request.POST.get('type')
+        edit_text = request.POST.get('edit_text')
+
+        if type == 'offer':
+            actual_comment = ValoracionOferta.objects.get(pk=int(comment_id))
+        else:
+            actual_comment = ValoracionEmpresa.objects.get(pk=int(comment_id))
+
+        # actualizar advertencia
+        actual_warning = actual_comment.getLastWarning()
+        actual_warning.modificado = True
+
+        # actualizar comentario
+        actual_comment.comentario = edit_text
+        actual_comment.fecha_modificacion = datetime.now()
+
+        # guardar cambios
+        actual_comment.save()
+        actual_warning.save()
+
+        return HttpResponse(json.dumps({'msg': 'Edición de comentario realizada'}),
+                            content_type='application/json')
+    return HttpResponseNotAllowed('POST')
