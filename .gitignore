@@ -1,10 +1,12 @@
+#cosas de pycharm
 .idea
 *.iml
-.env
-*/__pycache__
+**/__pycache__
 */migrations
-app/templatetags/__pycache__
+
+#ambiente
+.env
 
 #para no commitear archivos subidos
-/media/logos/*
+/media/logo/*
 /media/user_document/*

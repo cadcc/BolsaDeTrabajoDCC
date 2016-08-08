@@ -97,5 +97,14 @@
       "fecha_creacion": "2016-05-04 23:12:36.073000",
       "tipo_id": 2
     }
+  },
+  {
+    "model": "app.etiqueta",
+    "fields": {
+      "nombre": "freelance",
+      "validado": true,
+      "fecha_creacion": "2016-05-04 23:12:36.073000",
+      "tipo_id": 2
+    }
   }
 ]

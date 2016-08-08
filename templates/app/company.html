@@ -12,32 +12,27 @@
 {% block right_column_content %}
     <div class="row">
         <div class="col-xs-12 col-md-12 text-center">
-            <h2>Perfil de Empresa</h2>
+            <h2>Perfil de {{ empresa.nombre }}</h2>
             <div class="col-md-4 col-xs-12 text-center">
-                <div class="text-big text-highlight">{{ empresa.nombre }}</div>
                 <div>
-                    <img class="company-logo"
-                         src="{% if empresa.logo %}
-                            {{ empresa.logo }}
-                         {% else %}
-                            {% static "resources/company/default-logo-company.png" %}
-                         {% endif %}">
+                    {% ifnotequal empresa.logo "" %}
+                    <img class="company-logo" src="{% static empresa.logo.url %}">
+                    {% else %}
+                    <img class="company-logo" src="{% static "resources/company/default-logo-company.png" %}">
+                    {% endifnotequal%}
                 </div>
+                {% if user.isEncargado and user.administrador %}
+                    <div class="text-big text-highlight pointer underline" data-toggle="modal" data-target="#pictureModal">Cambiar imagen</div>
+                {% endif %}
             </div>
             <div class="col-md-8 col-xs-12">
                 <div class="badge badge-lightred">
                     <div>Publicaciones</div>
-                    <div class="text-big">{{ empresa.oferta_set.count }}</div>
+                    <div class="text-big">{{ company_offers|length }}</div>
                 </div>
-                <div class="badge badge-yellow" title="4.2">
+                <div class="badge badge-yellow" title="{{ empresa.puntaje }}">
                     <div>Valoración</div>
-                    <div class="text-big">
-                        <span>4.2</span>
-                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                        <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                        <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+                    <div class="text-big star-val" data-score={{ empresa.puntaje }}>
                     </div>
                 </div>
             </div>
@@ -45,26 +40,304 @@
     </div>
     <hr>
     <div>
-        <div class="title">Descripción</div>
+        <h3>
+            Descripción
+            {% if user.isEncargado and user.administrador %}
+            <button id="edit-description" type="button" class="m-btn-medium m-btn-blue">Editar</button>
+            {% endif %}
+        </h3>
         {# Interesst profile #}
-        <p>Lorem ipsum dolor sit amet, porttitor metus scelerisque, nullam hymenaeos, justo in lobortis. Consectetur proin, placerat scelerisque. Pellentesque tincidunt convallis, quis ornare, at dolor. Aenean ultrices, blandit mattis, amet ut nec. Mattis aliquam. At in. Morbi ac orci, sit semper. Lacinia arcu.</p>
+        {% if empresa.validada %}
+            <p id="description">{{ empresa.descripcion|default_if_none:"Sin descripción." }}</p>
+            {% if user.isEncargado and user.administrador %}
+            <form id="description-form" method="post" action="{% url 'descripcion_empresa' %}" class="hidden">
+            {% csrf_token %}
+                <textarea name="description" rows="3" class="form-control">{{ empresa.descripcion|default_if_none:"" }}</textarea>
+                <div>
+                    <input type="submit" class="m-btn-medium m-btn-cyan" />
+                    <button id="cancel-description" type="button" class="m-btn-medium m-btn-darkred">Cancelar</button>
+                </div>
+            </form>
+            {% endif %}
+        {% else %}
+            <p>Esta empresa aún no ha sido verificada.</p>
+        {% endif %}
+
     </div>
     <hr>
-    <div class="row text-center text-uppercase">
-        <div class="col-md-4 col-xs-12">
-            <div>Encargado</div>
-            <div class="text-highlight text-big">Ricardo Ruiz</div>
+    {% if encargado %}
+        <div class="row text-center text-uppercase">
+            <div class="col-md-4 col-xs-12">
+                <div>Encargado administrador</div>
+                <div class="text-highlight text-big">{{ encargado.first_name }}</div>
+            </div>
+            <div class="col-md-4 col-xs-12">
+                <div>Correo electrónico</div>
+                <div class="text-highlight text-big">{{ encargado.email }}</div>
+            </div>
+            <div class="col-md-4 col-xs-12">
+                <div>Teléfono</div>
+                <div class="text-highlight text-big">{{ encargado.telefono }}</div>
+            </div>
         </div>
-        <div class="col-md-4 col-xs-12">
-            <div>Correo electrónico</div>
-            <div class="text-highlight text-big">rruiz@company.cl</div>
-        </div>
-        <div class="col-md-4 col-xs-12">
-            <div>Teléfono</div>
-            <div class="text-highlight text-big">2 111 1111</div>
-        </div>
+    {% endif %}
+    <hr>
+    <div>
+        <h3>Ofertas</h3>
+        <ul>
+        {% for offer in company_offers %}
+            <li class="vertical-margin">
+            <div class="badge">
+                <div class="text-big">
+                    {{ offer.tipo }}
+                </div>
+            </div>
+            <a href="{% url "oferta" offer_id=offer.id %}">{{ offer.titulo }}</a>
+            </li>
+        {% empty %}
+        {% endfor %}
+        </ul>
+        {% for offer in empresa.oferta_set.all %}
+        {% empty %}
+            <p>Esta empresa no ha publicado ninguna oferta.</p>
+        {% endfor %}
     </div>
     <hr>
-    <h3>Comentarios y valoraciones</h3>
-    {% include "sub/company-comments.html" %}
+    {% if "normal" in roles %}
+        <h3>Comentarios y valoraciones</h3>
+        {% include "sub/company-comments.html" %}
+    {% endif %}
+
+
+    <!-- Modal -->
+    <div class="bd-example">
+      <div class="modal fade" id="pictureModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" id="exampleModalLabel">Imagen de empresa</h4>
+            </div>
+            <div class="modal-body">
+                <div class="top-align">
+                    <span class="text-highlight text-uppercase">Recortar imagen</span>
+                    <div id="cropper-container">
+                        {% if empresa.logo %}
+                        <img id="image" src="{% static empresa.logo.url %}">
+                        {% else %}
+                        <img id="image" src="{% static "resources/company/default-logo-company.png" %}">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="top-align">
+                    <span class="text-highlight text-uppercase">Vista previa</span>
+                    <div class="img-preview" title="Vista previa">
+                        <img />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <label class="btn btn-primary btn-upload" for="inputImage" title="Subir una imagen">
+                    <input type="file" class="sr-only" id="inputImage" name="file" accept="image/*">
+                    <span>
+                        Seleccionar imagen
+                        <span class="glyphicon glyphicon-upload"></span>
+                    </span>
+                </label>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <button id="saveImage" type="button" class="btn btn-primary" data-dismiss="modal">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static "cropper/cropper.min.css" %}">
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static "cropper/cropper.min.js" %}"></script>
+    <script type="text/javascript">
+        //colores e iconos en la parte de validar para practica
+        var valid_icons = $('.valid-class');
+        for (var i = 0; i < valid_icons.length; i++) {
+            var valid_icon = $(valid_icons[i]);
+            var icon;
+            if (valid_icon.data('valid') === 'Aprobada') {
+                icon = "glyphicon glyphicon-ok-sign text-big valid-class";
+            } else if (valid_icon.data('valid') === 'No Aprobada') {
+                icon = "glyphicon glyphicon-remove-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-red')
+            } else {
+                icon = "glyphicon glyphicon-question-sign text-big valid-class";
+                valid_icon.parent().attr('class', 'badge badge-orange')
+            }
+            valid_icon.attr('class', icon);
+        }
+    </script>
+    <script type="text/javascript">
+        //para el llenado de las estrellas
+        var star_vals = $('.star-val');
+        for (var i = 0; i < star_vals.length; i++) {
+            var star_val = $(star_vals[i]);
+            var offer_score = star_val.data('score');
+            //star_val.append($('<span/>', {text: offer_score/20}));
+            for (var score = 20; score <= 100; score+=20) {
+                if (offer_score >= score)
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star',
+                        'aria-hidden': 'true'
+                    }));
+                else
+                    star_val.append($('<span/>', {
+                        'class': 'glyphicon glyphicon-star-empty',
+                        'aria-hidden': 'true'
+                    }));
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        var commentButton = $('#comment_button');
+        commentButton.prop('disabled', true);
+        $('#valoration').on('rating.change', function() {
+            commentButton.removeClass('disabled')
+            commentButton.removeAttr('disabled');
+        });
+        $('#user-valoration').find('input').on('rating.change', function(){
+            $('#user-valoration-input').val($(this).val());
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#edit-comment-btn').click(function () {
+                var val = $('#user-valoration');
+                val.parent().find('.badge').addClass('hidden');
+                val.removeClass('hidden');
+                $('#user-textarea').removeClass('hidden');
+                $('#user-comment').addClass('hidden');
+                $('#update-comment-btn').removeClass('hidden');
+                $('#cancel-edit-btn').removeClass('hidden');
+                $('#user-importance').removeClass('hidden');
+                $(this).addClass('hidden');
+            });
+
+            $('#cancel-edit-btn').click(function () {
+                var val = $('#user-valoration');
+                val.parent().find('.badge').removeClass('hidden');
+                val.addClass('hidden');
+                $('#user-textarea').addClass('hidden');
+                $('#user-comment').removeClass('hidden');
+                $('#update-comment-btn').addClass('hidden');
+                $('#edit-comment-btn').removeClass('hidden');
+                $('#user-importance').addClass('hidden');
+                $(this).addClass('hidden');
+            });
+
+            $('#edit-description').click(function(){
+                $('#description').toggleClass('hidden');
+                $('#description-form').toggleClass('hidden');
+            });
+
+            $('#cancel-description').click(function(){
+                $('#description').toggleClass('hidden');
+                $('#description-form').toggleClass('hidden');
+            });
+
+            var $image = $('#image');
+            var options = {
+              aspectRatio: 1 / 1,
+              preview: '.img-preview',
+              movable: false,
+              zoomable: false,
+              crop: function(e) {
+                console.log(e.x);
+                console.log(e.y);
+                console.log(e.width);
+                console.log(e.height);
+                console.log(e.rotate);
+                console.log(e.scaleX);
+                console.log(e.scaleY);
+              }
+            };
+            // Cropper
+              $image.cropper(options);
+            /*var cropper = new Cropper($image, {
+              aspectRatio: 1 / 1,
+              crop: function(e) {
+                console.log(e.detail.x);
+                console.log(e.detail.y);
+                console.log(e.detail.width);
+                console.log(e.detail.height);
+                console.log(e.detail.rotate);
+                console.log(e.detail.scaleX);
+                console.log(e.detail.scaleY);
+              }
+            });*/
+            // Import image
+            var $inputImage = $('#inputImage');
+            var URL = window.URL || window.webkitURL;
+            var blobURL;
+
+            if (URL) {
+            $inputImage.change(function () {
+              var files = this.files;
+              var file;
+
+              if (!$image.data('cropper')) {
+                return;
+              }
+
+              if (files && files.length) {
+                file = files[0];
+
+                if (/^image\/\w+$/.test(file.type)) {
+                  blobURL = URL.createObjectURL(file);
+                  $image.one('built.cropper', function () {
+
+                    // Revoke when load complete
+                    URL.revokeObjectURL(blobURL);
+                  }).cropper('reset').cropper('replace', blobURL);
+                  $inputImage.val('');
+                } else {
+                  window.alert('Escoge un archivo de imagen.');
+                }
+              }
+            });
+            } else {
+                $inputImage.prop('disabled', true).parent().addClass('disabled');
+            }
+
+            $('#saveImage').click(function(){
+                $image.cropper('getCroppedCanvas').toBlob(function (blob) {
+                    var formData = new FormData();
+
+                    formData.append('image', blob);
+                    formData.append('csrfmiddlewaretoken', $('input[name="csrfmiddlewaretoken"]').val());
+                    var logo = $('.company-logo');
+                    var src = logo.attr('src');
+                    var src = logo.attr('src', '');
+                    logo.toggleClass('loading');
+                    $.ajax('{% url "imagen_empresa" %}', {
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            logo.toggleClass('loading');
+                            if(data.status!='ok') {
+                                alert('La imagen no pudo ser modificada. Inténtelo más tarde.');
+                                logo.attr('src', src);
+                            }
+                            else
+                                logo.attr('src', data.url);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 {% endblock %}

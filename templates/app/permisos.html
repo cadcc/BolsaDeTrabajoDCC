@@ -1,0 +1,387 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+{% load filtros %}
+
+{% block title %} Administrar Permisos {% endblock %}
+{% block css %}
+<link href="https://fonts.googleapis.com/css?family=Cairo" rel="stylesheet">
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        // Toggle Panels
+        $(document).on('click', '.panel-heading span.clickable', function(e){
+            var $this = $(this);
+            if(!$this.hasClass('panel-collapsed')) {
+                $this.parents('.panel').find('.panel-body').slideUp();
+                $this.addClass('panel-collapsed');
+                $this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+            } else {
+                $this.parents('.panel').find('.panel-body').slideDown();
+                $this.removeClass('panel-collapsed');
+                $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        function updateUserList(user_id, rol){
+            var row_id = '#usuario_' + rol + '_' + user_id;
+            //$( row_id ).remove();
+            $( row_id ).css("display", "none");
+        }
+
+        function removeRole(user_id, rol) {
+            $.post('{% url 'quitar_permisos' %}',{
+                'user_id': user_id,
+                'rol': rol,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                updateUserList(user_id, rol);
+                console.log(msg);
+            });
+            $('#confirmation_modal').modal('hide');
+        }
+    </script>
+
+    <script type="text/javascript">
+        $('#confirmation_modal').on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var user_name = button.data('username');
+            var user_id = button.data('userid');
+            var role_name = button.data('rolename');
+
+            var modal = $(this);
+            var modal_text = modal.find('.modal-body p');
+            modal_text.text('¿Está seguro que desea quitar al usuario \'' + user_name + '\' de ' +
+                'la lista de ' + role_name + 'es?'
+            );
+            var modal_button = modal.find('#btn_confirmar');
+            modal_button.text('Quitar de ' + role_name + 'es');
+            modal_button.attr('onclick', "removeRole('"+user_id+"', '"+role_name+"')");
+            modal_button.css("text-transform", "capitalize");
+        });
+    </script>
+{% endblock %}
+
+{% block left_column_content %}
+    {% include "sub/left-panel-user-profile.html" %}
+    <hr>
+{% endblock %}
+
+{% block right_column_content %}
+    <h2 class="text-center"> Administrar Permisos </h2>
+    <hr><br>
+
+    <!-- Publicadores -->
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h2 class="panel-title"><strong>Publicadores</strong></h2>
+            <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+        </div>
+        <div class="panel-body">
+            <p class="text-info text-justify">
+                Encargados de revisar las ofertas recibidas. Pueden cambiar el estado las ofertas a <strong>Publicadas</strong>, haciéndolas visibles para el
+                resto de los usuarios, o <strong>Rechazadas</strong>, eliminando la oferta del sistema.
+            </p>
+            <hr>
+            <table class="table table-hover table-striped text-info">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Correo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in publicadores %}
+                        <tr id="usuario_publicador_{{ p.id }}">
+                            <td>{{ p.first_name }} {{ p.last_name }}</td>
+                            <td>{{ p.email }}</td>
+                            <td class="text-center">
+                                {% ifequal p.id user.id %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          style="color:rgb(88, 88, 88)">
+                                    </span>
+                                    <button type="button" class="btn btn-danger" disabled="disabled">
+                                        Quitar
+                                    </button>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="publicador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% else %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          onclick="removeRole({{ p.id }}, 'publicador')"
+                                          style="color:#F71D00">
+                                    </span>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="publicador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% endifequal %}
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <form action="" method="post" class="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-8">
+                        <select class="form-control selectpicker" name="publicador" title="Añadir Publicador"
+                                data-show-subtext="true" data-live-search="true" data-hide-disabled="true" data-size="5">
+                            {% for u in not_publicadores %}
+                                <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-success col-sm-2" name="add_pub" type="submit">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Validadores de Práctica -->
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h2 class="panel-title"><strong>Validadores</strong></h2>
+            <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+        </div>
+        <div class="panel-body">
+            <p class="text-success text-justify">
+                Encargados de revisar las ofertas de Práctica. Pueden clasificar las ofertas de práctica recibidas (y previamente publicadas
+                por un Publicador) como <strong>Práctica 1</strong>, <strong>Práctica 2</strong>, <strong>Práctica 1 y 2</strong> o <strong>No Válida</strong>.
+            </p>
+            <hr>
+            <table class="table table-hover table-striped text-success">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Correo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in validadores %}
+                        <tr id="usuario_validador_{{ p.id }}">
+                            <td>{{ p.first_name }} {{ p.last_name }}</td>
+                            <td>{{ p.email }}</td>
+                            <td class="text-center">
+                                {% ifequal p.id user.id %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          style="color:rgb(88, 88, 88)">
+                                    </span>
+                                    <button type="button" class="btn btn-danger" disabled="disabled">
+                                        Quitar
+                                    </button>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="validador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% else %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          onclick="removeRole({{ p.id }}, 'validador')"
+                                          style="color:#F71D00">
+                                    </span>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="validador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% endifequal %}
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <form action="" method="post" class="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-8">
+                        <select class="form-control selectpicker" name="validador" title="Añadir Validador"
+                                data-show-subtext="true" data-live-search="true" data-hide-disabled="true" data-size="5">
+                            {% for u in not_validadores %}
+                                <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                     <button class="btn btn-success col-sm-2" name="add_val" type="submit">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Moderadores -->
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h2 class="panel-title"><strong>Moderadores</strong></h2>
+            <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+        </div>
+        <div class="panel-body">
+            <p class="text-warning text-justify">
+                Encargados de supervisar las secciones de comentarios. Pueden <strong>ocultar</strong> y <strong>eliminar</strong> comentarios ofensivos, dando la oportunidad
+                al autor de editar el contenido para que pueda volver a ser visible de ser aceptada la modificación.
+            </p>
+            <hr>
+            <table class="table table-hover table-striped text-warning">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Correo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in moderadores %}
+                        <tr id="usuario_moderador_{{ p.id }}">
+                            <td>{{ p.first_name }} {{ p.last_name }}</td>
+                            <td>{{ p.email }}</td>
+                            <td class="text-center">
+                                {% ifequal p.id user.id %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          style="color:rgb(88, 88, 88)">
+                                    </span>
+                                    <button type="button" class="btn btn-danger" disabled="disabled">
+                                        Quitar
+                                    </button>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="moderador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% else %}
+                                    <!--<span class="glyphicon glyphicon-remove"
+                                          onclick="removeRole({{ p.id }}, 'moderador')"
+                                          style="color:#F71D00">
+                                    </span>-->
+                                    <button type="button" class="btn btn-danger btn_quitar"
+                                            data-toggle="modal" data-target="#confirmation_modal"
+                                            data-username="{{ p.first_name }} {{ p.last_name }}"
+                                            data-rolename="moderador" data-userid="{{ p.id }}">
+                                        Quitar
+                                    </button>
+                                {% endifequal %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <form action="" method="post" class="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-8">
+                        <select class="form-control selectpicker" name="moderador" title="Añadir Moderador"
+                                data-show-subtext="true" data-live-search="true" data-hide-disabled="true" data-size="5">
+                            {% for u in not_moderadores %}
+                                <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-success col-sm-2" name="add_mod" type="submit">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Administradores -->
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h2 class="panel-title"><strong>Administradores</strong></h2>
+            <span style="margin-top: -20px;	font-size: 15px;" class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+        </div>
+        <div class="panel-body">
+            <p class="text-danger text-justify">
+                Encargados de manejar permisos y cuentas de usuario y empresa. Pueden otorgar o quitar permisos a otros usuarios mediante la asignación
+                de Roles (<strong>Publicador</strong>, <strong>Verificador</strong>, <strong>Moderador</strong>, <strong>Administrador</strong>). Tienen
+                acceso a las solicitudes de registro de usuarios y empresas, encargándose de verificar la información entregada para aceptar o eliminar
+                cada solicitud.
+            </p>
+            <hr>
+            <table class="table table-hover table-striped text-danger">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Correo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in administradores %}
+                            <tr id="usuario_administrador_{{ p.id }}">
+                                <td>{{ p.first_name }} {{ p.last_name }}</td>
+                                <td>{{ p.email }}</td>
+                                <td class="text-center">
+                                    {% ifequal p.id user.id %}
+                                        <!--<span class="glyphicon glyphicon-remove"
+                                              style="color:rgb(88, 88, 88)">
+                                        </span>-->
+                                        <button type="button" class="btn btn-danger" disabled="disabled">
+                                            Quitar
+                                        </button>
+                                    {% else %}
+                                        <!--<span class="glyphicon glyphicon-remove"
+                                              onclick="removeRole({{ p.id }}, 'administrador')"
+                                              style="color:#F71D00">
+                                        </span>-->
+                                        <button type="button" class="btn btn-danger btn_quitar"
+                                                data-toggle="modal" data-target="#confirmation_modal"
+                                                data-username="{{ p.first_name }} {{ p.last_name }}"
+                                                data-rolename="administrador" data-userid="{{ p.id }}">
+                                            Quitar
+                                        </button>
+                                    {% endifequal %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            <form action="" method="post" class="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-8">
+                        <select class="form-control selectpicker" name="administrador"  title="Añadir Administrador"
+                                data-show-subtext="true" data-live-search="true" data-hide-disabled="true" data-size="5">
+                            {% for u in not_administradores %}
+                                <option value="{{ u.id }}" data-subtext="{{ u.email }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-success col-sm-2" name="add_admin" type="submit">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="confirmation_modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Confirmación</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-justify" id="confirmation_text"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btn_confirmar">Quitar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+{% endblock %}

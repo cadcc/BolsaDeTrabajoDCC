@@ -54,6 +54,12 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+#Authentication backends
+AUTHENTICATION_BACKENDS = (
+        'app.backends.U_PasaporteBackend',
+        'django.contrib.auth.backends.ModelBackend',
+    )
+
 ROOT_URLCONF = 'bolsa_trabajo.urls'
 
 TEMPLATES = [
@@ -117,7 +123,12 @@ TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
+TIME_INPUT_FORMATS = [
+    '%H:%M:%S',
+    '%H:%M %p',
+    '%H:%M'
+]
 
 USE_TZ = True
 
@@ -133,6 +144,9 @@ STATIC_URL = '/static/'
 # carga de url principal
 MAIN_URL = os.getenv('MAIN_URL', default='localhost:8000')
 
+# numero maximo de reportes antes de pasar a moderacion
+MAX_REPORTS_NUMBER = int(os.getenv('MAX_REPORTS_NUMBER', default=2))
+
 #carga de rutas por defecto
 PATH_LOGOS = os.getenv('PATH_LOGOS', default='static/resources/company/')
 PATH_DOCUMENTS = os.getenv('PATH_DOCUMENTS', default='static/document_user/')
@@ -141,9 +155,31 @@ PATH_DOCUMENTS = os.getenv('PATH_DOCUMENTS', default='static/document_user/')
 AUTH_USER_MODEL = 'app.UsuarioBase'
 
 #para los archivos a subir
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') + '/'
 MEDIA_URL = '/media/'
 
 #tiempos de sesion en minutos
 SESSION_TIME_NORMAL = int(os.getenv('SESSION_TIME_NORMAL', default=60))*60
 SESSION_TIME_REMEMBER_ME = int(os.getenv('SESSION_TIME_REMEMBER_ME', default=720))*60
+
+
+# Configuración Email ---------------------------------------------
+# Para tests: python -m smtpd -n -c DebuggingServer localhost:1025
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Host for sending e-mail. (SMTP)
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
+
+# Optional SMTP authentication information for EMAIL_HOST.
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_USE_TLS = False
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'no-reply-bolsadetrabajo@cadcc.cl'
+EMAIL_HOST_PASSWORD = 'bolsa2016'

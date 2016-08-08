@@ -1,7 +1,11 @@
 {% load staticfiles %}
 <div class="row">
     <div class="col-md-3 text-center">
-        <div class="text-capitalize text-big row">{{ offer.empresa }}</div>
+        <div class="text-capitalize text-big row">
+            <a href="{% url "empresa" nombre_empresa=offer.empresa.url_encoded_name %}">
+                {{ offer.empresa }}
+            </a>
+        </div>
         <img class="company-logo"
              src="{% if empresa.logo %}
                 {{ empresa.logo }}
@@ -12,6 +16,12 @@
     <div class="col-md-9">
         <div>
             <a href="{% url "oferta" offer_id=offer.id %}" class="text-highlight text-big text-capitalize">{{ offer.titulo }}</a>
+            <span class="glyphicon glyphicon-heart{% if not offer.id in ids_marcadores %}-empty{% endif %}"
+                  id="follow_icon_{{ offer.id }}"
+                  onclick="followOffer({{ offer.id }})"
+                  data-follow="{% if offer.id in ids_marcadores %}True{% else %}False{% endif %}"
+                  style="cursor: pointer">
+            </span>
         </div>
         <div>
             <div class="badge">
@@ -22,9 +32,21 @@
                 <div>Jornada</div>
                 <div class="text-big text-uppercase">{{ offer.jornada }}</div>
             </div>
+            {% ifequal offer.tipo "Práctica" %}
+            <div class="badge">
+                {% if offer.aprobada %}
+                    <div>Aprobada</div>
+                    <span data-valid="Aprobada" class="valid-class" aria-hidden="true"></span>
+                {% else %}
+                    <div>Sin Aprobar</div>
+                    <span data-valid="Sin Aprobar" class="valid-class" aria-hidden="true"></span>
+                {% endif %}
+            </div>
+            {% endifequal %}
             <div class="badge" title="{{ offer.puntuacion }}">
                 <div>Valoración</div>
-                <div class="text-big star-val" data-score={{ offer.puntuacion }}></div>
+                <div class="text-big star-val" data-score={{ offer.puntuacion }}>
+                </div>
             </div>
         </div>
         <div>
@@ -47,7 +69,7 @@
             {% empty %}
                 Esta oferta no posee etiquetas
             {% endfor %}
-            <span class="text-uppercase text-highlight pull-right">{{ offer.info.fecha_publicacion }}</span>
+            <span class="text-uppercase text-highlight pull-right">{{ offer.fecha_publicacion }}</span>
         </div>
     </div>
 </div>

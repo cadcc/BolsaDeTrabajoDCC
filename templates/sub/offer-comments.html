@@ -62,7 +62,7 @@
     {% endif %}
     {# previous valorations #}
     {% for comment in comments %}
-        <div class="frame frame-light">
+        <div class="frame frame-light{{ comment.prioritario|yesno:" featured,,"}}" id="comment_id_{{ comment.id }}">
             <div>
                 <div>
                     <div class="inline-block">
@@ -105,9 +105,8 @@
                                   <label class="sr-only" for="user_is_important">
                                       Importancia
                                   </label>
-                                  <input name="is_important" id="user_is_important" type="checkbox" {{ comment.prioritario|yesno:"checked,," }}>
+                                      <input name="is_important" id="user_is_important" type="checkbox" {{ comment.prioritario|yesno:"checked,," }}>
                                   He trabajado aquí
-                              </label>
                         </div>
                         <textarea id="user-textarea" name="comment" class="form-control hidden">{{ comment.comentario }}</textarea>
                         <div class="text-primary text-uppercase text-right">
@@ -121,7 +120,11 @@
                     {{ comment.comentario }}
                     </div>
                     <div class="text-danger text-uppercase text-right">
-                        <button type="button"><b>Reportar</b></button>
+                        <button id="comment_button_id_{{ comment.id }}"
+                                onclick="reportComment({{ comment.id }}, 'offer')"
+                                type="button">
+                            <b>Reportar</b>
+                        </button>
                     </div>
                 {% endifequal %}
             </div>

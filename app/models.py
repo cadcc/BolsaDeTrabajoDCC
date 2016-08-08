@@ -3,9 +3,17 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+import os
+from urllib.parse import quote_plus
 
 class UsuarioBase(AbstractUser):
     pass
+
+    def isUsuario(self):
+        return False
+
+    def isEncargado(self):
+        return False
 
     def __str__(self):
         return self.first_name + " " + self.last_name
@@ -16,11 +24,16 @@ class Rol(models.Model):
     def __str__(self):
         return self.nombre
 
+def logo_directory(instance, filename):
+    path = 'logo/{0}.jpeg'.format(instance.url_encoded_name())
+    if os.path.exists(os.path.join(settings.MEDIA_ROOT, path)):
+        os.remove(os.path.join(settings.MEDIA_ROOT, path))
+    return path
 
 class Empresa(models.Model):
     nombre = models.CharField(max_length=64, unique=True)
     sitio_web = models.CharField(max_length=64, null=True)
-    logo = models.FileField(upload_to='logos', null=True)
+    logo = models.FileField(upload_to=logo_directory, null=True)
     direccion = models.CharField(max_length=64, null=True)
     descripcion = models.TextField(null=True)
     puntaje = models.IntegerField(default=0)
@@ -30,12 +43,16 @@ class Empresa(models.Model):
         return self.nombre
 
     def url_encoded_name(self):
+        #return quote_plus(self.nombre)
         return self.nombre.replace(' ', '-')
 
 class Encargado(UsuarioBase):
     administrador = models.BooleanField(default=False)
     telefono = models.CharField(max_length=15)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+
+    def isEncargado(self):
+        return True
 
 class Region(models.Model):
     nombre = models.CharField(max_length=64)
@@ -165,9 +182,18 @@ class Usuario(UsuarioBase):
     roles = models.ManyToManyField(Rol)
     marcadores = models.ManyToManyField(Oferta)
 
+    def isUsuario(self):
+        return True
+
     def __str__(self):
         return self.first_name + " " + self.last_name
 
+    def getCommentsWithWarning(self):
+        offers_warnings_comments = list(
+            filter(lambda comment: comment.hasWarning(), ValoracionOferta.objects.filter(usuario=self)))
+        company_warnings_comments = list(
+            filter(lambda comment: comment.hasWarning(), ValoracionEmpresa.objects.filter(usuario=self)))
+        return offers_warnings_comments + company_warnings_comments
 
 class Validacion(models.Model):
     aceptado = models.BooleanField()
@@ -202,7 +228,7 @@ class ValoracionOferta(models.Model):
     valor = models.IntegerField()
     comentario = models.TextField(null=True)
     prioritario = models.BooleanField()
-    reportes = models.IntegerField(default=0)
+    reportes = models.ManyToManyField(Usuario, related_name='reportes_valoracionoferta')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(null=True)
 
@@ -211,6 +237,14 @@ class ValoracionOferta(models.Model):
 
     def value(self):
         return int(self.valor/20)
+
+    def hasWarning(self):
+        warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=self, resuelto=False)
+        return len(warnings)>0
+
+    def getLastWarning(self):
+        warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=self, resuelto=False)
+        return warnings.last()
 
 
 class AdvertenciaValoracionOferta(models.Model):
@@ -229,12 +263,16 @@ class ValoracionEmpresa(models.Model):
     valor = models.IntegerField()
     comentario = models.TextField(null=True)
     prioritario = models.BooleanField()
-    reportes = models.IntegerField(default=0)
+    reportes = models.ManyToManyField(Usuario, related_name='reportes_valoracionempresa')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(null=True)
 
     def __str__(self):
         return str(self.usuario) + ' - ' + str(self.valor) + ' - ' + self.comentario
+
+    def hasWarning(self):
+        warnings = AdvertenciaValoracionEmpresa.objects.filter(valoracion=self, resuelto=False)
+        return len(warnings) > 0
 
 
 class AdvertenciaValoracionEmpresa(models.Model):

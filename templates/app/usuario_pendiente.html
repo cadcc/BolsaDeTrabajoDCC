@@ -1,23 +1,43 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-    <head>
-        <meta charset="UTF-8">
-        <title>Usuario pendiente</title>
-    </head>
-    <body>
-
-        <h1>Página en construccion c:</h1> <br/><br/>
-
-        Aqui debe decir la cosa de que el usuario debe validarse y cosas locas.<br/>
-
-        Serás redireccionado al inicio en 3 segundos<br/><br/>
-
-
-        <script type="text/javascript">
-            setTimeout(function() {
-                window.location = "{% url "home" %}"
-            }, 3000)
+{% extends "sub/main.html" %}
+{% load staticfiles %}
+{% block title %}
+    Cuenta pendiente
+{% endblock %}
+{% block content %}
+    <div class="background height100">
+            <div class="height100"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12 m-b-5">
+            <a href="{{ MAIN_URL }}"><div class="logo"></div></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="frame">
+                <div class="title text-center">Solicitud de registro enviada</div>
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <p>
+                            Debes esperar a que tu cuenta sea activada antes de poder ingresar con ella.
+                            Serás redireccionado en <span id="time">5</span> segundos...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        var i = 5;
+        function theFinalCoutdown() {
+            i--;
+            if (i >= 0) $('#time').text(i);
+            else window.location = "{% url "home" %}";
+        }
+        setInterval(function() {
+            theFinalCoutdown();
+        }, 1000);
         </script>
-
-    </body>
-</html>
+{% endblock %}

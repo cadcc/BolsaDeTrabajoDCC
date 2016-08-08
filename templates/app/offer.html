@@ -2,12 +2,21 @@
 {% load staticfiles %}
 {% block title %} Oferta {% endblock %}
 {% block left_column_content %}
-    {% include "sub/left-panel-user-profile.html" %}
+    {% if not user.empresa %}
+            {% include "sub/left-panel-user-profile.html" %}
+        {% else %}
+            {% include "sub/left-panel-company-menu.html" %}
+    {% endif %}
 {% endblock %}
 
 {% block right_column_content %}
     {% csrf_token %}
-    <h2 class="text-center">{{ oferta.titulo }}</h2>
+    <h2 class="text-center">
+        {{ oferta.titulo }}
+        <button class="btn btn-info btn-lg" onclick="followOffer({{ oferta.id }})">
+            <span id="follow_icon" data-follow="{{ isFollowed }}" class="center-block glyphicon glyphicon-heart-empty"></span>
+        </button>
+    </h2>
     <hr>
     <div class="row text-center text-uppercase">
         <div class="col-md-4 col-xs-12">
@@ -20,7 +29,11 @@
         </div>
         <div class="col-md-4 col-xs-12">
             <div>Empresa</div>
-            <div class="text-highlight text-big">{{ oferta.empresa }}</div>
+            <div class="text-highlight text-big">
+                <a href="{% url "empresa" nombre_empresa=oferta.empresa.url_encoded_name %}">
+                    {{ oferta.empresa }}
+                </a>
+            </div>
         </div>
         <div class="col-md-4 col-xs-12">
             <div>Jornada</div>
@@ -194,5 +207,60 @@
                 $(this).addClass('hidden');
             });
         });
+    </script>
+    <script type="text/javascript">
+        function updateDataIconFollow() {
+            var iconFollow = $('#follow_icon');
+            if (iconFollow.data('follow') === 'True')
+                iconFollow.data('follow', 'False');
+            else iconFollow.data('follow', 'True');
+        }
+        function updateIconFollow() {
+            var iconFollow = $('#follow_icon');
+            if (iconFollow.data('follow') === 'True')
+                iconFollow.attr('class', "center-block glyphicon glyphicon-heart");
+            else iconFollow.attr('class', "center-block glyphicon glyphicon-heart-empty")
+        }
+        function followOffer(offer_id) {
+            //aqui hay que poner algo para que se vea como carga el sistema, su modal loco
+            var actual_state = $('#follow_icon').data('follow');
+            $.post('/seguir-oferta',{
+                'offer_id': offer_id,
+                'actual_state': actual_state,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                updateDataIconFollow();
+                updateIconFollow();
+                console.log(msg);
+            })
+        }
+        updateIconFollow();
+    </script>
+    <script type="text/javascript">
+        function desactivateButton(comment_id) {
+            var button = $('#comment_button_id_' + comment_id);
+            $(button.children()).text('Reportado');
+            button.prop('disabled', true);
+            button.addClass('disabled');
+        }
+        function reportComment(comment_id, type) {
+            $.post('/reportar-comentario',{
+                'comment_id': comment_id,
+                'type': type,
+                'csrfmiddlewaretoken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }).fail(function(err) {
+                console.log(err)
+            }).done(function(msg) {
+                if (msg.msg === 'ok') {
+                    desactivateButton(comment_id);
+                    console.log('reporte exitoso');
+                } else {
+                    desactivateButton(comment_id);
+                    console.log('Ya se reporto por este usuario');
+                }
+            })
+        }
     </script>
 {% endblock %}

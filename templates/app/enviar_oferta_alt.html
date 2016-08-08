@@ -1,0 +1,1051 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+{% load filtros %}
+
+{% block javascript %}
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+
+            var value = $('#select-remuneracion').val();
+            if (value === 'Por Determinar' || value === 'Sin Remuneración'){
+                $('#div_sueldo').hide();
+            }
+            else {
+                $('#div_sueldo').show();
+            }
+
+
+            var nueva_empresa = $('#nombre_empresa').val();
+            var empresa = $('#select-empresa option:selected').text();
+            if (nueva_empresa != ''){
+                console.log(nueva_empresa + " is not ''");
+                $('#div_nueva_empresa').show();
+            }
+            /*
+            if (empresa === 'Otra' && nueva_empresa != ''){
+                console.log(empresa + " is 'Otra' and " + nueva_empresa + " is not ''");
+                $('#div_nueva_empresa').show();
+            }
+            */
+
+        });
+
+        $('#select-empresa').on('change', function(event){
+            event.preventDefault();
+            var value = $('#select-empresa option:selected').text();
+            console.log(value)
+            if (value === 'Otra'){
+                $('#div_nueva_empresa').fadeIn();
+            }
+            else {
+                $('#div_nueva_empresa').fadeOut();
+            }
+        });
+
+        $('#tos_checkbox').change(function(){
+            if (this.checked){
+              $('#submit_btn').prop('disabled', false);
+            }
+            else {
+              $('#submit_btn').prop('disabled', true);
+            }
+        });
+
+        // Display HelpText
+        $('.help-icon').on('click', function(){
+            var helptext = $(this).data('text');
+            $(helptext).fadeToggle('fast');
+        });
+
+        //logica select en la parte de sueldo
+        $('#select-remuneracion').change(function(){
+            var value = $(this).val();
+            if (value === 'Por Determinar' || value === 'Sin Remuneración'){
+                $('#div_sueldo').fadeOut('fast');
+            }
+            else {
+                $('#div_sueldo').fadeIn('fast');
+            }
+        });
+
+        $('#ingreso_empresa').on('click', function (event) {
+            window.location = "{% url "registro_empresas" %}"
+        });
+
+        $(function () {
+            $('#time_ingreso').datetimepicker({
+                format: 'HH:mm'
+            });
+            $('#time_salida').datetimepicker({
+                format: 'HH:mm'
+            });
+        });
+        $(function () {
+            $('#date_comienzo').datetimepicker({
+                format: 'DD-MM-YYYY'
+            });
+            $('#date_termino').datetimepicker({
+                useCurrent: false,
+                format: 'DD-MM-YYYY'
+            });
+            $("#date_comienzo").on("dp.change", function (e) {
+                $('#date_termino').data("DateTimePicker").minDate(e.date);
+            });
+            $("#date_termino").on("dp.change", function (e) {
+                $('#date_comienzo').data("DateTimePicker").maxDate(e.date);
+            });
+        });
+
+    </script>
+{% endblock %}
+
+{% block title %} Formulario Empresa {% endblock %}
+
+{% block left_column_content %}
+    {% if user.is_authenticated %}
+        {% if not user.empresa %}
+            {% include "sub/left-panel-user-profile.html" %}
+        {% else %}
+            {% include "sub/left-panel-company-menu.html" %}
+        {% endif %}
+    {% else %}
+        {% include "sub/left-panel-company-login.html" %}
+    {% endif %}
+    <hr>
+{% endblock %}
+
+{% block right_column_content %}
+    <h2 class="text-center">
+        Publicar una oferta
+    </h2><br>
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            {% for error in form.non_field_errors %}
+                {{ error|escape }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form action="{{ action }}" method ="post" class="form-horizontal" id="form_oferta">
+        {% csrf_token %}
+
+        <!-- Título -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.titulo.id_for_label }}">
+                {{ info.titulo.label }}
+                {% if info.titulo.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#titulo_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <input class="form-control" name="{{ form.titulo.html_name }}" type="text" placeholder="{{ info.titulo.placeholder }}" value="{{ form.titulo.value|default_if_none:'' }}"/>
+                {% if info.titulo.help_text %}
+                    <div id="titulo_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.titulo.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.titulo.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.titulo.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Empresa -->
+        <div class="form-group" id="div_empresa">
+            <label class="col-sm-3 control-label" for="{{ form.empresa.id_for_label }}">
+                {{ info.empresa.label }}
+                {% if info.empresa.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#empresa_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                    {% if user.is_authenticated and user.empresa %}
+                        <select id="select-empresa" readonly class="form-control show-tick show-menu-arrow" name="{{ form.empresa.html_name }}" value="{{ user.empresa.id }}" data-live-search="false" data-hide-disabled="true" data-header="" title="{{ info.empresa.placeholder }}">
+                            <option value="{{ user.empresa.id }}" selected>{{ user.empresa.nombre }}</option>
+                        </select>
+                    {% else %}
+                        <select id="select-empresa" class="form-control selectpicker show-tick show-menu-arrow" name="{{ form.empresa.html_name }}" data-live-search="true" data-hide-disabled="true" data-header="{{ info.empresa.placeholder }}" title="{{ info.empresa.placeholder }}">
+                        <option value="" disabled>{{ info.empresa.placeholder }}</option>
+                        <option value="">Otra</option>
+                        <option data-divider="true"></option>
+                        {% for empresa in empresas %}
+                            <option value="{{ empresa.id }}" {% if empresa.id == form.empresa.value|add:0 %} selected {% endif %}>{{ empresa.nombre }}</option>
+                        {% endfor %}
+                        </select>
+                    {% endif %}
+                {% if info.empresa.help_text %}
+                    <div id="empresa_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{ info.empresa.help_text }}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.empresa.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.empresa.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Nueva Empresa -->
+        <div class="form-group" id="div_nueva_empresa" style="display:none">
+            <label class="col-sm-3 control-label" for="{{ form.nombre_empresa.id_for_label }}">
+                {{ info.nueva_empresa.label }}
+                {% if info.nueva_empresa.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#nueva_empresa_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <input class="form-control" id="nombre_empresa" name="{{ form.nombre_empresa.html_name }}" placeholder="{{ info.nueva_empresa.placeholder }}" value="{{ form.nombre_empresa.value|default_if_none:'' }}"/>
+                {% if info.nueva_empresa.help_text %}
+                    <div id="nueva_empresa_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.nueva_empresa.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.nombre_empresa.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.nombre_empresa.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <br><h3>Datos de la Oferta</h3><hr>
+        <!-- Tipo Oferta -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.tipo.id_for_label }}">
+                {{ info.tipo.label }}
+                {% if info.tipo.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#tipo_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                {% for key, value in tipos %}
+                    <label class="radio-inline">
+                        <input type="radio" name="{{ form.tipo.html_name }}" value="{{ value }}" {% if form.tipo.value == value %} checked {% endif %}> {{ key }}
+                    </label>
+                {% endfor %}
+                {% if info.tipo.help_text %}
+                    <div id="tipo_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.tipo.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.tipo.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.tipo.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Descripción -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.descripcion.id_for_label }}">
+                {{ info.descripcion.label }}
+                {% if info.descripcion.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#descripcion_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <textarea class="form-control" name="{{ form.descripcion.html_name }}" style="resize:vertical;">{{ form.descripcion.value|default_if_none:'' }}</textarea>
+                {% if info.descripcion.help_text %}
+                    <div id="descripcion_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.descripcion.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.descripcion.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.descripcion.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Experiencia Requerida -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.requiere_experiencia.id_for_label }}">
+                {{ info.experiencia.label }}
+                {% if info.experiencia.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#experiencia_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <textarea class="form-control" name="{{ form.requiere_experiencia.html_name }}" style="resize:vertical;">{{ form.requiere_experiencia.value|default_if_none:'' }}</textarea>
+                {% if info.experiencia.help_text %}
+                    <div id="experiencia_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.experiencia.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.requiere_experiencia.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.requiere_experiencia.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Habilidades Requeridas -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.habilidades_requeridas.id_for_label }}">
+                {{ info.habilidades_requeridas.label }}
+                {% if info.habilidades_requeridas.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#habilidades_requeridas_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <textarea class="form-control" name="{{ form.habilidades_requeridas.html_name }}" style="resize:vertical;">{{ form.habilidades_requeridas.value|default_if_none:'' }}</textarea>
+                {% if info.habilidades_requeridas.help_text %}
+                    <div id="habilidades_requeridas_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.habilidades_requeridas.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.habilidades_requeridas.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.habilidades_requeridas.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Habilidades Deseadas -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.habilidades_deseadas.id_for_label }}">
+                {{ info.habilidades_deseadas.label }}
+                {% if info.habilidades_deseadas.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#habilidades_deseadas_helptext"></span>
+                {% endif %}
+            </label>
+            <!-- Errores -->
+            <div class="col-sm-9">
+                <textarea class="form-control" name="{{ form.habilidades_deseadas.html_name }}" style="resize:vertical;">{{ form.habilidades_deseadas.value|default_if_none:'' }}</textarea>
+                {% if info.habilidades_deseadas.help_text %}
+                    <div id="habilidades_deseadas_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.habilidades_deseadas.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.habilidades_deseadas.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.habilidades_deseadas.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Se Ofrece -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.se_ofrece.id_for_label }}">
+                {{ info.se_ofrece.label }}
+                {% if info.se_ofrece.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#se_ofrece_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <textarea class="form-control" name="{{ form.se_ofrece.html_name }}" style="resize:vertical;">{{ form.se_ofrece.value|default_if_none:'' }}</textarea>
+                {% if info.se_ofrece.help_text %}
+                    <div id="se_ofrece_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.se_ofrece.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.se_ofrece.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.se_ofrece.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Etiquetas -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="id_etiquetas">
+                {{ info.etiquetas.label }}
+                {% if info.etiquetas.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#etiquetas_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-tags"></span>
+                    </span>
+                    <select class="form-control selectpicker" name="{{ form.etiquetas.html_name }}" value="{{ form.etiquetas.value|default_if_none:'' }}" data-live-search="true" multiple title="{{ info.etiquetas.placeholder }}">
+                        {% for tipo, tags in etiquetas.items %}
+                            <optgroup label="{{ tipo }}">
+                                {% for tag in tags %}
+                                    <option data-content="<span class='label label-primary'>{{ tag.nombre }}</span>" value="{{ tag.id }}">{{ tag.nombre }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if info.etiquetas.help_text %}
+                    <div id="etiquetas_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{ info.etiquetas.help_text }}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.etiquetas.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.etiquetas.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <br><h3>Jornada Laboral</h3><hr>
+        <!-- Jornada -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.jornada.id_for_label }}">
+                {{ info.jornada.label }}
+                {% if info.jornada.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#jornada_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                {% for j in jornadas %}
+                    <label class="radio-inline">
+                        <input type="radio" name="{{ form.jornada.html_name }}" value="{{ j.id }}" {% if form.jornada.value|add:0 == j.id %} checked {% endif %}> {{ j.nombre }}
+                    </label>
+                {% endfor %}
+                {% if info.jornada.help_text %}
+                    <div id="jornada_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{ info.jornada.help_text }}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.jornada.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.jornada.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Horario Ingreso -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.hora_ingreso.id_for_label }}">
+                {{ info.hora_ingreso.label }}
+                {% if info.hora_ingreso.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#hora_ingreso_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group date" id="time_ingreso">
+                    <input class="form-control" name="{{ form.hora_ingreso.html_name }}" type="text" placeholder="{{ info.hora_ingreso.placeholder }}" value="{{ form.hora_ingreso.value|default_if_none:'' }}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+                {% if info.hora_ingreso.help_text %}
+                    <div id="hora_ingreso_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.hora_ingreso.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.hora_ingreso.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.hora_ingreso.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Horario Salida -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.hora_salida.id_for_label }}">
+                {{ info.hora_salida.label }}
+                {% if info.hora_salida.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#hora_salida_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group date" id="time_salida">
+                    <input class="form-control" name="{{ form.hora_salida.html_name }}" type="text" placeholder="{{ info.hora_salida.placeholder }}" value="{{ form.hora_salida.value|default_if_none:'' }}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+                {% if info.hora_salida.help_text %}
+                    <div id="hora_salida_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.hora_salida.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.hora_salida.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.hora_salida.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <br><h3>Remuneración</h3><hr>
+        <!-- Remuneración -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.remunerado.id_for_label }}">
+                {{ info.remuneracion.label }}
+                {% if info.remuneracion.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#remuneracion_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <select id="select-remuneracion" class="form-control selectpicker" name="{{ form.remunerado.html_name }}">
+                    <option value="" selected="selected" disabled>-----</option>
+                    {% for key, value in remuneraciones %}
+                        <option value="{{ key }}" {% ifequal form.remunerado.value key %} selected {% endifequal %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+                {% if info.remuneracion.help_text %}
+                    <div id="remuneracion_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.remuneracion.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.remunerado.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.remunerado.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Sueldo Base -->
+        <div class="form-group" id="div_sueldo">
+            <label class="col-sm-3 control-label" for="{{ form.sueldo_minimo.id_for_label }}">
+                {{ info.sueldo_base.label }}
+                {% if info.sueldo_base.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#sueldo_base_helptext"></span>
+                {% endif %}
+            </label>
+            <!-- Errores -->
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        CLP <span class="glyphicon glyphicon-usd"></span>
+                    </span>
+                    <input class="form-control" name="{{ form.sueldo_minimo.html_name }}" type="number" min="0" placeholder="{{ info.sueldo_base.placeholder }}" value="{{ form.sueldo_minimo.value|default_if_none:'0' }}"/>
+                </div>
+                {% if info.sueldo_base.help_text %}
+                    <div id="sueldo_base_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.sueldo_base.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.sueldo_minimo.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.sueldo_minimo.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Comentario Sueldo -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.comentario_sueldo.id_for_label }}">
+                {{ info.comentario_sueldo.label }}
+                {% if info.comentario_sueldo.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#comentario_sueldo_helptext"></span>
+                {% endif %}
+            </label>
+            <!-- Errores -->
+            <div class="col-sm-9">
+                <textarea class="form-control" name="{{ form.comentario_sueldo.html_name }}" style="resize:vertical;">{{ form.comentario_sueldo.value|default_if_none:'' }}</textarea>
+                {% if info.comentario_sueldo.help_text %}
+                    <div id="comentario_sueldo_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.comentario_sueldo.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.comentario_sueldo.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.comentario_sueldo.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <br><h3>Duración y Plazos de Postulación</h3><hr>
+        <!-- Fecha Comienzo -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.fecha_comienzo.id_for_label }}">
+                {{ info.fecha_comienzo.label }}
+                {% if info.fecha_comienzo.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#fecha_comienzo_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group date" id="date_comienzo">
+                    <input class="form-control datepicker" name="{{ form.fecha_comienzo.html_name }}" type="text" placeholder="{{ info.fecha_comienzo.placeholder }}" value="{{ form.fecha_comienzo.value|default_if_none:'' }}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                {% if info.fecha_comienzo.help_text %}
+                    <div id="fecha_comienzo_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.fecha_comienzo.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.fecha_comienzo.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.fecha_comienzo.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Fecha Fin -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.fecha_termino.id_for_label }}">
+                {{ info.fecha_termino.label }}
+                {% if info.fecha_termino.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#fecha_termino_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group date" id="date_termino">
+                    <input class="form-control datepicker" name="{{ form.fecha_termino.html_name }}" type="text" placeholder="{{ info.fecha_termino.placeholder }}" value="{{ form.fecha_termino.value|default_if_none:'' }}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                {% if info.fecha_termino.help_text %}
+                    <div id="fecha_termino_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.fecha_termino.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.fecha_termino.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.fecha_termino.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Duración Minima -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.duracion_minima.id_for_label }}">
+                {{ info.duracion.label }}
+                {% if info.duracion.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#duracion_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                  <input class="form-control" name="{{ form.duracion_minima.html_name }}" type="number" min="0" placeholder="{{ info.duracion.placeholder }}" value="{{ form.duracion_minima.value|default_if_none:0 }}"/>
+                  <span class="input-group-addon">Meses</span>
+                </div>
+                {% if info.duracion.help_text %}
+                    <div id="duracion_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.duracion.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.duracion_minima.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.duracion_minima.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Comentario Duracion -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.comentario_duracion.id_for_label }}">
+                {{ info.comentario_duracion.label }}
+                {% if info.comentario_duracion.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#comentario_duracion_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <textarea class="form-control" name="{{ form.comentario_duracion.html_name }}" style="resize:vertical;">{{ form.comentario_duracion.value|default_if_none:'' }}</textarea>
+                {% if info.comentario_duracion.help_text %}
+                    <div id="comentario_duracion_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.comentario_duracion.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.comentario_duracion.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.comentario_duracion.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <br><h3>Ubicación</h3><hr>
+        <!-- Dirección -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.direccion.id_for_label }}">
+                {{ info.direccion.label }}
+                {% if info.direccion.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#direccion_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <input class="form-control" name="{{ form.direccion.html_name }}" type="text" placeholder="{{ info.direccion.placeholder }}" value="{{ form.direccion.value|default_if_none:'' }}"/>
+                {% if info.direccion.help_text %}
+                    <div id="direccion_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.direccion.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.direccion.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.direccion.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Comuna -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.comuna.id_for_label }}">
+                {{ info.comuna.label }}
+                {% if info.comuna.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#comuna_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <select class="form-control selectpicker" name="{{ form.comuna.html_name }}" data-live-search="true" data-hide-disabled="true" title="{{ info.comuna.placeholder }}">
+                    {% for reg, com in comunas.items %}
+                        <optgroup label="{{ reg }}" class="opt_region" id="opt_{% with c=com|first %}{{ c.region_id }}{% endwith %}">
+                            {% for c in com %}
+                                <option value="{{ c.id }}" {% if form.comuna.value|add:0 == c.id %} selected {% endif %}>{{ c.nombre }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+                {% if info.comuna.help_text %}
+                    <div id="comuna_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.comuna.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.comuna.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.comuna.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <br><h3>Contacto</h3><hr>
+        <!-- Nombre Encargado -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.nombre_encargado.id_for_label }}">
+                {{ info.encargado.label }}
+                {% if info.encargado.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#encargado_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-user"></span>
+                    </span>
+                    {% if user.is_authenticated and user.empresa %}
+                        {% if form.nombre_encargado.value %}
+                          <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text" placeholder="{{ info.encargado.placeholder }}"
+                                 value="{{ form.nombre_encargado.value }}"/>
+                        {% else %}
+                          <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text" placeholder="{{ info.encargado.placeholder }}"
+                                 value="{{ user.first_name }} {{ user.last_name }}"/>
+                        {% endif %}
+                    {% else %}
+                        <input class="form-control" name="{{ form.nombre_encargado.html_name }}" type="text"
+                               placeholder="{{ info.encargado.placeholder }}" value="{{ form.nombre_encargado.value|default_if_none:'' }}"/>
+                    {% endif %}
+                </div>
+                {% if info.encargado.help_text %}
+                    <div id="encargado_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.encargado.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.nombre_encargado.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.nombre_encargado.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Email -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.email_encargado.id_for_label }}">
+                {{ info.email.label }}
+                {% if info.email.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#email_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-envelope"></span>
+                    </span>
+                    {% if user.is_authenticated and user.empresa %}
+                        {% if form.email_encargado.value %}
+                          <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}"
+                                 value="{{ form.email_encargado.value }}"/>
+                        {% else %}
+                          <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}"
+                                 value="{{ user.email }}"/>
+                        {% endif %}
+                    {% else %}
+                        <input class="form-control" name="{{ form.email_encargado.html_name }}" type="email" placeholder="{{ info.email.placeholder }}"
+                               value="{{ form.email_encargado.value|default_if_none:'' }}"/>
+                    {% endif %}
+                </div>
+                {% if info.email.help_text %}
+                    <div id="email_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.email.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.email_encargado.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.email_encargado.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Teléfono -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="{{ form.telefono_encargado.id_for_label }}">
+                {{ info.telefono.label }}
+                {% if info.telefono.help_text %}
+                    <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#telefono_helptext"></span>
+                {% endif %}
+            </label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-earphone"></span>
+                    </span>
+                    {% if user.is_authenticated and user.empresa %}
+                        {% if form.telefono_encargado.value %}
+                          <input class="form-control" name="{{ form.telefono_encargado.html_name }}" type="text" placeholder="{{ info.telefono.placeholder }}"
+                                 value="{{ form.telefono_encargado.value }}"/>
+                        {% else %}
+                          <input class="form-control" name="{{ form.telefono_encargado.html_name }}" type="text" placeholder="{{ info.telefono.placeholder }}"
+                                 value="{{ user.telefono }}"/>
+                        {% endif %}
+                    {% else %}
+                        <input class="form-control" name="{{ form.telefono_encargado.html_name }}" type="text" placeholder="{{ info.telefono.placeholder }}"
+                               value="{{ form.telefono_encargado.value|default_if_none:'' }}"/>
+                    {% endif %}
+                </div>
+                {% if info.telefono.help_text %}
+                    <div id="telefono_helptext" class="helptext" style="display:none">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {{info.telefono.help_text}}
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Errores -->
+                {% if form.telefono_encargado.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        {% for error in form.telefono_encargado.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <!-- Feedback -->
+        <div class="col-sm-offset-1 checkbox">
+          <label>
+            {{ form.notificar }} {{ info.notificar.label }}
+          </label>
+          {% if info.notificar.help_text %}
+              <span style="color:#FF841F; font-size:12pt" class="glyphicon glyphicon-question-sign help-icon" data-text="#notificar_helptext"></span>
+          {% endif %}
+          {% if info.notificar.help_text %}
+              <div id="notificar_helptext" class="helptext" style="display:none">
+                  <div class="alert alert-info" role="alert">
+                      <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                      {{ info.notificar.help_text }}
+                  </div>
+              </div>
+          {% endif %}
+        </div>
+        <!-- ToS -->
+        <div class="col-sm-offset-1 checkbox">
+          <label>
+            <input type="checkbox" id="tos_checkbox" value="">He leído y acepto los <a href="#">Términos y Condiciones</a>.
+          </label>
+        </div>
+        <br>
+        <input class="btn btn-primary btn-block" id="submit_btn" type="submit" disabled="disabled" value="Enviar"/><br>
+    </form>
+{% endblock %}

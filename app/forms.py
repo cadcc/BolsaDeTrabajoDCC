@@ -73,7 +73,7 @@ class UserForm(forms.Form):
             raise forms.ValidationError('El archivo subido supera los 5MB')
         return document
 
-class CommentOfferForm(forms.Form):
+class CommentForm(forms.Form):
     valoration = forms.IntegerField()
     is_important = forms.BooleanField(required=False)
     comment = forms.CharField(required=False)
@@ -84,11 +84,83 @@ class CommentOfferForm(forms.Form):
             raise forms.ValidationError('Las puntuaciones van entre 1 y 5 estrellas.')
         return valoration * 20
 
-class MyDateInput(forms.DateInput):
-    input_type = 'date'
+class CompanyDescriptionForm(forms.Form):
+    description = forms.CharField(required=True)
 
-class MyTimeInput(forms.TimeInput):
-    input_type = 'time'
+class NuevoEncargadoForm(forms.Form):
+    nombre = forms.CharField(required=True)
+    email = forms.EmailField(required=True)
+    telefono = forms.CharField(required=True)
+    password = forms.CharField(required=True)
+    repassword = forms.CharField(required=True)
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if Usuario.objects.filter(email=email) or Encargado.objects.filter(email=email):
+            raise forms.ValidationError('El correo electrónico ingresado ya se '
+                                        'encuentra registrado en el sistema.')
+        return email
+
+    def clean_repassword(self):
+        password = self.cleaned_data['password']
+        repassword = self.cleaned_data['repassword']
+        if password != repassword:
+            raise forms.ValidationError('Las contraseñas no coinciden.')
+        return repassword
+
+    def clean_telefono(self):
+        phone = self.cleaned_data['telefono']
+        phone = phone.replace(' ', '')
+        if len(phone) < 7 or len(phone) > 20:
+            raise forms.ValidationError('El número de teléfono no es correcto')
+        if (phone[0] == '+' and not phone[1:].isnumeric()) and not phone.isnumeric():
+            raise forms.ValidationError('El número de teléfono no es correcto')
+        return phone
+
+class EncargadoForm(forms.Form):
+    nombre = forms.CharField(required=True)
+    telefono = forms.CharField(required=True)
+
+    def clean_telefono(self):
+        phone = self.cleaned_data['telefono']
+        phone = phone.replace(' ', '')
+        if len(phone) < 7 or len(phone) > 20:
+            raise forms.ValidationError('El número de teléfono no es correcto')
+        if (phone[0] == '+' and not phone[1:].isnumeric()) and not phone.isnumeric():
+            raise forms.ValidationError('El número de teléfono no es correcto')
+        return phone
+
+class AddPublicadorForm(forms.Form):
+    publicador = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(roles__nombre__in=['normal'])
+                                .exclude(roles__nombre__in=['publicador'])
+                                .order_by('last_name'),
+        required=True)
+
+
+class AddValidadorForm(forms.Form):
+    validador = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(roles__nombre__in=['normal'])
+                                .exclude(roles__nombre__in=['validador'])
+                                .order_by('last_name'),
+        required=True)
+
+
+class AddModeradorForm(forms.Form):
+    moderador = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(roles__nombre__in=['normal'])
+                                .exclude(roles__nombre__in=['moderador'])
+                                .order_by('last_name'),
+        required=True)
+
+
+class AddAdministradorForm(forms.Form):
+    administrador = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(roles__nombre__in=['normal'])
+                                .exclude(roles__nombre__in=['administrador'])
+                                .order_by('last_name'),
+        required=True)
+
 
 class OfferForm(ModelForm):
     nombre_empresa = forms.CharField(max_length=64, required=False, label="Nombre Empresa")
@@ -96,7 +168,12 @@ class OfferForm(ModelForm):
     sueldo_minimo = forms.IntegerField(min_value=0, required=False, label="Sueldo Base")
     duracion_minima = forms.IntegerField(min_value=0, label="Duración Mínima (meses)")
     jornada = forms.ModelChoiceField(queryset=Jornada.objects.all(), widget=forms.RadioSelect(), empty_label=None, label="Tipo de Jornada")
+    empresa = forms.ModelChoiceField(queryset=Empresa.objects.exclude(validada=True).order_by('nombre'))
     comuna = forms.ModelChoiceField(queryset=Comuna.objects.all().order_by('nombre'))
+    fecha_comienzo = forms.DateField(input_formats=('%d-%m-%Y', '%d/%m/%Y', '%d-%m-%y', '%d/%m/%y'))
+    fecha_termino = forms.DateField(input_formats=('%d-%m-%Y', '%d/%m/%Y', '%d-%m-%y', '%d/%m/%y'))
+    hora_ingreso = forms.TimeField()
+    hora_salida = forms.TimeField()
 
     class Meta:
         model = Oferta
@@ -123,53 +200,12 @@ class OfferForm(ModelForm):
             'comentario_duracion',
             'direccion',
             'comuna',
-            #'etiquetas',
+            'etiquetas',
             'nombre_encargado',
             'email_encargado',
             'telefono_encargado',
             'notificar',
         )
-        labels = {
-            'titulo': 'Título de la Oferta',
-            'tipo': 'Tipo de Oferta',
-            'jornada': 'Tipo de Jornada',
-            'descripción': 'Descripción',
-            'requiere_experiencia': 'Experiencia Requerida (Opcional)',
-            'comentario_jornada': 'Comentarios sobre la Jornada (Opcional)',
-            'hora_ingreso': 'Horario Ingreso',
-            'hora_salida': 'Horario Salida',
-            'remunerado': 'Remuneración',
-            'sueldo_minimo': 'Sueldo Base',
-            'comentario_sueldo': 'Comentarios sobre la Remuneración (Opcional)',
-            'fecha_comienzo': 'Inicio Postulaciones',
-            'fecha_termino': 'Fin Postulaciones',
-            'duracion_minima': 'Duración mínima (meses)',
-            'comentario_duracion': 'Comentarios sobre la Duración (Opcional)',
-            'direccion': 'Dirección',
-            'comuna': 'Comuna',
-            'nombre_encargado': 'Nombre del Contacto',
-            'email_encargado': 'Email de Contacto',
-            'telefono_encargado': 'Teléfono de Contacto',
-            'notificar': 'Deseo recibir feedback de la oferta',
-        }
-        help_texts = {
-            'titulo': 'Tooltip Titulo'
-        }
-        widgets = {
-            #forms.Textarea(attrs={'rows':4, 'cols':15}),
-            'hora_ingreso': MyTimeInput(),
-            'hora_salida': MyTimeInput(),
-            'fecha_comienzo': forms.SelectDateWidget,
-            'fecha_termino': forms.SelectDateWidget,
-            'descripcion': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'requiere_experiencia': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'habilidades_deseadas': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'habilidades_requeridas': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'se_ofrece': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'comentario_jornada': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'comentario_sueldo': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-            'comentario_duracion': forms.Textarea(attrs={'rows':3, 'style':'resize:vertical;'}),
-        }
 
     def __init__(self, *args, **kwargs):
         super(OfferForm, self).__init__(*args, **kwargs)
@@ -183,8 +219,12 @@ class OfferForm(ModelForm):
         data = super(OfferForm, self).clean()
         empresa = data.get("empresa")
         nueva_empresa = data.get("nombre_empresa")
-        if (empresa == None and nueva_empresa == ''):
+        if ((empresa == None or empresa == 'Otra') and nueva_empresa == ''):
             raise forms.ValidationError('Debe elegir una Empresa del listado o agregar una Nueva Empresa')
+        elif ((empresa == None or empresa == 'Otra') and nueva_empresa != ''):
+            nueva_empresa_obj = Empresa.objects.filter(nombre=nueva_empresa).first()
+            if (nueva_empresa_obj and nueva_empresa_obj.validada):
+                raise forms.ValidationError('La empresa seleccionada es una Empresa Verificada en el sistema. Por favor, inicie sesión como Encargado de dicha empresa para publicar.')
 
         sueldo = data.get("sueldo_minimo")
         remuneracion = data.get("remunerado")
@@ -211,3 +251,21 @@ class OfferForm(ModelForm):
         if not re.match(r'^(\+56 ?)?((9|2) [0-9]{4} [0-9]{4}|(9|2) [0-9]{8}|[0-9]{2} [0-9]{3} [0-9]{4}|[0-9]{9})$', telefono):
             raise forms.ValidationError("El teléfono debe tener 9 dígitos ('+56' opcional)")
         return telefono
+
+class ProfileImageForm(forms.Form):
+    image = forms.ImageField()
+
+    def clean_image(self):
+        from PIL import Image
+        from io import BytesIO
+        image = self.cleaned_data['image']
+        imageo = Image.open(image)
+        w, h = imageo.size
+        if not w == h:
+            raise forms.ValidationError("La imagen no es cuadrada")
+        imageo = imageo.resize((100, 100), Image.ANTIALIAS)
+        image_file = BytesIO()
+        imageo.save(image_file, 'JPEG', quality=90)
+
+        image.file = image_file
+        return image

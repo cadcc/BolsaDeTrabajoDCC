@@ -1,5 +1,27 @@
 {% load staticfiles %}
 <script src="{% static "js/jquery.min.js" %}"></script>
+<script src="{% static "js/jquery-ui.min.js" %}"></script>
+<script src="{% static "js/jquery.noty.packaged.min.js" %}"></script>
 <script src="{% static "js/bootstrap.min.js" %}"></script>
 <script src="{% static "js/scripts.js" %}"></script>
 <script src="{% static "js/star-rating.min.js" %}" type="text/javascript"></script>
+<script src="{% static "js/moment.js" %}" type="text/javascript"></script>
+<script src="{% static "js/bootstrap-datetimepicker.js" %}" type="text/javascript"></script>
+<script src="{% static "js/bootstrap-select.min.js" %}" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+        var left_column = $('.column-left');
+        var right_column = $('.column-right');
+        left_column.change(function () {
+            console.log('left_change');
+            left_column.height(Math.max(left_column.height(), right_column.height()));
+            right_column.height(left_column.height());
+        });
+        right_column.change(function () {
+            console.log('right_change');
+            left_column.height(Math.max(left_column.height(), right_column.height()));
+            right_column.height(left_column.height());
+        });
+        left_column.change();
+    });
+</script>

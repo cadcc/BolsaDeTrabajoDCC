@@ -1,0 +1,172 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+{% block title %} Moderación de comentarios {% endblock %}
+{% block left_column_content %}
+    {% include "sub/left-panel-user-profile.html" %}
+{% endblock %}
+
+{% block right_column_content %}
+    {% csrf_token %}
+    <h1>Comentarios Reportados</h1>
+    <div class="frame frame-light">
+    {% for comment in report_comments %}
+        <div class="panel panel-default" id="comment_{{ comment.id }}">
+            <div class="panel-heading" style="padding-top: 1px; padding-bottom: 1px">
+                <div>
+                    <h4>
+                        <span class="label label-danger pull-right">
+                            Reportes: {{ comment.reportes.all|length }}
+                        </span>
+                        <span class="text-capitalize">{{ comment.usuario }}</span>
+                        en
+                        {% if comment.oferta %}
+                            oferta <span class="text-capitalize">"{{ comment.oferta }}"</span>
+                        {% else %}
+                            empresa <span class="text-capitalize">"{{ comment.empresa }}"</span>
+                        {% endif %}
+                    </h4>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div id="user-comment">
+                    <h4>{{ comment.comentario }}</h4>
+                </div>
+            </div>
+            <div class="panel-footer" style="padding-top: 5px; padding-bottom: 5px">
+                <button id="resolve_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Resolver" class="btn btn-success btn-sm resolveButton">Resolver</button>
+                <div class="pull-right">
+                    <button id="warning_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Enviar Advertencia" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ModalAdvertencia">Enviar Advertencia</button>
+                    <button id="delete_button_{{ comment.id }}" data-idcomment="{{ comment.id }}" type="button" data-text="Eliminar" class="btn btn-danger btn-sm deleteButton">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>
+            No hay comentarios reportados
+        </p>
+    {% endfor %}
+    </div>
+    <span id="asdasdasd"></span>
+
+
+    <div class="modal fade" id="ModalAdvertencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <button type="button" class="close"
+                       data-dismiss="modal">
+                           <span aria-hidden="true">&times;</span>
+                           <span class="sr-only">Cerrar</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        Mandar advertencia
+                    </h4>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form role="form">
+                      <div class="form-group">
+                        <label for="razonAdvertencia">Razón de la advertencia</label>
+                          <textarea class="form-control" id="razonAdvertencia" rows="3"></textarea>
+                          <input type="hidden" id="hidden_comment_id" value="">
+                      </div>
+                    </form>
+                </div>
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">
+                                Cerrar
+                    </button>
+                    <button type="button" class="btn btn-warning warningButton">
+                        Advertir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        function sendInfo(url, data, done, button, idInterval) {
+            var time = 5000;
+            data.csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+            data.type = 'offer';
+            $.post(url, data).fail(function(msg) {
+                console.log('Fallo el post a: ' + url);
+                clearInterval(idInterval);
+                setTimeout(function() {
+                    $(button).text($(button).data('text'));
+                }, 500);
+                if (msg.status === 400) {
+                    msg = JSON.parse(msg.responseText);
+                    if (msg.show) {
+                        noty({text: msg.msg, layout: 'topRight', type: 'warning', timeout: time});
+                        done();
+                    } else {
+                        console.log(msg.msg);
+                        noty({text: 'Ocurrio un error al procesar la solicitud.', layout: 'topRight', type: 'error', timeout: time});
+                    }
+                }
+            }).done(function(msg) {
+                console.log(msg);
+                done();
+                noty({text: msg.msg, layout: 'topRight', type: 'success', timeout: time});
+            })
+        }
+
+        function wordLoading(word, idTag) {
+            var i = 0;
+            function dots() {
+                var str = '';
+                var j;
+                for (j = 0; j <= i; j++) str += '.';
+                i = (i + 1)%3;
+                return str;
+            }
+            $(idTag).text(word);
+            return setInterval(function () {
+                $(idTag).text(word + dots())
+            }, 500);
+        }
+
+        // resolver un comentario
+        $('.resolveButton').on('click', function (event) {
+            var id = $(this).data('idcomment');
+            var idInterval = wordLoading('Resolviendo', '#resolve_button_' + id);
+            sendInfo('/resolver-reporte', {'id_comment': id}, function() {
+                $('#comment_' + id).hide('drop', {'direction': 'left'}, 500)
+            }, this, idInterval)
+        });
+        //eliminar un comentario
+        $('.deleteButton').on('click', function (event) {
+            var id = $(this).data('idcomment');
+            var idInterval = wordLoading('Eliminando', '#delete_button_' + id);
+            sendInfo('/eliminar-comentario', {'id_comment': id}, function() {
+                $('#comment_' + id).hide('drop', {'direction': 'rigth'}, 500)
+            }, this, idInterval)
+        });
+        //advertir un comentario
+        $('.warningButton').on('click', function (event) {
+            var id = $('#hidden_comment_id').val();
+            var warning = $('#razonAdvertencia').val();
+            $('#ModalAdvertencia').modal('hide');
+            var idInterval = wordLoading('Enviando', '#warning_button_' + id);
+            sendInfo('/enviar-advertencia', {'id_comment': id, 'warning': warning}, function() {
+                setTimeout(function() {
+                    $('#comment_' + id).hide('highlight', 1000);
+                }, 500)
+            }, $('#warning_button_' + id), idInterval)
+        });
+
+        $('#ModalAdvertencia').on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var id = button.data('idcomment');
+            $('#hidden_comment_id').val(id);
+        });
+    </script>
+{% endblock %}
