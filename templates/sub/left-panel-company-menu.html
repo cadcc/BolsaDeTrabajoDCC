@@ -3,7 +3,7 @@
     <div class="text-center text-capitalize">Su Empresa: <span class="text-highlight text-capitalize text-big">{{ user.empresa.nombre }}</span></div>
     <div>
         <a href="{% url 'formulario' %}"><button type="button" class="m-btn-full m-btn-darkcyan">Publicar</button></a>
-        <a href="{% url 'empresa' user.empresa.url_encoded_name %}"><button type="button" class="m-btn-full m-btn-cyan">Perfil</button></a>
+        <a href="{% url 'mi_empresa' %}"><button type="button" class="m-btn-full m-btn-cyan">Perfil</button></a>
         {% if user.administrador %}
         <a href="{% url 'encargados' %}"><button type="button" class="m-btn-full m-btn-darkred">Encargados</button></a>
         {% endif %}

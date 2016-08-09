@@ -160,6 +160,15 @@ def empresa(request, id_empresa):
     context = load_info_company(user, empresa)
     return render(request, 'app/company.html', context)
 
+@login_required(login_url='home')
+def mi_empresa(request):
+    user = getUser(request.user)
+    if user.isUsuario():
+        return redirect(reverse(home))
+    empresa = user.empresa
+    context = load_info_company(user, empresa)
+    return render(request, 'app/company.html', context)
+
 @csrf_exempt
 def login_empresa(request):
     if request.method == 'POST':
@@ -176,7 +185,8 @@ def login_empresa(request):
         else:   #No hay registros de existencia del usuario
             context['error_login'] = 'Combinación de usuario y contraseña inválida'
             return render(request, 'app/registro_empresa.html', context)
-        return redirect('/empresa/' + str(baseUser.encargado.empresa.id))
+        #return redirect('/empresa/' + str(baseUser.encargado.empresa.id))
+        return redirect(reverse('mi_empresa'))
     return HttpResponseNotAllowed('POST')
 
 @csrf_exempt

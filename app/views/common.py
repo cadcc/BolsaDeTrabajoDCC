@@ -52,7 +52,7 @@ def home(request):
         if user.isUsuario():
             return redirect(reverse('listado_ofertas'))
         elif user.isEncargado():
-            return redirect(reverse('empresa', args=[user.empresa.url_encoded_name()]))
+            return redirect(reverse('mi_empresa'))
     return render(request, 'app/home.html', context)
 
 @login_required(login_url='home')
