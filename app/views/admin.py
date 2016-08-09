@@ -194,7 +194,7 @@ def download_file(request, user_id):
 
         # Do stuff
         usuario_pendiente = Usuario.objects.get(pk=user_id)
-        filename = usuario_pendiente.documento
+        user_file = usuario_pendiente.documento
 
         '''
         fsock = open(settings.MEDIA_ROOT + filename.name, 'r')
@@ -215,8 +215,9 @@ def download_file(request, user_id):
         return response
         '''
 
+        filename = settings.MEDIA_ROOT + str(user_file)
         #att_name = "{}_{}.pdf".format(usuario_pendiente.first_name, usuario_pendiente.last_name)
-        return sendfile(request, str(filename))
+        return sendfile(request, filename)
     else:
         return HttpResponseNotAllowed('GET')
 
