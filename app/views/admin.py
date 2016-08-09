@@ -204,7 +204,7 @@ def download_file(request, user_id):
         response = HttpResponse(content_type='application/force-download')
         response['Content-Disposition'] = 'attachment; filename=%s_%s.pdf' % (usuario_pendiente.first_name, usuario_pendiente.last_name)
         #response['X-Sendfile'] = smart_str(path_to_file)   # Apache
-        response['X-Accel-Redirect'] = smart_str('/download/%s' % filename)    # Nginx
+        response['X-Accel-Redirect'] = smart_str('/protected/%s' % filename)    # Nginx
 
         return response
     else:
