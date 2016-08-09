@@ -43,8 +43,7 @@ class Empresa(models.Model):
         return self.nombre
 
     def url_encoded_name(self):
-        #return quote_plus(self.nombre)
-        return self.nombre.replace(' ', '-')
+        return self.id
 
 class Encargado(UsuarioBase):
     administrador = models.BooleanField(default=False)
