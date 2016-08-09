@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth.decorators import login_required
+from django.utils.encoding import smart_str
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import render, redirect
@@ -192,10 +193,19 @@ def download_file(request, user_id):
         # Do stuff
         usuario_pendiente = Usuario.objects.get(pk=user_id)
         filename = usuario_pendiente.documento
+
+        '''
         fsock = open(settings.MEDIA_ROOT + filename.name, 'r')
         response = HttpResponse(fsock, content_type='application/pdf')
         response['Content-Disposition'] = "attachment; filename=%s_%s.pdf" % \
                                           (usuario_pendiente.first_name, usuario_pendiente.last_name)
+        '''
+
+        response = HttpResponse(content_type='application/force-download')
+        response['Content-Disposition'] = 'attachment; filename=%s_%s.pdf' % (usuario_pendiente.first_name, usuario_pendiente.last_name)
+        #response['X-Sendfile'] = smart_str(path_to_file)   # Apache
+        response['X-Accel-Redirect'] = smart_str('/download/%s' % filename)    # Nginx
+
         return response
     else:
         return HttpResponseNotAllowed('GET')
