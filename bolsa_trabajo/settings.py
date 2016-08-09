@@ -187,5 +187,5 @@ EMAIL_HOST_PASSWORD = 'bolsa2016'
 
 # Django-Sendfile -----------------------------------------------
 SENDFILE_BACKEND = 'sendfile.backends.nginx'
-SENDFILE_ROOT =  '/root/git/bolsatrabajo/media'
+SENDFILE_ROOT =  '/home/bolsatrabajo/bolsatrabajo/media'
 SENDFILE_URL = '/descargas'
