@@ -371,3 +371,34 @@ a.text-highlight:hover, a.text-highlight:focus{
     width: 450px;
     height: 270px;
 }
+
+#recovery-form input[type=text]{
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+#recovery-form input[type=submit]{
+    color: #FFF;
+    background-color: hsl(170, 75%, 30%);
+    border-color: hsla(170,57%,20%,1);
+    padding: 6px 12px;
+    margin: 2px;
+    border: 1px solid;
+    font-size: 18px;
+    font-weight: normal;
+    border-radius: 3px;
+}

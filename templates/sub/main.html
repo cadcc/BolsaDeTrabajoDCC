@@ -18,8 +18,10 @@
 <body>
     <div class="container">
         {% include "sub/header.html" %}
-        {% block content %}
-        My kakkoii content
+        {% block custom_content %}
+            {% block content %}
+            My kakkoii content
+            {% endblock %}
         {% endblock %}
         {% include "sub/footer.html" %}
     </div>

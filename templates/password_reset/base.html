@@ -1,2 +1,30 @@
-{% extends "sub/main.html" %}
+{% extends "sub/main_one_column.html" %}
 {% load staticfiles %}
+
+{% block custom_content_wrapper %}
+    <div class="row frame frame-white">
+        <div class="col-md-6 col-xs-12">
+                <h2>¿Has olvidado tu contraseña?</h2>
+                <hr>
+                <p>
+                    Ingresa tu correo electrónico. Una nueva contraseña será asignada a tu cuenta para que puedas ingresar.
+                    <br><br>
+                    En el caso de que poseas una cuenta U-Pasaporte deberás recuperar tu contraseña con su propio <a href="http://pasaporte.uchile.cl/" target="_blank">sistema de recuperación</a>.
+                </p>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <div class="frame frame-light">
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <div class="title text-center">Solicitar cambio de contraseña</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="recovery-form" class="col-md-10 col-md-offset-1 col-xs-12">
+                        {{ block.super }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
