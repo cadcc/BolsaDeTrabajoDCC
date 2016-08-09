@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth.decorators import login_required
+from django.utils.encoding import smart_str
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import render, redirect
@@ -8,6 +9,8 @@ from django.conf import settings
 from app.forms import AddPublicadorForm, AddAdministradorForm, AddValidadorForm, AddModeradorForm
 from app.models import Usuario, Rol, Encargado
 from app.views.common import getUser
+
+from sendfile import sendfile
 
 @login_required(login_url='home')
 def manage_permissions(request):
@@ -191,12 +194,30 @@ def download_file(request, user_id):
 
         # Do stuff
         usuario_pendiente = Usuario.objects.get(pk=user_id)
-        filename = usuario_pendiente.documento
+        user_file = usuario_pendiente.documento
+
+        '''
         fsock = open(settings.MEDIA_ROOT + filename.name, 'r')
         response = HttpResponse(fsock, content_type='application/pdf')
-        response['Content-Disposition'] = "attachment; filename=%s_%s.pdf" % \
+        response['Content-Disposition'] = 'attachment; filename="%s_%s.pdf"' % \
                                           (usuario_pendiente.first_name, usuario_pendiente.last_name)
+
+        print("Generando Response")
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="{}_{}.pdf"'.format(usuario_pendiente.first_name, usuario_pendiente.last_name)
+        #response['X-Sendfile'] = smart_str('/protected/%s' % filename)   # Apache
+        response['X-Accel-Redirect'] = smart_str('/protected/{}'.format(filename))    # Nginx
+
+        print("Filename: {}".format(filename))
+        print("Content-Disposition: {}".format(response['Content-Disposition']))
+        print("X-Accel-Redirect: {}".format(response['X-Accel-Redirect']))
+
         return response
+        '''
+
+        filename = settings.MEDIA_ROOT + str(user_file)
+        #att_name = "{}_{}.pdf".format(usuario_pendiente.first_name, usuario_pendiente.last_name)
+        return sendfile(request, filename)
     else:
         return HttpResponseNotAllowed('GET')
 

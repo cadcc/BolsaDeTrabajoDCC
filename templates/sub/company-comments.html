@@ -62,7 +62,7 @@
     {% endif %}
     {# previous valorations #}
     {% for comment in comments %}
-        <div class="frame frame-light">
+        <div class="frame frame-light{{ comment.prioritario|yesno:" featured,,"}}" id="comment_id_{{ comment.id }}">
             <div>
                 <div>
                     <div class="inline-block">

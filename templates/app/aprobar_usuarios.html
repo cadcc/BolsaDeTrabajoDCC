@@ -88,11 +88,12 @@
                 <tr id="{{ u.id }}">
                   <td>{{ u.first_name }} {{ u.last_name }}</td>
                   <td>
-                    <a href="{% url 'descargar_archivo' user_id=u.id %}"
-                    <button type="button" class="btn btn-primary" data-filename="{{ u.documento }}">
-                      <!--<i class="fa fa-file-text-o" aria-hidden="true"></i>-->
-                      <i class="glyphicon glyphicon-save-file" aria-hidden="true"></i>
-                    </button>
+                    <a href="{% url 'descargar_archivo' user_id=u.id %}" target="_blank">
+                      <button type="button" class="btn btn-primary">
+                        <!--<i class="fa fa-file-text-o" aria-hidden="true"></i>-->
+                        <i class="glyphicon glyphicon-save-file" aria-hidden="true"></i>
+                      </button>
+                    </a>
                   </td>
                   <td>{{ u.email }}</td>
                   <td class="text-center">
