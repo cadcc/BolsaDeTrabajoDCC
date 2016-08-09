@@ -216,7 +216,7 @@ def download_file(request, user_id):
         '''
 
         #att_name = "{}_{}.pdf".format(usuario_pendiente.first_name, usuario_pendiente.last_name)
-        return sendfile(request, filename)
+        return sendfile(request, str(filename))
     else:
         return HttpResponseNotAllowed('GET')
 
