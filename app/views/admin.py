@@ -200,11 +200,15 @@ def download_file(request, user_id):
         response['Content-Disposition'] = "attachment; filename=%s_%s.pdf" % \
                                           (usuario_pendiente.first_name, usuario_pendiente.last_name)
         '''
+        print("Generando Response")
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename={}_{}.pdf'.format(usuario_pendiente.first_name, usuario_pendiente.last_name)
+        #response['X-Sendfile'] = smart_str('/protected/%s' % filename)   # Apache
+        response['X-Accel-Redirect'] = smart_str('/protected/{}'.format(filename))    # Nginx
 
-        response = HttpResponse(content_type='application/force-download')
-        response['Content-Disposition'] = 'attachment; filename=%s_%s.pdf' % (usuario_pendiente.first_name, usuario_pendiente.last_name)
-        #response['X-Sendfile'] = smart_str(path_to_file)   # Apache
-        response['X-Accel-Redirect'] = smart_str('/protected/%s' % filename)    # Nginx
+        print("Filename: {}".format(filename))
+        print("Content-Disposition: {}".format(response['Content-Disposition']))
+        print("X-Accel-Redirect: {}".format(response['X-Accel-Redirect']))
 
         return response
     else:
