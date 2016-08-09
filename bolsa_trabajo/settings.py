@@ -182,10 +182,10 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'no-reply-bolsadetrabajo@cadcc.cl'
-EMAIL_HOST_PASSWORD = 'bolsa2016'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 # Django-Sendfile -----------------------------------------------
-SENDFILE_BACKEND = 'sendfile.backends.nginx'
-SENDFILE_ROOT =  '/home/bolsatrabajo/bolsatrabajo/media'
-SENDFILE_URL = '/descargas'
+SENDFILE_BACKEND = os.getenv('SENDFILE_BACKEND')
+SENDFILE_ROOT =  os.getenv('SENDFILE_ROOT')
+SENDFILE_URL = os.getenv('SENDFILE_URL')
