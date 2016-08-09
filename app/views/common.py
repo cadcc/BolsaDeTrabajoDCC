@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-
+from django.views.static import serve
 from app.models import Usuario, Encargado
 
 
@@ -60,3 +60,7 @@ def home(request):
 def logout_user(request):
     logout(request)
     return redirect(reverse(home))
+
+@login_required()
+def media(request, path, document_root=None, show_indexes=False):
+    return serve(request, path, document_root)

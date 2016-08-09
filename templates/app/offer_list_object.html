@@ -6,12 +6,11 @@
                 {{ offer.empresa }}
             </a>
         </div>
-        <img class="company-logo"
-             src="{% if empresa.logo %}
-                {{ empresa.logo }}
-             {% else %}
-                {% static "resources/company/default-logo-company.png" %}
-             {% endif %}">
+        {% ifnotequal offer.empresa.logo "" %}
+            <img class="company-logo" src="{% static offer.empresa.logo.url %}">
+        {% else %}
+            <img class="company-logo" src="{% static "resources/company/default-logo-company.png" %}">
+        {% endifnotequal%}
     </div>
     <div class="col-md-9">
         <div>

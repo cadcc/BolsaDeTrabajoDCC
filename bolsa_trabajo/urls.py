@@ -22,7 +22,7 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('app.urls')),
-    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+    url(r'^media/(?P<path>.*)$', 'app.views.common.media', {
         'document_root': settings.MEDIA_ROOT,
     }),
     url(r'^recover-password/', include('password_reset.urls')),
