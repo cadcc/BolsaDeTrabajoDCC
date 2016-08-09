@@ -10,6 +10,8 @@ from app.forms import AddPublicadorForm, AddAdministradorForm, AddValidadorForm,
 from app.models import Usuario, Rol, Encargado
 from app.views.common import getUser
 
+from sendfile import sendfile
+
 @login_required(login_url='home')
 def manage_permissions(request):
     user = getUser(request.user)
@@ -199,7 +201,7 @@ def download_file(request, user_id):
         response = HttpResponse(fsock, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="%s_%s.pdf"' % \
                                           (usuario_pendiente.first_name, usuario_pendiente.last_name)
-        '''
+
         print("Generando Response")
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="{}_{}.pdf"'.format(usuario_pendiente.first_name, usuario_pendiente.last_name)
@@ -211,6 +213,10 @@ def download_file(request, user_id):
         print("X-Accel-Redirect: {}".format(response['X-Accel-Redirect']))
 
         return response
+        '''
+
+        #att_name = "{}_{}.pdf".format(usuario_pendiente.first_name, usuario_pendiente.last_name)
+        return sendfile(request, filename)
     else:
         return HttpResponseNotAllowed('GET')
 
