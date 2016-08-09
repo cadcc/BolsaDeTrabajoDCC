@@ -5,3 +5,4 @@ requests==2.10.0
 beautifulsoup4==4.4.1
 Pillow==3.3.0
 django-password-reset==0.9
+django-sendfile==0.3.10
