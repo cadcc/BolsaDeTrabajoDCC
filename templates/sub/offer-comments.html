@@ -79,13 +79,13 @@
                         <div id="user-valoration" class="hidden">
                             <input required type="number" class="rating" name="valoration" value="{{ comment.value }}" min="0" max="5" data-show-clear="false" data-show-caption="false" data-step="1" data-size="xs" >
                         </div>
-                        <div class="badge badge-yellow">
+                        <div class="badge badge-yellow" title="{{ comment.value }}">
                             <div class="text-big star-val" data-score={{ comment.valor }}>
                         </div>
                     </div>
                     {% else %}
                     <div class="text-big pull-right">
-                        <div class="badge badge-yellow">
+                        <div class="badge badge-yellow" title="{{ comment.value }}">
                             <div class="text-big star-val" data-score={{ comment.valor }}>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                             <button id="comment_button_id_{{ comment.id }}"
                                     onclick="reportComment({{ comment.id }}, 'offer')"
                                     type="button">
-                                <b>Reportar</b>
+                                <b>Reportar como inapropiado</b>
                             </button>
                         {% endif %}
                     </div>

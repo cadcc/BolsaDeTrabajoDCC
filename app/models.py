@@ -45,6 +45,9 @@ class Empresa(models.Model):
     def url_encoded_name(self):
         return self.id
 
+    def puntaje_explicito(self):
+        return self.puntaje/20.0
+
 class Encargado(UsuarioBase):
     administrador = models.BooleanField(default=False)
     telefono = models.CharField(max_length=15)
@@ -175,6 +178,9 @@ class Oferta(models.Model):
             c = c+1
         return '$' + clp;
 
+    def puntuacion_explicita(self):
+        return self.puntuacion/20.0
+
 
 class Usuario(UsuarioBase):
     documento = models.FileField(upload_to='user_document', null=True)
@@ -235,7 +241,7 @@ class ValoracionOferta(models.Model):
         return str(self.usuario) + ' - ' + str(self.valor) + ' - ' +self.comentario
 
     def value(self):
-        return int(self.valor/20)
+        return self.valor/20.0
 
     def hasWarning(self):
         warnings = AdvertenciaValoracionOferta.objects.filter(valoracion=self, resuelto=False)
@@ -277,7 +283,7 @@ class ValoracionEmpresa(models.Model):
         return str(self.usuario) + ' - ' + str(self.valor) + ' - ' + self.comentario
 
     def value(self):
-        return int(self.valor/20)
+        return self.valor/20
 
     def hasWarning(self):
         warnings = AdvertenciaValoracionEmpresa.objects.filter(valoracion=self, resuelto=False)
