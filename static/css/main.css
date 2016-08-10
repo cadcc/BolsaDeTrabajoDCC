@@ -64,6 +64,10 @@ nav.navbar a{
     color: #138673;
 }
 
+#navbar .collapse{
+    display: block;
+}
+
 /*End Bootstrap*/
 
 
