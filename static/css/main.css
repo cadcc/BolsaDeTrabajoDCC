@@ -48,8 +48,16 @@ a.text-highlight:hover, a.text-highlight:focus{
     background-color: #BCBD31;
 }
 
+.navbar-default{
+    background-color: #ffffff;
+    border-color: #e7e7e7;
+    border-radius: 0px;
+}
+
 nav.navbar{
     min-height: auto;
+    margin-bottom: 0px;
+    border-bottom: 5px solid rgba(13,101,87,0.9);
 }
 
 nav.navbar a{

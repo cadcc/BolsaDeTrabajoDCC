@@ -5,6 +5,11 @@
     <div class="background height100">
             <div class="height100"></div>
     </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            {% include "sub/navbar.html" %}
+        </div>
+    </div>
     <div class="col-md-3 col-xs-12 column-left">
         <div>
             <a href="{% url "home" %}"><div class="logo"></div></a>
@@ -17,7 +22,6 @@
         </div>
     </div>
     <div class="col-md-9 col-xs-12 column-right">
-        {% include "sub/navbar.html" %}
         {% block right_column_content %}
         
         {% endblock %}
