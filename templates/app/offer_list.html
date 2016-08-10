@@ -165,7 +165,18 @@
                 timeout: 5000
             });
         }
-
+    </script>
+    <script>
+        // recordar panel activo
+        $(document).ready(function() {
+            var activePanel = $('#active_panel_filter').val();
+            $('#' + activePanel + '_li').addClass('active');
+            $('#' + activePanel + '_panel').addClass('active');
+        });
+        $('.link-panel').on('click', function(event) {
+            $('#active_panel_filter').val($(this).data('panel'));
+            $('#active_panel_search').val($(this).data('panel'));
+        });
     </script>
 {% endblock %}
 
@@ -177,6 +188,7 @@
             <form action="{% url 'busqueda' %}" method="GET" role="search">
                 <div class="input-group">
                     <input type="text" name="q" class="form-control" placeholder="Buscar ofertas">
+                    <input type="hidden" name="active_panel" id="active_panel_search" value="{{ active_panel }}">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="submit">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -202,44 +214,44 @@
                     </div>
         {% endif %}
         <ul class="nav nav-tabs">
-            <li class="active">
-                <a href="#panel-804185" data-toggle="tab">Prácticas</a>
+            <li id="practices_li">
+                <a href="#practices_panel" data-toggle="tab" data-panel="practices" class="link-panel">Prácticas</a>
             </li>
-            <li>
-                <a href="#panel-289390" data-toggle="tab">Memorias</a>
+            <li id="reports_li">
+                <a href="#reports_panel" data-toggle="tab" data-panel="reports" class="link-panel">Memorias</a>
             </li>
-            <li>
-                <a href="#panel-289391" data-toggle="tab">Trabajos</a>
+            <li id="jobss_li">
+                <a href="#jobs_panel" data-toggle="tab" data-panel="jobs" class="link-panel">Trabajos</a>
             </li>
             {% if not marcadores %}
                 {% if 'publicador' in roles %}
-                    <li>
-                        <a href="#panel-289392" data-toggle="tab">Ofertas recibidas</a>
+                    <li id="offers_check_li">
+                        <a href="#offers_check_panel" data-toggle="tab" data-panel="offers_check" class="link-panel">Ofertas recibidas</a>
                     </li>
                 {% endif %}
                 {% if 'validador' in roles %}
-                    <li>
-                        <a href="#panel-289393" data-toggle="tab">Prácticas por revisar</a>
+                    <li id="practices_check_li">
+                        <a href="#practices_check_panel" data-toggle="tab" data-panel="practices_check" class="link-panel">Prácticas por revisar</a>
                     </li>
                 {% endif %}
             {% endif %}
         </ul>
         <div class="tab-content">
-            <div class="tab-pane active" id="panel-804185">
+            <div class="tab-pane" id="practices_panel">
                 {% for offer in practices %}
                     {% include "app/offer_list_object.html" %}
                     {% empty %}
                         Aún no hay ofertas de Práctica.
                 {% endfor %}
             </div>
-            <div class="tab-pane" id="panel-289390">
+            <div class="tab-pane" id="reports_panel">
                 {% for offer in reports %}
                     {% include "app/offer_list_object.html" %}
                     {% empty %}
                         Aún no hay ofertas de Memoria.
                 {% endfor %}
             </div>
-            <div class="tab-pane" id="panel-289391">
+            <div class="tab-pane" id="jobs_panel">
                 {% for offer in jobs %}
                     {% include "app/offer_list_object.html" %}
                     {% empty %}
@@ -248,7 +260,7 @@
             </div>
             {% if not marcadores %}
                 {% if 'publicador' in roles %}
-                <div class="tab-pane" id="panel-289392">
+                <div class="tab-pane" id="offers_check_panel">
                     {% for offer in offers_to_check %}
                         {% include "app/offer_list_acept_offer.html" %}
                         {% empty %}
@@ -257,7 +269,7 @@
                 </div>
                 {% endif %}
                 {% if 'validador' in roles %}
-                <div class="tab-pane" id="panel-289393">
+                <div class="tab-pane" id="practices_check_panel">
                     {% for offer in practices_to_check %}
                         {% include "app/offer_list_valid_prac.html" %}
                         {% empty %}

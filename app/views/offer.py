@@ -286,6 +286,7 @@ def offer_list(request):
 
     #cargar etiquetas para filtrar
     context['tipos_etiquetas'] = get_tags()
+    context['active_panel'] = 'practices'
 
     return render(request, 'app/offer_list.html', context)
 
@@ -366,6 +367,10 @@ def search_offer(request):
     context['query'] = busqueda
     context['busqueda'] = True
 
+    # recordar panel en el que se estaba
+    active_panel = request.GET.get('active_panel')
+    context['active_panel'] = active_panel
+
     return render(request, 'app/offer_list.html', context)
 
 # --------------------------------------------------------------------------------------
@@ -433,6 +438,7 @@ def filter(request):
             return HttpResponseBadRequest('No tienes permisos necesarios!!!')
         filters = list(map(lambda filter: int(filter), request.GET.getlist('filters')))
         salary = int(request.GET.get('salary'))
+        active_panel = request.GET.get('active_panel')
 
         results = Oferta.objects.filter(sueldo_minimo__gte=salary)
         for f in filters:
@@ -449,6 +455,9 @@ def filter(request):
 
         # cargar etiquetas para filtrar
         context['tipos_etiquetas'] = get_tags()
+
+        # recordar panel en el que se estaba
+        context['active_panel'] = active_panel
         return render(request, 'app/offer_list.html', context)
     else:
         return HttpResponseNotAllowed('GET')
