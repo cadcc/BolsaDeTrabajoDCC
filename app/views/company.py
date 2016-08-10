@@ -209,7 +209,7 @@ def change_description(request):
             description = form.cleaned_data['description']
             user.empresa.descripcion = description
             user.empresa.save()
-        return redirect('/empresa/' + user.empresa.url_encoded_name())
+        return redirect(reverse(empresa, args=[user.empresa.url_encoded_name()]))
     else:
         return redirect(reverse(home))
 
