@@ -375,7 +375,7 @@ def search_offer(request):
 
 # --------------------------------------------------------------------------------------
 
-@csrf_exempt
+@login_required(login_url='home')
 def suscription(request):
     if request.method == 'GET':
         user = getUser(request.user)
