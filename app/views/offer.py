@@ -241,6 +241,8 @@ def offer(request, offer_id):
 def classify_offers(offers_to_filter):
     publicadas = offers_to_filter.filter(publicada=True)
 
+    all_offers = Oferta.objects.all().order_by('fecha_publicacion')
+
     deadline = timezone.now() - timedelta(days=7)
     q_aprobadas = Q(validacion__isnull=False) & Q(validacion__aceptado=True)
     q_sin_validar = Q(validacion__isnull=True) & Q(fecha_publicacion__lte=deadline)
@@ -250,10 +252,10 @@ def classify_offers(offers_to_filter):
                                                        When(q_sin_validar, then=False),
                                                        default=False,
                                                        output_field=BooleanField())),
-        'practices_to_check': publicadas.filter(tipo='Práctica', validacion__isnull=True),
+        'practices_to_check': all_offers.filter(tipo='Práctica', validacion__isnull=True),
         'reports': publicadas.filter(tipo='Memoria'),
         'jobs': publicadas.filter(tipo='Trabajo'),
-        'offers_to_check': offers_to_filter.filter(publicada=False).order_by('-fecha_publicacion')
+        'offers_to_check': all_offers.filter(publicada=False).order_by('-fecha_publicacion')
     }
 
 def get_tags():
