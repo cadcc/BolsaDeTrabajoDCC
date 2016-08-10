@@ -43,7 +43,7 @@ class Empresa(models.Model):
         return self.nombre
 
     def url_encoded_name(self):
-        return str(self.id)
+        return self.id
 
     def puntaje_explicito(self):
         return self.puntaje/20.0
