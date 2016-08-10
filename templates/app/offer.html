@@ -13,9 +13,8 @@
     {% csrf_token %}
     <h2 class="text-center">
         {{ oferta.titulo }}
-        <button class="btn btn-info btn-lg" onclick="followOffer({{ oferta.id }})">
-            <span id="follow_icon" data-follow="{{ isFollowed }}" class="center-block glyphicon glyphicon-heart-empty"></span>
-        </button>
+         <span id="follow_icon" data-follow="{{ isFollowed }}" class="like like-medium glyphicon glyphicon-heart-empty"
+         onclick="followOffer({{ oferta.id }})"></span>
     </h2>
     <hr>
     <div class="row text-center text-uppercase">
@@ -217,9 +216,8 @@
         }
         function updateIconFollow() {
             var iconFollow = $('#follow_icon');
-            if (iconFollow.data('follow') === 'True')
-                iconFollow.attr('class', "center-block glyphicon glyphicon-heart");
-            else iconFollow.attr('class', "center-block glyphicon glyphicon-heart-empty")
+            iconFollow.toggleClass("glyphicon glyphicon-heart");
+            iconFollow.toggleClass("glyphicon glyphicon-heart-empty")
         }
         function followOffer(offer_id) {
             //aqui hay que poner algo para que se vea como carga el sistema, su modal loco

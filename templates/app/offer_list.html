@@ -134,9 +134,10 @@
         }
         function updateIconFollow(id) {
             var iconFollow = $('#follow_icon_' + id);
-            if (iconFollow.data('follow') === 'True')
-                iconFollow.attr('class', "glyphicon glyphicon-heart");
-            else iconFollow.attr('class', "glyphicon glyphicon-heart-empty")
+            ///if (iconFollow.data('follow') === 'True')
+                iconFollow.toggleClass("glyphicon-heart");
+            //else iconFollow.toggleClass("glyphicon-heart-empty")
+            iconFollow.toggleClass("glyphicon-heart-empty")
         }
         function followOffer(offer_id) {
             //aqui hay que poner algo para que se vea como carga el sistema, su modal loco

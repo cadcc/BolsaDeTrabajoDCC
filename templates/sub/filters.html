@@ -3,7 +3,7 @@
     <form class="text-left filter-panel" action="{% url "filtros" %}" method="GET" role="form">
         {% csrf_token %}
         <div class="form-group">
-            <label>Sueldo base <span class="text-highlight" id="min-price-label">{% if min_salary %}{{ min_salary }}{% else %}0{% endif %}</span></label>
+            <label>Sueldo mínimo <span class="text-highlight" id="min-price-label">{% if min_salary %}{{ min_salary }}{% else %}0{% endif %}</span></label>
             <div class="price-filter">
                 <div class="price-range-holder">
                     <input type="text" class="price-slider" value="{% if min_salary %}{{ min_salary }}{% else %}0{% endif %}">
@@ -16,7 +16,7 @@
                 <label class="control-label text-capitalize">{{ tipo_etiqueta.tipo }}</label>
                 <div>
                     {% for etiqueta in tipo_etiqueta.etiquetas %}
-                        <label class="checkbox">
+                        <label class="checkbox text-capitalize">
                             <input type="checkbox"
                                    name="filters"
                                    value="{{ etiqueta.id }}"

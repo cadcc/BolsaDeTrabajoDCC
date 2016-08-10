@@ -422,3 +422,43 @@ nav.navbar a{
     font-weight: normal;
     border-radius: 3px;
 }
+
+.like{
+    background: #e6997a;
+    border-radius: 30px;
+    color: #ffffff;
+    text-align: center;
+    -webkit-transition: background-color 300ms linear;
+    -moz-transition: background-color 300ms linear;
+    -o-transition: background-color 300ms linear;
+    -ms-transition: background-color 300ms linear;
+    transition: background-color 300ms linear;
+}
+
+.like.glyphicon-heart-empty{
+    background: #e6997a;
+}
+
+.like.glyphicon-heart{
+    background: #ff5e1f;
+}
+
+.like:hover{
+
+}
+
+.like.glyphicon-heart:hover{
+    background: #e48560;
+}
+
+.like.glyphicon-heart-empty:hover{
+    background: #ff5e1f;
+}
+
+.like.like-small{
+    padding: 4px;
+}
+
+.like.like-medium{
+    padding: 8px;
+}
