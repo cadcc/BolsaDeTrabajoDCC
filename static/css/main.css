@@ -361,8 +361,23 @@ nav.navbar a{
     margin-bottom: 2px;
 }
 
-.filter-panel{
+.filter-panel div.accordion label{
+    text-align: left;
+}
+
+.filter-panel div.accordion-body{
     margin-left: 30px;
+}
+
+.filter-panel div.accordion-group{
+    border-radius: 10px;
+    background-color: rgba(24,178,153,0.9);
+}
+
+.filter-panel div.accordion-heading{
+    text-align: center;
+    border-radius: 10px;
+    background-color: hsl(170, 75%, 30%);
 }
 
 
