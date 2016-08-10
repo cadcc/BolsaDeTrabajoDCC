@@ -193,7 +193,12 @@
     {% csrf_token %}
     <div class="tabbable" id="tabs-813395">
         {% if 'publicador' in roles and not marcadores and not busqueda %}
-            <h3>Para ver las nuevas ofertas aceptadas en las otras pestañas debes actualizar la página</h3>
+            <div id="titulo_helptext" class="helptext">
+                        <div class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            Para ver las nuevas ofertas aceptadas en las otras pestañas debes actualizar la página
+                        </div>
+                    </div>
         {% endif %}
         <ul class="nav nav-tabs">
             <li class="active">
