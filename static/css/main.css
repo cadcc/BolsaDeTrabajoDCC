@@ -444,7 +444,7 @@ nav.navbar a{
 }
 
 .like:hover{
-
+    cursor: pointer;
 }
 
 .like.glyphicon-heart:hover{
