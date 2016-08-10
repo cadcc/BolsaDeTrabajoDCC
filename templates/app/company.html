@@ -32,8 +32,11 @@
                 </div>
                 <div class="badge badge-yellow" title="{{ empresa.puntaje }}">
                     <div>Valoración</div>
-                    <div class="text-big star-val" data-score={{ empresa.puntaje }}>
-                    </div>
+                    {% ifequal empresa.puntaje 0 %}
+                    <div class="text-big text-uppercase">sin valoraciones</div>
+                    {% else %}
+                    <div class="text-big star-val" data-score="{{ empresa.puntaje }}" title="{{ empresa.puntaje_explicito }}"></div>
+                    {% endifequal %}
                 </div>
             </div>
         </div>

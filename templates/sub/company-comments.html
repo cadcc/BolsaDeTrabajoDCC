@@ -80,13 +80,13 @@
                             <input required type="number" class="rating" name="valoration" value="{{ comment.value }}" min="0" max="5" data-show-clear="false" data-show-caption="false" data-step="1" data-size="xs" >
                         </div>
                         <div class="badge badge-yellow">
-                            <div class="text-big star-val" data-score={{ comment.valor }}>
+                            <div class="text-big star-val" title="{{ comment.value }}" data-score={{ comment.valor }}>
                         </div>
                     </div>
                     {% else %}
                     <div class="text-big pull-right">
                         <div class="badge badge-yellow">
-                            <div class="text-big star-val" data-score={{ comment.valor }}>
+                            <div class="text-big star-val" title="{{ comment.value }}" data-score={{ comment.valor }}>
                         </div>
                     </div>
                     {%  endifequal %}
