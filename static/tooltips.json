@@ -94,7 +94,7 @@
         "placeholder": "DD-MM-YYYY"
     },
     "duracion": {
-        "label": "Duración Minima",
+        "label": "Duración Mínima",
         "help_text": "",
         "placeholder": "0"
     },
@@ -131,7 +131,7 @@
     "telefono": {
         "label": "Teléfono de Contacto",
         "help_text": "",
-        "placeholder": "+56 9 XXXX XXXX"
+        "placeholder": "+56 X XXXX XXXX"
     },
     "notificar": {
         "label": "Deseo recibir notificaciones en mi correo sobre el estado de la oferta.",

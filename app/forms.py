@@ -168,7 +168,7 @@ class OfferForm(ModelForm):
     sueldo_minimo = forms.IntegerField(min_value=0, required=False, label="Sueldo Base")
     duracion_minima = forms.IntegerField(min_value=0, label="Duración Mínima (meses)")
     jornada = forms.ModelChoiceField(queryset=Jornada.objects.all(), widget=forms.RadioSelect(), empty_label=None, label="Tipo de Jornada")
-    empresa = forms.ModelChoiceField(queryset=Empresa.objects.exclude(validada=True).order_by('nombre'))
+    empresa = forms.ModelChoiceField(queryset=Empresa.objects.all().order_by('nombre'))
     comuna = forms.ModelChoiceField(queryset=Comuna.objects.all().order_by('nombre'))
     fecha_comienzo = forms.DateField(input_formats=('%d-%m-%Y', '%d/%m/%Y', '%d-%m-%y', '%d/%m/%y'))
     fecha_termino = forms.DateField(input_formats=('%d-%m-%Y', '%d/%m/%Y', '%d-%m-%y', '%d/%m/%y'))
