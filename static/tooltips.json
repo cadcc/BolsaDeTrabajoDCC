@@ -94,7 +94,7 @@
         "placeholder": "DD-MM-YYYY"
     },
     "duracion": {
-        "label": "Duración Minima",
+        "label": "Duración Mínima",
         "help_text": "",
         "placeholder": "0"
     },
