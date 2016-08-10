@@ -1,0 +1,44 @@
+{% extends "sub/main_column.html" %}
+{% load staticfiles %}
+{% block title %} Términos y Condiciones {% endblock %}
+{% block left_column_content %}
+    {% if user.is_authenticated %}
+        {% if not user.empresa %}
+            {% include "sub/left-panel-user-profile.html" %}
+        {% else %}
+            {% include "sub/left-panel-company-menu.html" %}
+        {% endif %}
+    {% else %}
+        {% include "sub/left-panel-company-login.html" %}
+    {% endif %}
+{% endblock %}
+
+{% block right_column_content %}
+    <h2>Términos y Condiciones de Uso</h2>
+    <div class="revista">
+    <p>El uso de los servicios de Oferta de Trabajo está sujeto a las siguientes Políticas de Uso Aceptable.</p>
+    <ol>
+        <li>
+            Tu cuenta de usuario es personal e intransferible:
+            <ul>
+                <li>Tú eres la única persona autorizada para utilizar tu cuenta y serás responsable de mantener en secreto tus claves de acceso.</li>
+                <li>En caso de detectar una conducta negligente en este respecto, se te hará responsable del uso que terceros pudieran hacer con tu cuenta.</li>
+            </ul>
+        </li>
+        <li>
+            Al hacer uso de los servicios de Oferta de Trabajo aceptas NO caer en coductas que incluyan, entre otras:
+            <ul>
+                <li>Violar o fomentar la violación de los derechos legales de terceros.</li>
+		        <li>Utilizar nuestros servicios para propósitos ilegales, invasivos, difamatorios ni fraudulentos.</li>
+		        <li>Distribuir viruses, gusanos, troyanos, archivos corruptos, engaños (hoaxes), o cualquier otro artículo de naturaleza destructiva o engañosa.</li>
+		        <li>Interferir con el uso de nuestros servicios, ni con el equipamiento usado para proveer dichos servicios.</li>
+		        <li>Alterar, deshabilitar, interferir o eludir alguno de los aspectos de nuestros servicios.</li>
+		        <li>Realizar pruebas o ingeniería reversa de nuestros servicios con el fin de buscar vulnerabilidades, limitaciones o evadir sus restricciones.</li>
+		        <li>Usar nuestros servicios - o cualquiera de sus componentes - de maneras no autorizadas por el Área de Infotecnologías - ADI.</li>
+            </ul>
+        </li>
+    </ol>
+<p>El no cumplir con cualquiera de estas políticas resultará en la suspensión y/o cancelación de algunos servicios o tu cuenta de usuario de Oferta de Trabajo.</p>
+
+</div>
+{% endblock %}

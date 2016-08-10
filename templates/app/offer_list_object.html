@@ -42,10 +42,13 @@
                 {% endif %}
             </div>
             {% endifequal %}
-            <div class="badge" title="{{ offer.puntuacion }}">
+            <div class="badge" title="{{ offer.puntuacion_explicita }}">
                 <div>Valoración</div>
-                <div class="text-big star-val" data-score={{ offer.puntuacion }}>
-                </div>
+                {% ifequal offer.puntuacion 0 %}
+                <div class="text-big text-uppercase">sin valoraciones</div>
+                {% else %}
+                <div class="text-big star-val" data-score="{{ offer.puntuacion }}"></div>
+                {% endifequal %}
             </div>
         </div>
         <div>

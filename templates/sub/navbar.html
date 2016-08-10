@@ -4,10 +4,14 @@
             <ul class="nav navbar-nav">
                 <li><a href="{% url 'home' %}" class="text-uppercase text-highlight hidden-xs">Bolsa de Trabajo</a></li>
                 <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'faq' %}">FAQ</a></li>
+                <li><a href="{% url 'terms' %}">Términos y Condiciones</a></li>
             </ul>
+            {% if user.is_authenticated %}
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{% url "logout" %}">Cerrar sessión</a></li>
             </ul>
+            {% endif %}
         </div>
     </div>
 </nav>

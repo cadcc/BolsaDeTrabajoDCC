@@ -101,7 +101,7 @@
     </script>
 {% endblock %}
 
-{% block title %} Formulario Empresa {% endblock %}
+{% block title %} Publicar una Oferta {% endblock %}
 
 {% block left_column_content %}
     {% if user.is_authenticated %}
@@ -1042,7 +1042,7 @@
         <!-- ToS -->
         <div class="col-sm-offset-1 checkbox">
           <label>
-            <input type="checkbox" id="tos_checkbox" value="">He leído y acepto los <a href="#">Términos y Condiciones</a>.
+            <input type="checkbox" id="tos_checkbox" value="">He leído y acepto los <a href="{% url 'terms' %}" target="_blank">Términos y Condiciones</a>.
           </label>
         </div>
         <br>

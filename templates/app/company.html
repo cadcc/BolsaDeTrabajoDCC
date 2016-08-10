@@ -30,7 +30,7 @@
                     <div>Publicaciones</div>
                     <div class="text-big">{{ company_offers|length }}</div>
                 </div>
-                <div class="badge badge-yellow" title="{{ empresa.puntaje }}">
+                <div class="badge badge-yellow" title="{{ empresa.puntaje_explicito }}">
                     <div>Valoración</div>
                     {% ifequal empresa.puntaje 0 %}
                     <div class="text-big text-uppercase">sin valoraciones</div>

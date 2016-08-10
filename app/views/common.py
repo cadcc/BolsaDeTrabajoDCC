@@ -55,6 +55,12 @@ def home(request):
             return redirect(reverse('mi_empresa'))
     return render(request, 'app/home.html', context)
 
+def faq(request):
+    return render(request, 'app/faq.html')
+
+def terms(request):
+    return render(request, 'app/terms.html')
+
 @login_required(login_url='home')
 @csrf_exempt
 def logout_user(request):
