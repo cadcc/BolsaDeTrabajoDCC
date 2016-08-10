@@ -76,6 +76,15 @@ nav.navbar a{
     display: block;
 }
 
+#accordion a, #accordion a:hover{
+    color: #ffffff;
+}
+
+#accordion .panel-default>.panel-heading {
+    background-color: #1ea990;
+    border-color: #ddd;
+}
+
 /*End Bootstrap*/
 
 
